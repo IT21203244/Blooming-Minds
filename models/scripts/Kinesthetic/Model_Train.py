@@ -5,11 +5,11 @@ from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 
 # Paths to the folders containing your images
-smiling_folder = '../../datasets/Kinesthetic/Smile/smiling'
+smiling_folder = '../../datasets/Kinesthetic/Smile/smile'
 not_smiling_folder = '../../datasets/Kinesthetic/Smile/not_smiling'
 
 # Function to load images
@@ -74,16 +74,16 @@ model = models.Sequential([
 # Compile the model
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Callbacks for early stopping and model checkpointing
+# Callbacks for early stopping, model checkpointing, and learning rate reduction
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 checkpoint = ModelCheckpoint('../../saved_models/Kinesthetic/best_smile_model.keras', 
                              monitor='val_accuracy', save_best_only=True, mode='max')
+lr_reduction = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=1e-6)
 
-
-# Train the model
+# Train the model with increased epochs (20 epochs)
 history = model.fit(datagen.flow(X_train, y_train, batch_size=32), 
-                    epochs=50, validation_data=(X_test, y_test),
-                    callbacks=[early_stopping, checkpoint])
+                    epochs=40, validation_data=(X_test, y_test),
+                    callbacks=[early_stopping, checkpoint, lr_reduction])
 
 # Evaluate the model on the test set
 test_loss, test_acc = model.evaluate(X_test, y_test)
