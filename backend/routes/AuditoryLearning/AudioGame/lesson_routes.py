@@ -5,20 +5,11 @@ lesson_routes = Blueprint("lesson_routes", __name__)
 
 @lesson_routes.route("/add_lesson", methods=["POST"])
 def add_lesson():
-    """
-    API endpoint to add a new lesson to the database.
-    Expects a JSON body with lesson data.
-    """
     db = Database()
     try:
-        # Get JSON data from the request
         lesson_data = request.get_json()
-
-        # Validate required fields
-        if not all(key in lesson_data for key in ( "title", "text", "questions")):
+        if not all(key in lesson_data for key in ("title", "text", "questions")):
             return jsonify({"error": "Missing required fields"}), 400
-
-        # Insert data into the 'audio_lessons' collection
         inserted_id = db.insert_data("audio_lessons", lesson_data)
         return jsonify({"message": "Lesson added successfully", "id": str(inserted_id)}), 201
     except Exception as e:
@@ -30,16 +21,25 @@ def add_lesson():
 def get_lessons():
     db = Database()
     try:
-        print("Fetching lessons...")  # Debug log
         lessons = db.get_data("audio_lessons")
-        print(f"Lessons fetched: {lessons}")  # Debug log
-
         if not lessons:
             return jsonify({"message": "No lessons found"}), 404
-
         return jsonify({"lessons": lessons}), 200
     except Exception as e:
-        print(f"Error in /get_lessons: {e}")  # Log the error
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
+
+@lesson_routes.route("/get_lesson/<lesson_id>", methods=["GET"])
+def get_lesson(lesson_id):
+    db = Database()
+    try:
+        # Convert lesson_id to ObjectId
+        lesson = db.get_data("audio_lessons", {"_id": ObjectId(lesson_id)})
+        if not lesson:
+            return jsonify({"message": "Lesson not found"}), 404
+        return jsonify({"lesson": lesson[0]}), 200
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
