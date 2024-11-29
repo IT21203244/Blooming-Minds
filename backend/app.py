@@ -1,9 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
 import logging
-from routes.AuditoryLearning.record_routes import record_routes
 # Kinesthetic Imports
 from routes.KnestheticLearning.predict_routes import predict_routes  
+from routes.AuditoryLearning.AudioGame.record_routes import record_routes
+from routes.AuditoryLearning.AudioGame.lesson_routes import lesson_routes
 
 # Flask app setup
 app = Flask(__name__)
@@ -15,8 +16,9 @@ CORS(app, resources={r"/predict": {"origins": "http://localhost:3000"}})
 logging.basicConfig(level=logging.DEBUG)
 
 # Register Blueprints
-app.register_blueprint(record_routes)  # Auditory Learning routes
-app.register_blueprint(predict_routes)  # Kinesthetic Learning routes (smile prediction)
+# Auditory Learning
+app.register_blueprint(record_routes)
+app.register_blueprint(lesson_routes, url_prefix="/api") 
 
 # Run the Flask app on port 5000
 if __name__ == "__main__":
