@@ -1,75 +1,45 @@
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
-function CameraFeed() {
-  const [prediction, setPrediction] = useState('');
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const intervalRef = useRef(null); // Store interval reference for cleanup
+const SmileDetection = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-          video.srcObject = stream;
-        })
-        .catch((err) => {
-          console.log("Error: " + err);
-        });
-    }
-
-    // Start predicting every second
-    intervalRef.current = setInterval(() => {
-      captureFrameAndPredict();
-    }, 1000); // Send every second
-
-    // Cleanup when the component unmounts
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+    // Check if the backend is serving the video feed
+    const checkVideoFeed = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/video_feed', { method: 'HEAD' });
+        console.log('Video feed response:', response);
+        if (response.ok) {
+          setIsLoaded(true);
+        } else {
+          console.error('Video feed not available');
+        }
+      } catch (error) {
+        console.error('Error checking video feed:', error);
       }
     };
+
+    checkVideoFeed();
   }, []);
 
-  const captureFrameAndPredict = async () => {
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageData = canvas.toDataURL('image/jpeg');
-
-    try {
-      const response = await axios.post('http://localhost:5000/predict', {
-        image: imageData.split(',')[1],  // Get the base64 part of the image
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      setPrediction(response.data.prediction); // Set the prediction
-    } catch (error) {
-      console.error("Error in sending image to backend: ", error);
-    }
-  };
-
   return (
-    <div>
+    <div className="App">
       <h1>Smile Detection</h1>
-      <video ref={videoRef} autoPlay width="640" height="480" />
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <div>
-        {prediction && (
-          <h2>{prediction === "Smile" ? "😊 Smile detected!" : "😞 No Smile detected"}</h2>
-        )}
-      </div>
+      {!isLoaded ? (
+        <p>Loading video feed...</p>
+      ) : (
+        <img
+          src="http://localhost:5000/video_feed"
+          alt="Smile Detection Feed"
+          style={{
+            width: '50%',
+            height: 'auto',
+            border: '2px solid black',
+          }}
+        />
+      )}
     </div>
   );
-}
+};
 
-export default CameraFeed;
+export default SmileDetection;

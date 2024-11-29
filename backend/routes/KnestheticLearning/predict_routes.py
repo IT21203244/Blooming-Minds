@@ -1,45 +1,62 @@
-from flask import Blueprint, request, jsonify
-import logging
-import numpy as np
-import tensorflow as tf
-from PIL import Image
-from io import BytesIO
-import base64
+from flask import Blueprint, Response
 import cv2
+import tensorflow as tf
+import numpy as np
 import os
 
-# Initialize the Blueprint for predict routes
-predict_routes = Blueprint('predict_routes', __name__)
+model_path = 'C:/Users/Dilshan/Desktop/Blooming-Minds/models/saved_models/Kinesthetic/smile_detection_model.h5'
+
+if not os.path.exists(model_path):
+    print(f"Model file not found: {model_path}")
+    exit()
 
 # Load the trained model
-model_path = os.path.join(os.path.dirname(__file__), '../../../models/saved_models/Kinesthetic/smile_detection_model.h5')
 model = tf.keras.models.load_model(model_path)
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
+# Initialize the webcam
+cap = cv2.VideoCapture(0)
 
-# Route for handling smile detection requests
-@predict_routes.route('/predict', methods=['POST'])
-def predict():
-    data = request.json
-    img_data = data['image']
+if not cap.isOpened():
+    print("Error: Could not access the camera.")
+    exit()
 
-    # Decode the base64 image
-    img_data = base64.b64decode(img_data)
-    img = Image.open(BytesIO(img_data))
-    img = np.array(img)
+image_size = (128, 128)
 
-    # Preprocess the image (resize and normalize)
-    img_resized = cv2.resize(img, (128, 128))
-    img_resized = img_resized / 255.0
-    img_resized = np.expand_dims(img_resized, axis=0)
+predict_routes = Blueprint('predict_routes', __name__)
 
-    # Make prediction
-    prediction = model.predict(img_resized)
+def gen():
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: Could not read frame.")
+            break
 
-    if prediction[0] > 0.5:
-        result = "Smile"
-    else:
-        result = "Not Smile"
-    
-    return jsonify({'prediction': result})
+        # Resize the frame to match the model input
+        frame_resized = cv2.resize(frame, image_size)
+        frame_resized = frame_resized / 255.0
+        frame_resized = np.expand_dims(frame_resized, axis=0)
+
+        prediction = model.predict(frame_resized)
+
+        if prediction[0] > 0.5:
+            label = "Smile"
+            color = (0, 255, 0)  # Green
+        else:
+            label = "Not Smile"
+            color = (0, 0, 255)  # Red
+
+        cv2.putText(frame, label, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        if not ret:
+            print("Error: Could not encode frame.")
+            continue
+
+        frame = jpeg.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@predict_routes.route('/video_feed')
+def video_feed():
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
