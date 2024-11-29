@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 import logging
-from utils.AuditoryLearning.audio_utils import record_audio
-from utils.AuditoryLearning.transcription_utils import transcribe_audio
+from utils.AuditoryLearning.AudioBook.audio_utils import record_audio
+from utils.AuditoryLearning.AudioBook.transcription_utils import transcribe_audio
 
 record_routes = Blueprint("record_routes", __name__)
 
