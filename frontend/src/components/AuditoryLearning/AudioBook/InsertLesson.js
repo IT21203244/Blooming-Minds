@@ -51,6 +51,7 @@ const InsertLesson = () => {
   return (
     <div>
       <h1>Insert New Lesson</h1>
+      <h1>Insert</h1>
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       <form onSubmit={handleSubmit}>
