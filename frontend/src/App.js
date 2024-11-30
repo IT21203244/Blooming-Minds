@@ -2,7 +2,6 @@ import React from "react";
 import AudioTranscription from "../src/components/AuditoryLearning/AudioBook/AudioTranscription";
 import InsertLesson from "../src/components/AuditoryLearning/AudioBook/InsertLesson";
 import AllLessons from "../src/components/AuditoryLearning/AudioBook/Lessons/LessonsList";
-import LessonPage from "../src/components/AuditoryLearning/AudioBook/Lessons/LessonPage";
 import { Route, Routes } from "react-router";
 const App = () => {
   return (
@@ -17,7 +16,6 @@ const App = () => {
           <Route path="/AudioTranscription" element={<AudioTranscription />} />
           <Route path="/InsertLesson" element={<InsertLesson />} />
           <Route path="/AllLessons" element={<AllLessons />} />
-          <Route path="/lesson/:lessonId" element={<LessonPage />} />
 
 
         </Routes>

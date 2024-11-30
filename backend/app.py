@@ -16,7 +16,5 @@ logging.basicConfig(level=logging.DEBUG)
 app.register_blueprint(record_routes)
 app.register_blueprint(lesson_routes, url_prefix="/api") 
 
-# kinesthetic Learning
-
 if __name__ == "__main__":
     app.run(port=5000)
