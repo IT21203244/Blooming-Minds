@@ -34,11 +34,10 @@ def get_lessons():
 def get_lesson(lesson_id):
     db = Database()
     try:
-        # Convert lesson_id to ObjectId
-        lesson = db.get_data("audio_lessons", {"_id": ObjectId(lesson_id)})
+        lesson = db.get_data_by_id("audio_lessons", lesson_id)
         if not lesson:
             return jsonify({"message": "Lesson not found"}), 404
-        return jsonify({"lesson": lesson[0]}), 200
+        return jsonify({"lesson": lesson}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:

@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 
 class Database:
@@ -8,7 +9,6 @@ class Database:
         Replace the MongoDB connection string and database name as required.
         """
         try:
-            # MongoDB connection string
             self.client = MongoClient(
                 "mongodb+srv://blooming_minds:BsjsdM24@bloomingminds.n7ia1.mongodb.net/"
             )
@@ -52,6 +52,26 @@ class Database:
             return lessons
         except Exception as e:
             raise Exception(f"Error fetching data from {collection_name}: {e}")
+
+    def get_data_by_id(self, collection_name, document_id):
+        """
+        Fetch a single document by its ID from the specified collection.
+
+        Args:
+            collection_name (str): Name of the collection.
+            document_id (str): The ID of the document to fetch.
+
+        Returns:
+            dict: The document if found, or None if not found.
+        """
+        try:
+            collection = self.db[collection_name]
+            document = collection.find_one({"_id": ObjectId(document_id)})
+            if document:
+                document["_id"] = str(document["_id"])  # Convert ObjectId to string
+            return document
+        except Exception as e:
+            raise Exception(f"Error fetching document by ID from {collection_name}: {e}")
 
     def close_connection(self):
         """
