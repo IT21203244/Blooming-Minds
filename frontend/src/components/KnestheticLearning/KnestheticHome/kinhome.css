@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Inria+Sans:wght@300;400;700&display=swap");
+
+.kin_home_one_row {
+  background-image: url(./img/cover.png);
+  height: 40vh;
+  margin: 0;
+  background-position: center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  font-family: "Inria Sans", sans-serif;
+}
+.kin_home_main {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.topi_main {
+  color: white;
+  font-size: 150px;
+  font-weight: 600;
+}
+.kin_home_card_continer {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 55px;
+}
+._king_home_card {
+  width: 300px;
+  text-align: center;
+  font-family: "Inria Sans", sans-serif;
+  cursor: pointer;
+  border: 1px solid #2b69b2;
+}
+._king_home_card:hover {
+  border: 1px solid #fdd416;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.card_link {
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.dwon_topic {
+  text-align: center;
+  color: #2b69b2;
+  font-size: 25px;
+  font-weight: 600;
+  font-family: "Inria Sans", sans-serif;
+}
+@media (max-width: 990px) {
+  .topi_main {
+    color: white;
+    font-size: 50px;
+    font-weight: 600;
+  }
+  .kin_home_one_row {
+    height: 20vh;
+  }
+  .kin_home_card_continer{
+    margin-bottom: 25px;
+  }
+}

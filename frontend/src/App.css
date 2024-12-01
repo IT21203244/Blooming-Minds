@@ -1,31 +1,8 @@
-.app-container {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 50px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-.audio-recorder {
-  margin-top: 20px;
-}
-
-button {
-  margin: 10px;
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #aaa;
-}
-
-.transcription-result {
-  margin-top: 20px;
-  border: 1px solid #ccc;
-  padding: 15px;
-  display: inline-block;
-  text-align: left;
+*{
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
 }
