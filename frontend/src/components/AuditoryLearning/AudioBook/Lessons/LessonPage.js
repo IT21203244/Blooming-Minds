@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import "./CCS/LessonPage.css";
 
 const LessonPage = () => {
   const { lessonId } = useParams();
@@ -8,11 +9,15 @@ const LessonPage = () => {
   const [error, setError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [audioSpeed, setAudioSpeed] = useState(1);
   const [isAskingQuestion, setIsAskingQuestion] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [voices, setVoices] = useState([]);
-  const [countdown, setCountdown] = useState(5); // Countdown starting from 5 seconds
+  const [countdown, setCountdown] = useState(5);
   const [transcription, setTranscription] = useState("");
+
+  const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
   useEffect(() => {
     const getVoices = () => {
@@ -42,6 +47,7 @@ const LessonPage = () => {
   const stopAudio = () => {
     speechSynthesis.cancel();
     setIsPlaying(false);
+    setAudioProgress(0);
   };
 
   const readLessonPart = (index) => {
@@ -57,11 +63,12 @@ const LessonPage = () => {
       utterance.voice = selectedVoice;
     }
 
-    utterance.rate = 0.8;
+    utterance.rate = audioSpeed;
     utterance.pitch = 1.2;
     utterance.lang = "en-US";
 
     utterance.onend = () => {
+      setAudioProgress((index + 1) / lesson.text.length * 100);
       if (lesson.questions && lesson.questions[index] && !isAskingQuestion) {
         setIsAskingQuestion(true);
         setQuestionIndex(index);
@@ -87,7 +94,7 @@ const LessonPage = () => {
         }
       }
 
-      questionUtterance.rate = 0.8;
+      questionUtterance.rate = audioSpeed;
       questionUtterance.pitch = 1.2;
       questionUtterance.lang = "en-US";
 
@@ -157,38 +164,59 @@ const LessonPage = () => {
       });
   };
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!lesson) return <p>Loading...</p>;
+  if (error) return <p className="error-message">{error}</p>;
+  if (!lesson) return <p className="loading-message">Loading...</p>;
 
   return (
-    <div>
-      <h2>{lesson.title}</h2>
-      {lesson.title === "The Sun and the Sky" && (
-        <img src="https://example.com/sun-and-sky.jpg" alt="Sun and Sky" />
-      )}
-      <p>
+    <div className="lesson-page">
+      <h2 className="lesson-title">{lesson.title}</h2>
+      <img
+        src={lesson.imageURL || DEFAULT_IMAGE_URL}
+        alt={lesson.title}
+        className="lesson-image"
+      />
+      <p className="lesson-text">
         {lesson.text[currentIndex]?.text || lesson.text[currentIndex]}
       </p>
 
       {isAskingQuestion && (
-        <div>
-          <p>Question: {lesson.questions[questionIndex]?.text}</p>
+        <div className="question-box">
+          <p className="question-text">Question: {lesson.questions[questionIndex]?.text}</p>
         </div>
       )}
 
-      <div>
-        <button onClick={playAudio} disabled={isPlaying}>
+      <div className="controls">
+        <button className="control-button" onClick={playAudio} disabled={isPlaying}>
           Play Audio
         </button>
-        <button onClick={stopAudio} disabled={!isPlaying}>
+        <button className="control-button" onClick={stopAudio} disabled={!isPlaying}>
           Stop Audio
         </button>
       </div>
 
-      {isAskingQuestion && <p>Countdown: {countdown} seconds</p>}
+      <div className="audio-progress-container">
+        <div className="audio-progress" style={{ width: `${audioProgress}%` }}></div>
+      </div>
+
+      <div className="speed-control">
+        <label>Audio Speed</label>
+        <input
+          type="range"
+          min="0.5"
+          max="2"
+          step="0.1"
+          value={audioSpeed}
+          onChange={(e) => setAudioSpeed(e.target.value)}
+        />
+        <span>{audioSpeed}x</span>
+      </div>
+
+      {isAskingQuestion && (
+        <p className="countdown-timer">Countdown: {countdown} seconds</p>
+      )}
 
       {transcription && (
-        <div>
+        <div className="transcription-box">
           <h3>Transcription Result:</h3>
           <p>{transcription}</p>
         </div>
