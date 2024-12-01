@@ -5,11 +5,10 @@ import "./CCS/LessonsList.css";
 
 const LessonsList = () => {
   const [lessons, setLessons] = useState([]);
-  const [images, setImages] = useState({});
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const UNSPLASH_API_KEY = "your_unsplash_api_key"; // Replace with your Unsplash API Key
+  const DEFAULT_IMAGE_URL = "https://via.placeholder.com/300x200?text=No+Image"; // Default image URL
 
   useEffect(() => {
     // Fetch lessons from the server
@@ -18,23 +17,10 @@ const LessonsList = () => {
       .then((response) => {
         const fetchedLessons = response.data.lessons;
         setLessons(fetchedLessons);
-
-        // Fetch images for each lesson title
-        fetchedLessons.forEach((lesson) => {
-          fetchImageForLesson(lesson.title);
-        });
       })
       .catch(() => setError("Failed to fetch lessons."));
   }, []);
 
-  const fetchImageForLesson = (title) => {
-    const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(title)}/300/200`;
-    setImages((prevImages) => ({
-      ...prevImages,
-      [title]: imageUrl,
-    }));
-  };
-  
   const handleStart = (lessonId) => {
     navigate(`/lesson/${lessonId}`);
   };
@@ -48,7 +34,7 @@ const LessonsList = () => {
           {lessons.map((lesson) => (
             <div className="lesson_card" key={lesson._id}>
               <img
-                src={images[lesson.title] || "https://via.placeholder.com/250x150?text=Loading..."}
+                src={lesson.imageURL || DEFAULT_IMAGE_URL} // Use lesson's imageURL or default
                 alt={lesson.title}
                 className="lesson_image"
               />
