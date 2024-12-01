@@ -8,14 +8,17 @@ def add_lesson():
     db = Database()
     try:
         lesson_data = request.get_json()
-        if not all(key in lesson_data for key in ("title", "text", "questions")):
+        # Validate the required fields
+        if not all(key in lesson_data for key in ("title", "text", "questions", "imageURL")):
             return jsonify({"error": "Missing required fields"}), 400
+        # Insert the data into the database
         inserted_id = db.insert_data("audio_lessons", lesson_data)
         return jsonify({"message": "Lesson added successfully", "id": str(inserted_id)}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
+
 
 @lesson_routes.route("/get_lessons", methods=["GET"])
 def get_lessons():

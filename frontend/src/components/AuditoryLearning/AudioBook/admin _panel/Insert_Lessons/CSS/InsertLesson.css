@@ -1,0 +1,135 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Container */
+  .insertlesson_container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Sidebar */
+  .insertlesson_sidebar {
+    width: 80px;
+    background-color: #2d5ef7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    padding-top: 20px;
+  }
+  
+  .insertlesson_logo img {
+    width: 50px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
+  .insertlesson_nav {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .insertlesson_nav_item {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  .insertlesson_nav_item.active .insertlesson_icon {
+    color: yellow;
+  }
+  
+  .insertlesson_icon {
+    font-size: 24px;
+  }
+  
+  /* Main Content */
+  .insertlesson_main {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  /* Header */
+  .insertlesson_header {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .insertlesson_search {
+    width: 300px;
+    padding: 10px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Form Container */
+  .insertlesson_form_container {
+    margin-top: 30px;
+  }
+  
+  .insertlesson_form_container h1 {
+    margin-bottom: 20px;
+  }
+  
+  /* Form Inputs */
+  .insertlesson_input_group {
+    margin-bottom: 15px;
+  }
+  
+  .insertlesson_input_group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .insertlesson_input_group input,
+  .insertlesson_input_group textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .insertlesson_input_group textarea {
+    resize: vertical;
+  }
+  
+  /* Questions Section */
+  .insertlesson_questions_section {
+    margin-bottom: 20px;
+  }
+  
+  .insertlesson_add_question {
+    background-color: #2d5ef7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .insertlesson_add_question:hover {
+    background-color: #2245b0;
+  }
+  
+  /* Submit Button */
+  .insertlesson_submit_btn {
+    background-color: #2d5ef7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .insertlesson_submit_btn:hover {
+    background-color: #2245b0;
+  }
+  
