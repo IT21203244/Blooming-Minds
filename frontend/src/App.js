@@ -12,6 +12,7 @@ import LessonPage from "./components/AuditoryLearning/AudioBook/Lessons/LessonPa
 import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDetection";
 import KnestheticHome from "./components/KnestheticLearning/KnestheticHome/KnestheticHome";
 import LetterQuest from "./components/KnestheticLearning/LetterQuest/LetterQuest";
+import Result from "./components/KnestheticLearning/LetterQuest/Result";
 
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/SmileDetection" element={<SmileDetection />} />
           <Route path="/KnestheticHome" element={<KnestheticHome />} />
           <Route path="/LetterQuest" element={<LetterQuest />} />
+          <Route path="/result" element={<Result />} />
         </Routes>
       </React.Fragment>
     </div>
