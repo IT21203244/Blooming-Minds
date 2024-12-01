@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
+import './Action.css'
+import Smile from './img/smile.jpeg'
 const SmileDetection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -23,21 +24,26 @@ const SmileDetection = () => {
   }, []);
 
   return (
-    <div className="App">
-      <h1>Smile Detection</h1>
-      {!isLoaded ? (
-        <p>Loading video feed...</p>
-      ) : (
-        <img
-          src="http://localhost:5000/video_feed"
-          alt="Smile Detection Feed"
-          style={{
-            width: '50%',
-            height: 'auto',
-            border: '2px solid black',
-          }}
-        />
-      )}
+    <div >
+      <div>
+        <p>Action Quest</p>
+        <div>
+          <div>
+            <p>SMILE</p>
+            <p>2.00 Miniuts Left</p>
+          </div>
+          <div>      {!isLoaded ? (
+            <p>Camara Opening..</p>
+          ) : (
+            <img
+              src="http://localhost:5000/video_feed"
+              alt="Smile Detection Feed"
+              className='camara_kni'
+            />
+          )}</div>
+        </div>
+      </div>
+
     </div>
   );
 };

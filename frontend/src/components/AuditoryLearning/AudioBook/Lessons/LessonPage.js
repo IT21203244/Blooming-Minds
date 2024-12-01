@@ -173,7 +173,6 @@ const LessonPage = () => {
       {isAskingQuestion && (
         <div>
           <p>Question: {lesson.questions[questionIndex]?.text}</p>
-
         </div>
       )}
 
@@ -192,13 +191,8 @@ const LessonPage = () => {
         <div>
           <h3>Transcription Result:</h3>
           <p>{transcription}</p>
-
         </div>
       )}
-
-      <p>Answer: {lesson.questions[questionIndex]?.answer}</p>
-
-
     </div>
   );
 };
