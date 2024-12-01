@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import TranscriptionResult from "./TranscriptionResult";
+import TranscriptionResult from "../TranscriptionResult";
 
 const AudioRecorder = () => {
   const [audioFile, setAudioFile] = useState(null);
