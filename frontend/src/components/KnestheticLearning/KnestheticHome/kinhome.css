@@ -38,10 +38,12 @@
   gap: 55px;
 }
 ._king_home_card {
-  width: 300px;
+  width: 320px;
+  padding: 10px;
   text-align: center;
   font-family: "Inria Sans", sans-serif;
   cursor: pointer;
+  margin: 25px 0;
   border: 1px solid #2b69b2;
 }
 ._king_home_card:hover {
@@ -59,6 +61,7 @@
   color: #2b69b2;
   font-size: 25px;
   font-weight: 600;
+  margin-top: 25px;
   font-family: "Inria Sans", sans-serif;
 }
 @media (max-width: 990px) {
