@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-
 import logging
 # Kinesthetic Imports
 from routes.KnestheticLearning.predict_routes import predict_routes  
