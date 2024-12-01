@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Inria+Sans:wght@300;400;700&display=swap");
+.main_continer {
+  padding: 0px 10%;
+  margin: 0;
+  font-family: "Inria Sans", sans-serif;
+}
+.action_card_set {
+  display: flex;
+  align-items: center;
+  margin-top: 50px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.main_topic {
+  text-align: center;
+  color: #2b69b2;
+  font-size: 40px;
+  font-weight: 600;
+}
+.smile_kni {
+  width: 300px;
+  margin: 0 auto;
+}
+.details_set {
+
+  text-align: center;
+  flex: 1;
+}
+.camara_side {
+  flex: 1;
+}
+.camara_kni {
+  width: 100%;
+}
+.no_word {
+  text-align: center;
+}
+.btn_start {
+  background-color: #2b69b2;
+  display: flex;
+  margin: 25px auto;
+  border-radius: 80px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 20px;
+  padding: 5px 15px;
+  border: 1px solid #2b69b2;
+  color: white;
+  cursor: pointer;
+  align-items: center;
+}
+.word_name {
+  text-align: center;
+  font-size: 50px;
+  font-weight: 600;
+  margin: 0;
+  margin-top: 25px;
+  letter-spacing: 8px;
+}
+.time_count {
+  text-align: end;
+  margin: 20px 0;
+  padding-right: 50px;
+  font-weight: 600;
+  color: #2b69b2;
+}

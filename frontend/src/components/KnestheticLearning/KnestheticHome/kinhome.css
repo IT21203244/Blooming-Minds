@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Inria+Sans:wght@300;400;700&display=swap");
-
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .kin_home_one_row {
   background-image: url(./img/cover.png);
   height: 40vh;
