@@ -1,58 +1,53 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate hook for routing
 import Clap from './img/clap.jpg';
 import Cry from './img/cry.jpg';
 import Smile from './img/smile.jpg';
 import WinImage from './img/win.png';
 import Sad from './img/sad.png';
-import './letter.css'
+import './letter.css';
+
 function LetterQuest() {
-    // Image and name data
+    const navigate = useNavigate();  // Hook for navigation
     const images = [
         { name: 'Clap', src: Clap },
         { name: 'Cry', src: Cry },
         { name: 'Smile', src: Smile }
     ];
 
-    // State to store the randomly selected image and name
     const [randomImage, setRandomImage] = useState(images[0]);
-    const [timeLeft, setTimeLeft] = useState(60); // 1 minute countdown
+    const [timeLeft, setTimeLeft] = useState(60);
     const [randomLetters, setRandomLetters] = useState([]);
     const [clickedLetters, setClickedLetters] = useState([]);
     const [wordToGuess, setWordToGuess] = useState('');
+    const [startTime, setStartTime] = useState(null);  // Track start time of the game
 
-    // Function to generate a shuffled alphabet and fill the grid
-    // Function to generate a shuffled alphabet and fill the grid
     const generateRandomLetters = (word) => {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const gridSize = 6 * 6; // 6x6 grid = 36 letters
-        let grid = Array(gridSize).fill(null); // Start with an empty grid
+        const gridSize = 6 * 6;
+        let grid = Array(gridSize).fill(null);
 
-        // Shuffle the alphabet
         const shuffledAlphabet = alphabet.split('').sort(() => Math.random() - 0.5);
 
-        // Place the word in random positions in the grid
         const wordArr = word.split('');
         wordArr.forEach((letter, index) => {
             const randomIndex = Math.floor(Math.random() * gridSize);
             grid[randomIndex] = letter;
         });
 
-        // Fill the remaining empty spots with shuffled alphabet letters
         let alphabetIndex = 0;
         for (let i = 0; i < grid.length; i++) {
             if (grid[i] === null) {
                 grid[i] = shuffledAlphabet[alphabetIndex];
                 alphabetIndex++;
                 if (alphabetIndex >= shuffledAlphabet.length) {
-                    alphabetIndex = 0; // Reset index if we've used all alphabet letters
+                    alphabetIndex = 0;
                 }
             }
         }
 
-        // Shuffle the grid to distribute the word letters randomly
         grid = grid.sort(() => Math.random() - 0.5);
 
-        // Convert the grid into a 2D array (6x6)
         const letters = [];
         for (let i = 0; i < 6; i++) {
             letters.push(grid.slice(i * 6, (i + 1) * 6));
@@ -60,67 +55,79 @@ function LetterQuest() {
         return letters;
     };
 
-
-    // Function to randomly select an image and name
     const getRandomImage = () => {
         const randomIndex = Math.floor(Math.random() * images.length);
         return images[randomIndex];
     };
 
-    // Set random image, letters, and word to guess on initial render
     useEffect(() => {
         const randomImage = getRandomImage();
         setRandomImage(randomImage);
-        setWordToGuess(randomImage.name.toUpperCase()); // Set word to guess based on selected image
-        setRandomLetters(generateRandomLetters(randomImage.name.toUpperCase())); // Generate grid with word
+        setWordToGuess(randomImage.name.toUpperCase());
+        setRandomLetters(generateRandomLetters(randomImage.name.toUpperCase()));
+        setStartTime(new Date().getTime());  // Set start time when the game starts
     }, []);
 
-    // Countdown timer effect
     useEffect(() => {
-        if (timeLeft === 0) return; // Stop the countdown when time reaches 0
+        if (timeLeft === 0) return;
         const timer = setInterval(() => {
             setTimeLeft(prevTime => {
                 if (prevTime <= 1) {
-                    clearInterval(timer); // Stop timer at 0
+                    clearInterval(timer);
                     return 0;
                 }
                 return prevTime - 1;
             });
         }, 1000);
 
-        // Cleanup timer on component unmount
         return () => clearInterval(timer);
     }, [timeLeft]);
 
-    // Function to handle letter click
     const handleLetterClick = (letter) => {
         if (clickedLetters.length < wordToGuess.length) {
             setClickedLetters(prevClicked => [...prevClicked, letter]);
         }
     };
 
-    // Check if the guessed letters match the word
     const isCorrectGuess = clickedLetters.join('') === wordToGuess;
     const isGameOver = timeLeft === 0 || (clickedLetters.length === wordToGuess.length && !isCorrectGuess);
+
+    // Function to calculate time spent and remaining time
+    const calculateTimeSpent = () => {
+        if (!startTime) return 0;
+        return Math.floor((new Date().getTime() - startTime) / 1000);  // Return time in seconds
+    };
+
+    const calculateProgress = () => {
+        const timeSpent = calculateTimeSpent();
+        const totalTime = 60; // Total time available is 60 seconds
+        const progress = Math.min((timeSpent / totalTime) * 100, 100);  // Ensure progress doesn't exceed 100%
+        return Math.floor(progress);
+    };
+
+    const handleGameOver = () => {
+        // Collect game progress data
+        const timeSpent = calculateTimeSpent();
+        const remainingTime = timeLeft;
+        const progress = calculateProgress();
+
+        // Navigate to the result page with the progress data
+        navigate('/result', { state: { timeSpent, remainingTime, progress } });
+    };
 
     return (
         <div className='main_continer'>
             <div>
                 <p className='main_topic'>Letter Quest</p>
                 <div className='letter_continer'>
-
                     <div className='letter_card'>
                         <p className='letter_name'>{randomImage.name}</p>
-                        <p
-                            className='time_cpunt'
-                            style={{ color: timeLeft <= 10 ? 'red' : '#2b69b2' }} // Red when 10 seconds or less
-                        >
+                        <p className='time_cpunt' style={{ color: timeLeft <= 10 ? 'red' : '#2b69b2' }}>
                             {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} Minutes Left
                         </p>
                         <img src={randomImage.src} alt={randomImage.name} className='letter_img' />
                     </div>
                     <div className='letter_table'>
-                        {/* Random Letter Table */}
                         <div>
                             <div className="clicked_letters">
                                 <p>{clickedLetters.join(' ')}</p>
@@ -143,18 +150,13 @@ function LetterQuest() {
                                 </div>
                             </div>
                         </div>
-                        {/* Check if user guessed the correct word */}
                         {isCorrectGuess && (
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
-                                    <p className="correct_guess">
-                                        Congratulation You Win !
-                                    </p>
-                                    <img src={WinImage} className='win_image' alt='winnn' /><br/>
-                                    <button className='try_btn' onClick={() => window.location.reload()}>
-                                        Next Step
-                                    </button>
+                                    <p className="correct_guess">Congratulations! You Win!</p>
+                                    <img src={WinImage} className='win_image' alt='win' />
                                     <br />
+                                    {handleGameOver()}
                                 </div>
                             </div>
                         )}
@@ -163,15 +165,9 @@ function LetterQuest() {
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
                                     <p className="correct_guess">
-                                        {timeLeft === 0
-                                            ? "Time's Up! Try Again!"
-                                            : "Oh no, try again!"}
+                                        {timeLeft === 0 ? "Time's Up! Try Again!" : "Oh no, try again!"}
                                     </p>
-                                    <img
-                                        src={timeLeft === 0 ? Sad : Sad}
-                                        className='win_image'
-                                        alt='sad'
-                                    />
+                                    <img src={Sad} className='win_image' alt='sad' />
                                     <br />
                                     <button className='try_btn' onClick={() => window.location.reload()}>
                                         Try Again
