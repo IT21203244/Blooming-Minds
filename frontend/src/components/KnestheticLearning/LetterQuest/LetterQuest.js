@@ -3,6 +3,7 @@ import Clap from './img/clap.jpg';
 import Cry from './img/cry.jpg';
 import Smile from './img/smile.jpg';
 import WinImage from './img/win.png';
+import Sad from './img/sad.png';
 import './letter.css'
 function LetterQuest() {
     // Image and name data
@@ -100,6 +101,7 @@ function LetterQuest() {
 
     // Check if the guessed letters match the word
     const isCorrectGuess = clickedLetters.join('') === wordToGuess;
+    const isGameOver = timeLeft === 0 || (clickedLetters.length === wordToGuess.length && !isCorrectGuess);
 
     return (
         <div className='main_continer'>
@@ -150,18 +152,29 @@ function LetterQuest() {
                                     </p>
                                     <img src={WinImage} className='win_image' alt='winnn' />
                                     <br />
-                                    <div>
-                                        <button className="nextstep" onClick={() => window.location.reload()}>Next Step</button>
-                                        <button className="nextstep" onClick={() => window.location.reload()}>Go Home</button>
-                                    </div>
                                 </div>
                             </div>
                         )}
 
-                        {clickedLetters.length === wordToGuess.length && !isCorrectGuess && (
-                            <p className='incorrect_guess' style={{ color: 'red' }}>
-                                Incorrect guess! Try again.
-                            </p>
+                        {isGameOver && (
+                            <div className="correct_guess_modal">
+                                <div className="correct_guess_modal_content">
+                                    <p className="correct_guess">
+                                        {timeLeft === 0
+                                            ? "Time's Up! Try Again!"
+                                            : "Oh no, try again!"}
+                                    </p>
+                                    <img
+                                        src={timeLeft === 0 ? Sad : Sad}
+                                        className='win_image'
+                                        alt='sad'
+                                    />
+                                    <br />
+                                    <button className='try_btn' onClick={() => window.location.reload()}>
+                                        Try Again
+                                    </button>
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>
