@@ -13,6 +13,7 @@ const LessonsList = () => {
       .then((response) => setLessons(response.data.lessons))
       .catch(() => setError("Failed to fetch lessons."));
   }, []);
+  
 
   const handleStart = (lessonId) => {
     navigate(`/lesson/${lessonId}`);
