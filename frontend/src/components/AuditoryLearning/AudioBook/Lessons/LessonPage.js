@@ -12,22 +12,20 @@ const LessonPage = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [voices, setVoices] = useState([]);
   const [countdown, setCountdown] = useState(5); // Countdown starting from 5 seconds
+  const [transcription, setTranscription] = useState("");
 
   useEffect(() => {
-    // Fetch available voices on page load
     const getVoices = () => {
       const allVoices = speechSynthesis.getVoices();
-      setVoices(allVoices.filter((voice) => voice.name.toLowerCase().includes('female')));
+      setVoices(allVoices.filter((voice) => voice.name.toLowerCase().includes("female")));
     };
 
-    // Wait for voices to be available
     if (speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = getVoices;
     } else {
       getVoices();
     }
 
-    // Fetch lesson details
     axios
       .get(`http://localhost:5000/api/get_lesson/${lessonId}`)
       .then((response) => setLesson(response.data.lesson))
@@ -48,7 +46,7 @@ const LessonPage = () => {
 
   const readLessonPart = (index) => {
     if (index >= lesson.text.length) {
-      setIsPlaying(false); // Stop if all parts are read
+      setIsPlaying(false);
       return;
     }
 
@@ -59,19 +57,16 @@ const LessonPage = () => {
       utterance.voice = selectedVoice;
     }
 
-    // Slow speech rate for better clarity for children
-    utterance.rate = 0.8; // Slow down the speech rate
-    utterance.pitch = 1.2; // Slightly higher pitch for a softer voice
-    utterance.lang = "en-US"; // Adjust the language to English
+    utterance.rate = 0.8;
+    utterance.pitch = 1.2;
+    utterance.lang = "en-US";
 
     utterance.onend = () => {
-      // If there's a corresponding question for this part, ask it
       if (lesson.questions && lesson.questions[index] && !isAskingQuestion) {
         setIsAskingQuestion(true);
         setQuestionIndex(index);
         askQuestion(index);
       } else {
-        // Move to the next part of the lesson if no question
         setCurrentIndex(index + 1);
         readLessonPart(index + 1);
       }
@@ -92,9 +87,9 @@ const LessonPage = () => {
         }
       }
 
-      questionUtterance.rate = 0.8; // Slow down the question speech rate
-      questionUtterance.pitch = 1.2; // Soft pitch for the question
-      questionUtterance.lang = "en-US"; // Language of the question
+      questionUtterance.rate = 0.8;
+      questionUtterance.pitch = 1.2;
+      questionUtterance.lang = "en-US";
 
       questionUtterance.onend = () => {
         startCountdown(index);
@@ -111,14 +106,55 @@ const LessonPage = () => {
         setCountdown(countdownTimer);
         countdownTimer--;
       } else {
-        clearInterval(countdownInterval); // Stop countdown when it reaches 0
-        setCountdown(5); // Reset countdown for the next time
-        setIsAskingQuestion(false);
-        // After countdown ends, resume lesson
-        setCurrentIndex(index + 1);
-        readLessonPart(index + 1); // Continue the lesson after countdown
+        clearInterval(countdownInterval);
+        setCountdown(5);
+        activateSpeechRecognition(index);
       }
-    }, 1000); // Decrease countdown every second
+    }, 1000);
+  };
+
+  const activateSpeechRecognition = (index) => {
+    setIsAskingQuestion(false);
+
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          const formData = new FormData();
+          formData.append("file", audioBlob, "recorded_audio.wav");
+
+          axios
+            .post("http://localhost:5000/record", formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then((response) => {
+              setTranscription(response.data.transcription);
+              setCurrentIndex(index + 1);
+              readLessonPart(index + 1);
+            })
+            .catch(() => {
+              setError("Failed to transcribe audio.");
+              setCurrentIndex(index + 1);
+              readLessonPart(index + 1);
+            });
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => {
+          mediaRecorder.stop();
+        }, 5000);
+      })
+      .catch(() => {
+        setError("Failed to access the microphone.");
+      });
   };
 
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -131,12 +167,13 @@ const LessonPage = () => {
         <img src="https://example.com/sun-and-sky.jpg" alt="Sun and Sky" />
       )}
       <p>
-        {lesson.text[currentIndex]?.text || lesson.text[currentIndex]} {/* Display current lesson text */}
+        {lesson.text[currentIndex]?.text || lesson.text[currentIndex]}
       </p>
 
       {isAskingQuestion && (
         <div>
           <p>Question: {lesson.questions[questionIndex]?.text}</p>
+          
         </div>
       )}
 
@@ -149,11 +186,19 @@ const LessonPage = () => {
         </button>
       </div>
 
-      {isAskingQuestion && (
+      {isAskingQuestion && <p>Countdown: {countdown} seconds</p>}
+
+      {transcription && (
         <div>
-          <p>Countdown: {countdown} seconds</p>
+          <h3>Transcription Result:</h3>
+          <p>{transcription}</p>
+          
         </div>
       )}
+
+<p>Answer: {lesson.questions[questionIndex]?.answer}</p>
+
+
     </div>
   );
 };

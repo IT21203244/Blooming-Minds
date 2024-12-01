@@ -1,6 +1,6 @@
 import React from "react";
-import AudioTranscription from "../src/components/AuditoryLearning/AudioBook/AudioTranscription";
-import InsertLesson from "../src/components/AuditoryLearning/AudioBook/InsertLesson";
+import AudioTranscription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
+import InsertLesson from "../src/components/AuditoryLearning/AudioBook/admin _panel/Insert_Lessons/InsertLesson";
 import AllLessons from "../src/components/AuditoryLearning/AudioBook/Lessons/LessonsList";
 import LessonPage from "../src/components/AuditoryLearning/AudioBook/Lessons/LessonPage";
 import { Route, Routes } from "react-router";
