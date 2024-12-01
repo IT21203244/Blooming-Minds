@@ -1,0 +1,265 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Container */
+  .auditory_container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Sidebar */
+  .auditory_sidebar {
+    width: 80px;
+    background-color: #2d5ef7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+  }
+  
+  .auditory_logo {
+    margin: 20px 0;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+  }
+  .auditory_logo img {
+  width: 50px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+  
+  .auditory_nav {
+    flex-grow: 1;
+  }
+  
+  .auditory_nav_item {
+    color: white;
+    text-decoration: none;
+    margin: 15px 0;
+    font-size: 18px;
+  }
+  
+  .auditory_nav_item.active {
+    font-weight: bold;
+  }
+  
+  /* Main Content */
+  .auditory_main {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  /* Header */
+  .auditory_header {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .auditory_search {
+    width: 300px;
+    padding: 10px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Welcome Section */
+  .auditory_welcome_section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffe600;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+  
+  .auditory_welcome_message h1 {
+    margin: 0;
+  }
+  
+  .auditory_welcome_image img {
+    max-width: 100px;
+  }
+  
+  /* Continue Watching */
+  .auditory_continue_section {
+    margin: 20px 0;
+  }
+  
+  .auditory_lessons_count {
+    color: red;
+  }
+  
+  .auditory_lessons {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+  }
+  
+  .auditory_lesson_card {
+    min-width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  
+  .auditory_lesson_card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+  }
+  
+  .auditory_lesson_info {
+    padding: 10px;
+  }
+  
+  .auditory_lesson_info h3 {
+    margin: 0;
+  }
+  
+  .auditory_lesson_info p {
+    margin: 5px 0 0;
+    color: #555;
+  }
+/* General Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Container */
+.auditory_container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.auditory_sidebar {
+  width: 80px;
+  background-color: #2d5ef7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  padding-top: 20px;
+}
+
+.auditory_logo {
+  margin: 20px 0;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+}
+
+.auditory_nav {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.auditory_nav_item {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.auditory_nav_item.active {
+  font-weight: bold;
+}
+
+.auditory_icon {
+  font-size: 24px;
+}
+
+/* Main Content */
+.auditory_main {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Header */
+.auditory_header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.auditory_search {
+  width: 300px;
+  padding: 10px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+}
+
+/* Welcome Section */
+.auditory_welcome_section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffe600;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.auditory_welcome_message h1 {
+  margin: 0;
+}
+
+.auditory_welcome_image img {
+  max-width: 100px;
+}
+
+/* Continue Watching */
+.auditory_continue_section {
+  margin: 20px 0;
+}
+
+.auditory_lessons_count {
+  color: red;
+}
+
+.auditory_lessons {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+}
+
+.auditory_lesson_card {
+  min-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.auditory_lesson_card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.auditory_lesson_info {
+  padding: 10px;
+}
+
+.auditory_lesson_info h3 {
+  margin: 0;
+}
+
+.auditory_lesson_info p {
+  margin: 5px 0 0;
+  color: #555;
+}
+  

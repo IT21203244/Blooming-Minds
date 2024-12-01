@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router";
 /*Home*/
 import Home from "./components/Home/Home";
 /*Auditory Learning*/
+import AuditoryHomePage from "./components/AuditoryLearning/Home/AuditoryHomePage";
 import AudioTranscription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
 import InsertLesson from "./components/AuditoryLearning/AudioBook/admin _panel/Insert_Lessons/InsertLesson";
 import AllLessons from "./components/AuditoryLearning/AudioBook/Lessons/LessonsList";
@@ -21,6 +22,7 @@ const App = () => {
           {/*Home*/}
           <Route path="/" element={<Home />} />
           {/* Auditory Learning*/}
+          <Route path="/AuditoryHomePage" element={<AuditoryHomePage />} />
           <Route path="/AudioTranscription" element={<AudioTranscription />} />
           <Route path="/InsertLesson" element={<InsertLesson />} />
           <Route path="/AllLessons" element={<AllLessons />} />
