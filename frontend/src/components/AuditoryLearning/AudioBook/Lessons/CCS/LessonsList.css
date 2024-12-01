@@ -1,0 +1,80 @@
+/* Container Styles */
+.lessons_container {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .lessons_title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* Error Message */
+  .lessons_error {
+    color: red;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  /* Lessons Grid */
+  .lessons_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Lesson Card */
+  .lesson_card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .lesson_card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .lesson_image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+  
+  /* Lesson Content */
+  .lesson_content {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .lesson_title {
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: #333;
+  }
+  
+  /* Start Button */
+  .lesson_button {
+    background-color: #2d5ef7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .lesson_button:hover {
+    background-color: #1a46c0;
+  }
+  
+  /* Empty State */
+  .lessons_empty {
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+  }
+  
