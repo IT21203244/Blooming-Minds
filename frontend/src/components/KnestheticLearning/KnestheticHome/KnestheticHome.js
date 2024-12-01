@@ -14,7 +14,7 @@ function KnestheticHome() {
         <p className='dwon_topic'>Select Your Today Task</p>
         <div className='kin_home_two_row'>
           <div className='kin_home_card_continer'>
-            <div className='_king_home_card'>
+            <div onClick={() => (window.location.href = '/LetterQuest')} className='_king_home_card'>
               <img src={Letter} alt='letercard' className='card_image_kin' />
               <p className='card_link'>Letter Quest</p>
             </div>
@@ -23,7 +23,6 @@ function KnestheticHome() {
               <p className='card_link'>Action Quest</p>
             </div>
           </div>
-
         </div>
       </div>
     </div>

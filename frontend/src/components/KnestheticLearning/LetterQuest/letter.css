@@ -1,0 +1,106 @@
+.letter_continer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.letter_card {
+  text-align: center;
+}
+.letter_table {
+  text-align: center;
+  padding: 25px;
+}
+
+.letter_img {
+  width: 450px;
+  border-radius: 8px;
+  margin: 25px 0;
+  height: 450px;
+}
+.letter_name {
+  font-size: 50px;
+  letter-spacing: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.time_cpunt {
+  text-align: end;
+  font-size: 20px;
+  font-weight: 600;
+}
+.leter_main_box {
+  text-align: center;
+}
+.letter_board {
+  display: flex;
+  align-items: center;
+  width: 450px;
+  justify-content: space-between;
+}
+.letter_cell {
+  font-size: 40px;
+  padding: 10px;
+  cursor: pointer;
+}
+.clicked_letters {
+  font-weight: 600;
+  color: #2b69b2;
+  font-size: 35px;
+  margin-bottom: 25px;
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.correct_guess_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.938); /* Dark background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.correct_guess_modal_content {
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  position: relative;
+  width: 50%;
+}
+
+.correct_guess_modal .close_btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #333;
+  background: none;
+  border: none;
+}
+
+.correct_guess {
+  font-size: 50px;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+.win_image{
+    width: 300px;
+    margin-bottom: 25px;
+}
+.nextstep{
+    background-color: #2b69b2;
+    border: 1px solid #2b69b2;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 10px;
+}

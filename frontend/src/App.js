@@ -10,6 +10,7 @@ import LessonPage from "./components/AuditoryLearning/AudioBook/Lessons/LessonPa
 /*Knesthetic Learning*/
 import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDetection";
 import KnestheticHome from "./components/KnestheticLearning/KnestheticHome/KnestheticHome";
+import LetterQuest from "./components/KnestheticLearning/LetterQuest/LetterQuest";
 
 
 const App = () => {
@@ -27,6 +28,7 @@ const App = () => {
           {/* Knesthetic Learning*/}
           <Route path="/SmileDetection" element={<SmileDetection />} />
           <Route path="/KnestheticHome" element={<KnestheticHome />} />
+          <Route path="/LetterQuest" element={<LetterQuest />} />
         </Routes>
       </React.Fragment>
     </div>
