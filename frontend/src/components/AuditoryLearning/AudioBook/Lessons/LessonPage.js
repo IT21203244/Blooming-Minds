@@ -16,6 +16,7 @@ const LessonPage = () => {
   const [voices, setVoices] = useState([]);
   const [countdown, setCountdown] = useState(5);
   const [transcription, setTranscription] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
@@ -143,9 +144,25 @@ const LessonPage = () => {
               headers: { "Content-Type": "multipart/form-data" },
             })
             .then((response) => {
-              setTranscription(response.data.transcription);
-              setCurrentIndex(index + 1);
-              readLessonPart(index + 1);
+              const userTranscription = response.data.transcription;
+              setTranscription(userTranscription);
+
+              const correctAnswer = lesson.questions[questionIndex]?.answer;
+              if (userTranscription.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
+                setFeedback("Correct! Well done.");
+                setTimeout(() => {
+                  setFeedback("");
+                  setCurrentIndex(index + 1);
+                  readLessonPart(index + 1);
+                }, 2000);
+              } else {
+                setFeedback("Incorrect. Moving to the next part.");
+                setTimeout(() => {
+                  setFeedback("");
+                  setCurrentIndex(index + 1);
+                  readLessonPart(index + 1);
+                }, 2000);
+              }
             })
             .catch(() => {
               setError("Failed to transcribe audio.");
@@ -221,6 +238,10 @@ const LessonPage = () => {
           <p>{transcription}</p>
         </div>
       )}
+
+      {feedback && <p className="feedback-message">{feedback}</p>}
+
+      <p className="question-text">Right Answer: {lesson.questions[questionIndex]?.answer}</p>
     </div>
   );
 };
