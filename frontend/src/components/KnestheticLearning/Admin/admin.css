@@ -1,0 +1,41 @@
+.student-records-container {
+  padding: 25px 8%;
+}
+.table_name {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 30px;
+  font-weight: 500;
+}
+.student-records-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 1px solid #2b69b2; /* Adding a border around the table */
+  border-radius: 5px; /* Optional: To round the corners of the table */
+}
+
+.student-records-table .tble_kin_head,
+.student-records-table .tble_kin_bd {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #2b69b2;
+}
+.tble_kin_head {
+  text-align: center;
+}
+.delete_btn_kin {
+  background-color: #ff0000;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+@media (max-width: 990px) {
+  .student-records-table {
+    width: 100%;
+    display: block;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+}

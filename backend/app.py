@@ -5,6 +5,7 @@ import logging
 from routes.KnestheticLearning.predict_routes import predict_routes  
 from routes.AuditoryLearning.AudioGame.record_routes import record_routes
 from routes.AuditoryLearning.AudioGame.lesson_routes import lesson_routes
+from routes.KnestheticLearning.LetterRoutes import LetterRoutes
 # Flask app setup
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Register Blueprints
 app.register_blueprint(predict_routes) 
+app.register_blueprint(LetterRoutes) 
 app.register_blueprint(record_routes)
 app.register_blueprint(lesson_routes, url_prefix="/api")
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import Letter from './img/letter.png'
 import Action from './img/action.png'
+import AdminIcon from './img/adminicon.png'
 import './kinhome.css'
 function KnestheticHome() {
   return (
@@ -24,6 +25,9 @@ function KnestheticHome() {
             </div>
           </div>
         </div>
+      </div>
+      <div className='admin_btn' onClick={() => (window.location.href = '/KnestheticAdmin')}>
+        <img src={AdminIcon} alt='admin icon' className='admin_acion' />
       </div>
     </div>
   )

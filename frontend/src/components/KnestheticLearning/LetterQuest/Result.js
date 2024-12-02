@@ -16,7 +16,13 @@ function Result() {
             return "red"; // Red for less than 50%
         }
     };
+    const handleSaveRecord = () => {
+        // Save the data to local storage
+        localStorage.setItem("actualProgress", actualProgress);
+        localStorage.setItem("randomImageName", randomImageName);
 
+        window.location.href = '/saveRecordLetter';
+    };
     return (
         <div>
             <div>
@@ -34,8 +40,8 @@ function Result() {
                                 >
                                     <span className="progress_text">{actualProgress}%</span>
                                 </div>
-                                <button className="save_btn">Save record</button>
-                                <button className="next_btn">Next Task</button>
+                                <button className="save_btn" onClick={handleSaveRecord}>Save record</button>
+                                <button className="next_btn" onClick={() => (window.location.href = '/LetterQuest')}>Next Task</button>
                             </div>
                         </div>
                     </div>

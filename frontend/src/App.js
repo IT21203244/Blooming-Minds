@@ -13,6 +13,8 @@ import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDet
 import KnestheticHome from "./components/KnestheticLearning/KnestheticHome/KnestheticHome";
 import LetterQuest from "./components/KnestheticLearning/LetterQuest/LetterQuest";
 import Result from "./components/KnestheticLearning/LetterQuest/Result";
+import AddRecord from "./components/KnestheticLearning/LetterQuest/AddRecord";
+import AdminDashKnesthetic from "./components/KnestheticLearning/Admin/AdminDashKnesthetic";
 
 
 const App = () => {
@@ -33,6 +35,8 @@ const App = () => {
           <Route path="/KnestheticHome" element={<KnestheticHome />} />
           <Route path="/LetterQuest" element={<LetterQuest />} />
           <Route path="/result" element={<Result />} />
+          <Route path="/saveRecordLetter" element={<AddRecord />} />
+          <Route path="/KnestheticAdmin" element={<AdminDashKnesthetic />} />
         </Routes>
       </React.Fragment>
     </div>
