@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inria+Sans:wght@300;400;700&display=swap");
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -64,6 +64,20 @@
   margin-top: 25px;
   font-family: "Inria Sans", sans-serif;
 }
+.admin_acion {
+  width: 100%;
+}
+.admin_btn {
+  position: absolute;
+  background-color: #2b69b2;
+  border-radius: 100%;
+  height: 70px;
+  width: 70px;
+  right: 80px;
+  padding: 10px;
+  cursor: pointer;
+  bottom: 20px;
+}
 @media (max-width: 990px) {
   .topi_main {
     color: white;
@@ -73,7 +87,7 @@
   .kin_home_one_row {
     height: 20vh;
   }
-  .kin_home_card_continer{
+  .kin_home_card_continer {
     margin-bottom: 25px;
   }
 }
