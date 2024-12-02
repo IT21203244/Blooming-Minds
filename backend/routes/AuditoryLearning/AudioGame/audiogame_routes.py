@@ -8,18 +8,26 @@ def add_audiogame():
     db = GameDatabase()
     try:
         game_data = request.get_json()
-        # Validate input data
-        required_fields = ["number","question", "answers", "images", "correct_answer"]
-        if not all(key in game_data for key in required_fields):
+        if "number" not in game_data or "questions" not in game_data:
             return jsonify({"error": "Missing required fields"}), 400
-        if len(game_data["answers"]) != len(game_data["images"]):
-            return jsonify({"error": "Answers and images count mismatch"}), 400
-        if game_data["correct_answer"] not in game_data["answers"]:
-            return jsonify({"error": "Correct answer must be one of the provided answers"}), 400
 
-        # Insert data into the database
-        inserted_id = db.insert_game("audiogames", game_data)
-        return jsonify({"message": "Audiogame added successfully", "id": str(inserted_id)}), 201
+        for question in game_data["questions"]:
+            required_fields = ["question", "answers", "images", "correct_answer"]
+            if not all(key in question for key in required_fields):
+                return jsonify({"error": "Missing fields in a question"}), 400
+            if len(question["answers"]) != len(question["images"]):
+                return jsonify({"error": "Answers and images count mismatch"}), 400
+            if question["correct_answer"] not in question["answers"]:
+                return jsonify(
+                    {"error": "Correct answer must be one of the provided answers"}
+                ), 400
+
+        # Insert each question into the database under the same number
+        for question in game_data["questions"]:
+            question["number"] = game_data["number"]
+            db.insert_game("audiogames", question)
+
+        return jsonify({"message": "Audiogames added successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:

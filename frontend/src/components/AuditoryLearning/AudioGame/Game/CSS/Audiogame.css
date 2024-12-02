@@ -1,64 +1,199 @@
-.audiogame-list {
-    background-color: #e6f0ff; /* Pastel blue background */
-    color: #333;
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  
-  h1 {
-    color: #4c8cff; /* Pastel blue for headings */
-    text-align: center;
-  }
-  
-  .games-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-  }
-  
-  .game-card {
-    background-color: #ffffff;
-    border: 1px solid #d1e4ff;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 10px;
-    width: 300px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .game-card h3 {
-    color: #4c8cff;
-  }
-  
-  .answers {
-    margin-top: 10px;
-  }
-  
-  .answer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 10px 0;
-  }
-  
-  .answer p {
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .answer-image {
-    width: 100px;
-    height: 100px;
-    margin-top: 5px;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-  
-  .error {
-    color: red;
-    text-align: center;
-    font-size: 16px;
-  }
-  
+.play-audio {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.play-audio:hover {
+  background-color: #0056b3;
+}
+
+.answer {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.answer:hover {
+  background-color: #218838;
+}
+
+.error,
+.message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.message {
+  color: green;
+}
+
+.games-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.game-card {
+  flex: 1 1 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.images-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.answer-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+select {
+  padding: 5px 10px;
+  font-size: 16px;
+  margin: 10px 0;
+}
+.save-answer {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  background-color: #17a2b8;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-answer:hover {
+  background-color: #138496;
+}
+
+.answer {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.answer:hover {
+  background-color: #218838;
+}
+
+.error,
+.message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.message {
+  color: green;
+}
+
+.games-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.game-card {
+  flex: 1 1 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.images-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.answer-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+select {
+  padding: 5px 10px;
+  font-size: 16px;
+  margin: 10px 0;
+}
+.next-button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-button:hover {
+  background-color: #0056b3;
+}
+.prev-button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.prev-button:hover {
+  background-color: #0056b3;
+}
+
+.prev-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+.timer {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff5733;
+}
