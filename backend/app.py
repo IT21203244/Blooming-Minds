@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 import logging
 # Kinesthetic Imports
-from routes.KnestheticLearning.predict_routes import predict_routes  
+#from routes.KnestheticLearning.predict_routes import predict_routes  
 from routes.AuditoryLearning.AudioGame.record_routes import record_routes
 from routes.AuditoryLearning.AudioGame.lesson_routes import lesson_routes
 # Flask app setup
@@ -15,7 +15,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Register Blueprints
-app.register_blueprint(predict_routes) 
+#app.register_blueprint(predict_routes) 
 app.register_blueprint(record_routes)
 app.register_blueprint(lesson_routes, url_prefix="/api")
 
