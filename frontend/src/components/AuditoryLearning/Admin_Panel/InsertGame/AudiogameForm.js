@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import './CSS/InsertGame.css';
 
 const InsertGame = () => {
   const [number, setNumber] = useState("");

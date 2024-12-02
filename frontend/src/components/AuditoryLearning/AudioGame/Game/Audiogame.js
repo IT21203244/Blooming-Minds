@@ -153,6 +153,18 @@ const AudiogamesList = () => {
       {message && <p className="message">{message}</p>}
       {error && <p className="error">{error}</p>}
 
+      {/* User ID Input */}
+      <div className="user-id-section">
+        <label htmlFor="user-id">User ID:</label>
+        <input
+          id="user-id"
+          type="text"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+          placeholder="Enter your User ID"
+        />
+      </div>
+
       <div className="game-card">
         {audiogames.length > 0 && (
           <>
@@ -168,6 +180,7 @@ const AudiogamesList = () => {
               id="speed-select"
               value={playSpeed}
               onChange={(e) => setPlaySpeed(parseFloat(e.target.value))}
+              style={{ backgroundColor: "#f7d3f7", color: "#512a6b", borderRadius: "10px", padding: "5px" }}
             >
               <option value="0.5">0.5x</option>
               <option value="1">1x</option>
@@ -181,17 +194,24 @@ const AudiogamesList = () => {
               onClick={() =>
                 playAudio(`Simon says ${audiogames[currentQuestionIndex].question}`)
               }
+              style={{
+                backgroundColor: "#ffb3c1",
+                color: "#512a6b",
+                borderRadius: "20px",
+                padding: "10px 20px",
+                fontWeight: "bold",
+              }}
             >
               Play Question Audio
             </button>
 
-            <div className="timer">
+            <div className="timer" style={{ fontSize: "20px", color: "#ff6f61" }}>
               <p>Time Left: {timer} seconds</p>
             </div>
 
-            <div className="answers">
+            <div className="answers" style={{ marginTop: "20px" }}>
               {audiogames[currentQuestionIndex].answers.map((answer, index) => (
-                <div key={index} className="answer-container">
+                <div key={index} className="answer-container" style={{ marginBottom: "15px" }}>
                   <button
                     className="answer"
                     onClick={() =>
@@ -200,6 +220,14 @@ const AudiogamesList = () => {
                         audiogames[currentQuestionIndex].correct_answer
                       )
                     }
+                    style={{
+                      backgroundColor: "#b5e4d6",
+                      color: "#512a6b",
+                      borderRadius: "15px",
+                      padding: "10px",
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                    }}
                   >
                     {answer}
                   </button>
@@ -208,39 +236,57 @@ const AudiogamesList = () => {
                       src={audiogames[currentQuestionIndex].images[index]}
                       alt={`Answer ${index + 1}`}
                       className="answer-image"
+                      style={{ marginTop: "10px", borderRadius: "10px" }}
                     />
                   )}
                 </div>
               ))}
             </div>
 
-            <div className="navigation-buttons">
+            <div className="navigation-buttons" style={{ marginTop: "20px" }}>
               <button
                 className="prev-button"
                 onClick={handlePreviousQuestion}
                 disabled={currentQuestionIndex === 0}
+                style={{
+                  backgroundColor: "#f7d3f7",
+                  color: "#512a6b",
+                  padding: "10px 20px",
+                  borderRadius: "20px",
+                  fontWeight: "bold",
+                  marginRight: "10px",
+                }}
               >
-                Back
+                Previous
               </button>
-              <button className="next-button" onClick={handleNextQuestion}>
-                Next Question
+              <button
+                className="next-button"
+                onClick={handleNextQuestion}
+                disabled={currentQuestionIndex === audiogames.length - 1}
+                style={{
+                  backgroundColor: "#f7d3f7",
+                  color: "#512a6b",
+                  padding: "10px 20px",
+                  borderRadius: "20px",
+                  fontWeight: "bold",
+                }}
+              >
+                Next
               </button>
             </div>
 
-            {/* Input for User ID */}
-            <div className="user-id-input">
-              <label htmlFor="user-id">User ID:</label>
-              <input
-                type="text"
-                id="user-id"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="Enter your user ID"
-              />
-            </div>
-
-            {/* Submit Result Button */}
-            <button className="submit-result" onClick={handleSubmit}>
+            <button
+              className="submit-button"
+              onClick={handleSubmit}
+              style={{
+                backgroundColor: "#ffb3c1",
+                color: "#512a6b",
+                borderRadius: "20px",
+                padding: "15px 30px",
+                fontWeight: "bold",
+                marginTop: "20px",
+              }}
+            >
               Submit Result
             </button>
           </>

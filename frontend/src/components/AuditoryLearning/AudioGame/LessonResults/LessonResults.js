@@ -1,6 +1,6 @@
-// src/components/GameResults.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './CSS/GameResults.css';
 
 const GameResults = () => {
   const [gameResults, setGameResults] = useState([]);
@@ -8,17 +8,15 @@ const GameResults = () => {
   const [userId, setUserId] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
   const [lessonSummary, setLessonSummary] = useState({});
+  const [userSummary, setUserSummary] = useState({});
 
   useEffect(() => {
-    // Fetch all game results when the component is mounted
     const fetchGameResults = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/get_audiogame_results'); // Ensure correct API endpoint
-        setGameResults(response.data.audiogame_results); // Set all results to the state
-        setFilteredResults(response.data.audiogame_results); // Initially, display all results
-
-        // Calculate lesson-wise summary for all results
-        calculateLessonSummary(response.data.audiogame_results);
+        const response = await axios.get('http://localhost:5000/api/get_audiogame_results');
+        setGameResults(response.data.audiogame_results);
+        setFilteredResults(response.data.audiogame_results);
+        calculateSummaries(response.data.audiogame_results);
       } catch (err) {
         setError("An error occurred while fetching the game results.");
       }
@@ -31,71 +29,95 @@ const GameResults = () => {
     const id = e.target.value;
     setUserId(id);
 
-    // Filter the results based on the user ID
     if (id) {
       const filtered = gameResults.filter(result => result.user_id === id);
       setFilteredResults(filtered);
-      calculateLessonSummary(filtered); // Recalculate summary based on filtered results
+      calculateSummaries(filtered);
     } else {
-      setFilteredResults(gameResults); // Show all results if no user ID is entered
-      calculateLessonSummary(gameResults); // Recalculate summary for all results
+      setFilteredResults(gameResults);
+      calculateSummaries(gameResults);
     }
   };
 
-  const calculateLessonSummary = (results) => {
-    const summary = {};
+  const calculateSummaries = (results) => {
+    const lessonSummary = {};
+    const userSummary = {};
 
-    // Loop through each result and group by lesson_number
     results.forEach(result => {
       const lessonNumber = result.lesson_number;
+      const userId = result.user_id;
 
-      if (!summary[lessonNumber]) {
-        summary[lessonNumber] = {
+      // Lesson-wise summary
+      if (!lessonSummary[lessonNumber]) {
+        lessonSummary[lessonNumber] = {
           totalGames: 0,
           correctResponses: 0,
           totalResponseTime: 0,
         };
       }
 
-      // Update the summary for the current lesson
-      summary[lessonNumber].totalGames += 1;
+      lessonSummary[lessonNumber].totalGames += 1;
       if (result.response_correctness) {
-        summary[lessonNumber].correctResponses += 1;
+        lessonSummary[lessonNumber].correctResponses += 1;
       }
-      summary[lessonNumber].totalResponseTime += result.response_time;
+      lessonSummary[lessonNumber].totalResponseTime += result.response_time;
+
+      // User-wise summary
+      if (!userSummary[userId]) {
+        userSummary[userId] = {
+          totalGames: 0,
+          correctResponses: 0,
+          totalResponseTime: 0,
+        };
+      }
+
+      userSummary[userId].totalGames += 1;
+      if (result.response_correctness) {
+        userSummary[userId].correctResponses += 1;
+      }
+      userSummary[userId].totalResponseTime += result.response_time;
     });
 
-    // Calculate the average response time and correctness percentage for each lesson
-    for (let lessonNumber in summary) {
-      const lesson = summary[lessonNumber];
+    // Calculate averages and percentages for lesson-wise and user-wise summaries
+    for (let lessonNumber in lessonSummary) {
+      const lesson = lessonSummary[lessonNumber];
       lesson.averageResponseTime = (lesson.totalResponseTime / lesson.totalGames).toFixed(2);
       lesson.correctnessPercentage = ((lesson.correctResponses / lesson.totalGames) * 100).toFixed(2);
     }
 
-    setLessonSummary(summary); // Set the calculated summary to the state
+    for (let userId in userSummary) {
+      const user = userSummary[userId];
+      user.averageResponseTime = (user.totalResponseTime / user.totalGames).toFixed(2);
+      user.correctnessPercentage = ((user.correctResponses / user.totalGames) * 100).toFixed(2);
+    }
+
+    setLessonSummary(lessonSummary);
+    setUserSummary(userSummary);
   };
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="error-message">{error}</div>;
   }
 
   return (
-    <div>
-      <h2>Audiogame Results</h2>
+    <div className="game-results-container">
+      <h2 className="page-title">Audiogame Results</h2>
 
-      {/* Input field to get the user ID */}
-      <input
-        type="text"
-        placeholder="Enter User ID"
-        value={userId}
-        onChange={handleUserIdChange}
-      />
+      <div className="search-container">
+        <input
+          type="text"
+          className="user-id-input"
+          placeholder="Enter User ID"
+          value={userId}
+          onChange={handleUserIdChange}
+        />
+      </div>
 
       {filteredResults.length === 0 ? (
-        <p>No game results found for the entered user ID.</p>
+        <p className="no-results-message">No game results found for the entered user ID.</p>
       ) : (
-        <div>
-          <table>
+        <div className="results-table-container">
+          <table className="results-table">
             <thead>
               <tr>
                 <th>User ID</th>
@@ -118,18 +140,21 @@ const GameResults = () => {
             </tbody>
           </table>
 
-          {/* Lesson-wise Summary */}
-          <div>
-            <h3>Lesson-wise Summary</h3>
-            {Object.keys(lessonSummary).map((lessonNumber) => (
-              <div key={lessonNumber}>
-                <h4>Lesson {lessonNumber}</h4>
-                <p>Total Games: {lessonSummary[lessonNumber].totalGames}</p>
-                <p>Correct Responses: {lessonSummary[lessonNumber].correctResponses}</p>
-                <p>Correctness Percentage: {lessonSummary[lessonNumber].correctnessPercentage}%</p>
-                <p>Average Response Time: {lessonSummary[lessonNumber].averageResponseTime}s</p>
-              </div>
-            ))}
+          <div className="summary-container">
+          
+
+            <div className="user-summary">
+              <h3>User-wise Summary</h3>
+              {Object.keys(userSummary).map((userId) => (
+                <div className="user-summary-item" key={userId}>
+                  <h4>User {userId}</h4>
+                  <p>Total Games: {userSummary[userId].totalGames}</p>
+                  <p>Correct Responses: {userSummary[userId].correctResponses}</p>
+                  <p>Correctness Percentage: {userSummary[userId].correctnessPercentage}%</p>
+                  <p>Average Response Time: {userSummary[userId].averageResponseTime}s</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
