@@ -34,7 +34,7 @@ const App = () => {
           <Route path="/AllLessons" element={<AllLessons />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/InsertAudioGame" element={<InsertAudioGame />} />
-          <Route path="/AllAudioGames" element={< AllAudioGames />} />
+          <Route path="/audiogames" element={< AllAudioGames />} />
          
           {/* Knesthetic Learning*/}
           <Route path="/SmileDetection" element={<SmileDetection />} />

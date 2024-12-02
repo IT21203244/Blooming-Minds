@@ -24,9 +24,9 @@ const LessonsList = () => {
     navigate(`/lesson/${lessonId}`);
   };
 
-  const handleStartAudioGame = (lessonIndex) => {
-    alert(`AudioGame ${lessonIndex + 1}`);
-    navigate(`/audiogame/${lessonIndex + 1}`); // Navigate to the audio game page
+  const handleStartAudioGame = (lessonLNumber) => {
+    // Pass lesson.lnumber to the next page via state
+    navigate(`/audiogames`, { state: { lessonLNumber: lessonLNumber } });
   };
 
   return (
@@ -53,7 +53,7 @@ const LessonsList = () => {
                 &nbsp;
                 <button
                   className="lesson_button"
-                  onClick={() => handleStartAudioGame(index)}
+                  onClick={() => handleStartAudioGame(lesson.lnumber)}
                 >
                   Start AudioGame
                 </button>
