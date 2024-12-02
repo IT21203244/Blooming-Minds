@@ -1,26 +1,52 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-// import './result.css';
+import React from "react";
+import { useLocation } from "react-router-dom";
 
 function Result() {
     const { state } = useLocation();
-    const { timeSpent, remainingTime } = state;
+    const { timeSpent = 0, remainingTime = 0, progress = 0, randomImageName, randomImageSrc } = state || {};
+    const actualProgress = 100 - progress;
 
-    // Calculate the progress percentage
-    const progress = ((timeSpent - remainingTime) / timeSpent) * 100;
+    // Determine the color based on the progress percentage
+    const getColor = () => {
+        if (actualProgress >= 80) {
+            return "#4a90e2"; // Blue for 80% or above
+        } else if (actualProgress >= 50) {
+            return "green"; // Green for 50% or above
+        } else {
+            return "red"; // Red for less than 50%
+        }
+    };
 
     return (
-        <div className="result_container">
-            <h2>Your Progress</h2>
-            <div className="result_data">
-                <p><strong>Time Spent:</strong> {timeSpent} seconds</p>
-                <p><strong>Remaining Time:</strong> {remainingTime} seconds</p>
-                <p><strong>Progress:</strong> {progress.toFixed(2)}%</p> {/* Display with 2 decimal places */}
-            </div>
-            <div className="button_container">
-                <button onClick={() => window.location.reload()} className="restart_btn">
-                    Play Again
-                </button>
+        <div>
+            <div>
+                <p className="topic_pro">Your Progress</p>
+                <div className="result_container">
+                    <div className="new_boc">
+                        <div>
+                            <p className="topic_train">result details</p>
+                            <div className="data_set_mainone">
+                                <div
+                                    className="progress_circle"
+                                    style={{
+                                        background: `conic-gradient(${getColor()} ${actualProgress}%, #e0e0e0 ${actualProgress}%)`,
+                                    }}
+                                >
+                                    <span className="progress_text">{actualProgress}%</span>
+                                </div>
+                                <button className="save_btn">Save record</button>
+                                <button className="next_btn">Next Task</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="resalt_second_container">
+                        <p className="topic_train">task details</p>
+                        <div className="result_image">
+                            <p className="matchname">{randomImageName}</p>
+                            {randomImageSrc && <img src={randomImageSrc} alt={randomImageName} className="image_resalt" />}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
