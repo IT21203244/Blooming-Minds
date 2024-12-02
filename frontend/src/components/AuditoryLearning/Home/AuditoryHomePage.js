@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import './AuditoryHomePage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,6 +19,10 @@ import En from "./images/Envirnment.png"
 
 
 function AuditoryHomePage() {
+  const navigate = useNavigate(); 
+  const handleStartNowClick = () => {
+    navigate('/AllLessons');
+  };
   return (
     <div className="auditory_container">
       {/* Sidebar */}
@@ -61,11 +66,18 @@ function AuditoryHomePage() {
         {/* Welcome Section */}
         <div className="auditory_welcome_section">
           <div className="auditory_welcome_text">
-            <h1>Hi, Soundy!</h1>
+            <h1>Hi, Soundy!</h1><br></br>
+            <div className="auditory_start_button_container">
+    <button 
+    onClick={handleStartNowClick}
+    className="auditory_start_button">Start Now</button>
+  </div>
           </div>
+
           <div className="auditory_welcome_image">
             <img src={Man} alt="Welcome Illustration" />
           </div>
+         
         </div>
 
         {/* Continue Watching */}

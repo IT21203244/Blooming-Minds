@@ -262,4 +262,28 @@ body, html {
   margin: 5px 0 0;
   color: #555;
 }
+
+/* Start Now Button */
+.auditory_start_button_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.auditory_start_button {
+  background-color: #2d5ef7;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auditory_start_button:hover {
+  background-color: #1a3b89;
+}
+
   

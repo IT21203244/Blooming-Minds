@@ -1,0 +1,130 @@
+.insertgame_container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #4a90e2;
+  }
+  
+  .insertgame_input_group,
+  .insertgame_question_section,
+  .insertgame_options_section,
+  .insertgame_correct_answer {
+    margin-bottom: 20px;
+  }
+  
+  .insertgame_input_group label,
+  .insertgame_question_section label,
+  .insertgame_options_section label,
+  .insertgame_correct_answer label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .insertgame_input_group input,
+  .insertgame_option_group input,
+  .insertgame_correct_answer select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+  }
+  
+  .insertgame_input_group input[type="number"] {
+    width: auto;
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  .insertgame_add_question_btn,
+  .insertgame_add_option,
+  .insertgame_submit_btn {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .insertgame_add_question_btn,
+  .insertgame_add_option {
+    margin-top: 10px;
+  }
+  
+  .insertgame_add_question_btn:hover,
+  .insertgame_add_option:hover,
+  .insertgame_submit_btn:hover {
+    background-color: #357ab7;
+  }
+  
+  .insertgame_option_group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .insertgame_option_group input {
+    width: 100%;
+  }
+  
+  .insertgame_question_section {
+    background-color: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .insertgame_correct_answer select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .insertgame_correct_answer {
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .insertgame_submit_btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    background-color: rgb(219, 216, 7);
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .insertgame_submit_btn:hover {
+    background-color: rgb(219, 216, 7);
+  }
+  
+  .insertgame_container p {
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .insertgame_container p.success {
+    color: rgb(219, 216, 7);
+  }
+  
+  .insertgame_container p.error {
+    color: red;
+  }
+  

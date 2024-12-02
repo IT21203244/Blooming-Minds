@@ -2,6 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./CCS/LessonsList.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faHome,
+  faTh,
+  faUser,
+  faChartLine,
+  faCogs,
+  faSignOutAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import Logo from "./CCS/Logo.png";
 
 const LessonsList = () => {
   const [lessons, setLessons] = useState([]);
@@ -25,45 +35,47 @@ const LessonsList = () => {
   };
 
   const handleStartAudioGame = (lessonLNumber) => {
-    // Pass lesson.lnumber to the next page via state
     navigate(`/audiogames`, { state: { lessonLNumber: lessonLNumber } });
   };
 
   return (
     <div className="lessons_container">
-      <h2 className="lessons_title">All Lessons</h2>
-      {error && <p className="lessons_error">{error}</p>}
-      {lessons.length > 0 ? (
-        <div className="lessons_list">
-          {lessons.map((lesson, index) => (
-            <div className="lesson_card" key={lesson._id}>
-              <img
-                src={lesson.imageURL || DEFAULT_IMAGE_URL}
-                alt={lesson.title}
-                className="lesson_image"
-              />
-              <div className="lesson_content">
-                <h3 className="lesson_title">{lesson.title}</h3>
-                <button
-                  className="lesson_button"
-                  onClick={() => handleStartAudioBook(lesson._id)}
-                >
-                  Start AudioBook
-                </button>
-                &nbsp;
-                <button
-                  className="lesson_button"
-                  onClick={() => handleStartAudioGame(lesson.lnumber)}
-                >
-                  Start AudioGame
-                </button>
+ 
+
+      <div className="content">
+        <h2 className="lessons_title">All Lessons</h2>
+        {error && <p className="lessons_error">{error}</p>}
+        {lessons.length > 0 ? (
+          <div className="lessons_list">
+            {lessons.map((lesson) => (
+              <div className="lesson_card" key={lesson._id}>
+                <img
+                  src={lesson.imageURL || DEFAULT_IMAGE_URL}
+                  alt={lesson.title}
+                  className="lesson_image"
+                />
+                <div className="lesson_content">
+                  <h3 className="lesson_title">{lesson.title}</h3>
+                  <button
+                    className="lesson_button"
+                    onClick={() => handleStartAudioBook(lesson._id)}
+                  >
+                    Start AudioBook
+                  </button>
+                  <button
+                    className="lesson_button"
+                    onClick={() => handleStartAudioGame(lesson.lnumber)}
+                  >
+                    Start AudioGame
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="lessons_empty">No lessons found</p>
-      )}
+            ))}
+          </div>
+        ) : (
+          <p className="lessons_empty">No lessons found</p>
+        )}
+      </div>
     </div>
   );
 };
