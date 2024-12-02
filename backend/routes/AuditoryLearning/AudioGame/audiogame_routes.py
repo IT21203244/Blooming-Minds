@@ -59,3 +59,38 @@ def get_audiogame(game_id):
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
+        
+@audiogame_routes.route("/add_audiogame_result", methods=["POST"])
+def add_audiogame_result():
+    db = GameDatabase()
+    try:
+        result_data = request.get_json()
+        required_fields = [
+            "user_id", "lesson_number", "question_number", "response_correctness", "response_time"
+        ]
+
+        if not all(field in result_data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Insert the result into the database
+        result_id = db.insert_audiogame_result(result_data)
+        return jsonify({"message": "Audiogame result added successfully", "id": result_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
+
+
+@audiogame_routes.route("/get_audiogame_results", methods=["GET"])
+def get_audiogame_results():
+    db = GameDatabase()
+    try:
+        # Fetch all audiogame results from the database
+        results = db.get_audiogame_results()  # Fetch results specifically from the audiogame_results collection
+        if not results:
+            return jsonify({"message": "No audiogame results found"}), 404
+        return jsonify({"audiogame_results": results}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()

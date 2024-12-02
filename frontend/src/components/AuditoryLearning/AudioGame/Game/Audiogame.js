@@ -13,6 +13,8 @@ const AudiogamesList = () => {
   const [timer, setTimer] = useState(60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [spentTime, setSpentTime] = useState(0);
+  const [responseCorrectness, setResponseCorrectness] = useState(0);
+  const [userId, setUserId] = useState("");  // User ID input state
 
   const location = useLocation();
   const lessonLNumber = location.state?.lessonLNumber;
@@ -86,7 +88,10 @@ const AudiogamesList = () => {
 
   const handleAnswerSelection = (selectedAnswer, correctAnswer) => {
     setIsTimerRunning(false);
-    if (selectedAnswer === correctAnswer) {
+    const correctness = selectedAnswer === correctAnswer ? 1 : 0;
+    setResponseCorrectness(correctness);
+    
+    if (correctness === 1) {
       setMessage(`Correct! Time spent: ${spentTime} seconds`);
     } else {
       setMessage("Incorrect. Try again.");
@@ -98,6 +103,7 @@ const AudiogamesList = () => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setMessage("");
       setTimer(60);
+      setResponseCorrectness(0); // Reset correctness
     } else {
       setMessage("You've reached the last question!");
     }
@@ -108,7 +114,37 @@ const AudiogamesList = () => {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       setMessage("");
       setTimer(60);
+      setResponseCorrectness(0); // Reset correctness
     }
+  };
+
+  const handleSubmit = () => {
+    const resultData = {
+      user_id: userId,
+      lesson_number: audiogames[currentQuestionIndex].number,
+      question_number: currentQuestionIndex + 1,
+      response_correctness: responseCorrectness,
+      response_time: spentTime,
+    };
+
+    fetch("http://localhost:5000/api/add_audiogame_result", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(resultData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message) {
+          setMessage("Result added successfully!");
+        } else {
+          setMessage("Error adding result.");
+        }
+      })
+      .catch(() => {
+        setMessage("An error occurred while submitting the result.");
+      });
   };
 
   return (
@@ -121,6 +157,10 @@ const AudiogamesList = () => {
         {audiogames.length > 0 && (
           <>
             <h3>{`Question ${currentQuestionIndex + 1}: ${audiogames[currentQuestionIndex].question}`}</h3>
+            <p>Game Number: {audiogames[currentQuestionIndex].number}</p>
+            <p>Question Index: {currentQuestionIndex + 1}</p>
+            <p>Response Correctness: {responseCorrectness}</p>
+            <p>Time Taken to Answer: {spentTime} seconds</p>
 
             {/* Play speed selector */}
             <label htmlFor="speed-select">Playback Speed:</label>
@@ -186,6 +226,23 @@ const AudiogamesList = () => {
                 Next Question
               </button>
             </div>
+
+            {/* Input for User ID */}
+            <div className="user-id-input">
+              <label htmlFor="user-id">User ID:</label>
+              <input
+                type="text"
+                id="user-id"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                placeholder="Enter your user ID"
+              />
+            </div>
+
+            {/* Submit Result Button */}
+            <button className="submit-result" onClick={handleSubmit}>
+              Submit Result
+            </button>
           </>
         )}
       </div>
