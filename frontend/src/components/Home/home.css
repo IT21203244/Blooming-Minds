@@ -38,6 +38,7 @@
 .card_link {
   font-weight: 600;
   cursor: pointer;
+  margin-bottom: 10px;
   text-transform: uppercase;
 }
 
