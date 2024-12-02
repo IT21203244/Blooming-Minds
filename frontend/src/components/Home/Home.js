@@ -17,7 +17,7 @@ function Home() {
                     <img src={Visual} alt="Visual learning" className='card_image' />
                     <p className='card_link' >Visual Learning</p>
                 </div>
-                <div className='card_home' onClick={() => (window.location.href = '/')}>
+                <div className='card_home' onClick={() => (window.location.href = '/AuditoryHomePage')}>
                     <img src={Auditory} alt="auditory learning" className='card_image' />
                     <p className='card_link' >Auditory Learning</p>
                 </div>
