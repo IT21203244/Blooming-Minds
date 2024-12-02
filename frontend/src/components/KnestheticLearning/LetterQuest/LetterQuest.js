@@ -110,10 +110,17 @@ function LetterQuest() {
         const timeSpent = calculateTimeSpent();
         const remainingTime = timeLeft;
         const progress = calculateProgress();
-
-        // Navigate to the result page with the progress data
-        navigate('/result', { state: { timeSpent, remainingTime, progress } });
+    
+        // Navigate to the result page with the progress data and image info
+        navigate('/result', { state: { 
+            timeSpent, 
+            remainingTime, 
+            progress, 
+            randomImageName: randomImage.name,  // Pass the image name
+            randomImageSrc: randomImage.src     // Pass the image source
+        } });
     };
+    
 
     return (
         <div className='main_continer'>
