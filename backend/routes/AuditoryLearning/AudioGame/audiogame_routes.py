@@ -9,7 +9,7 @@ def add_audiogame():
     try:
         game_data = request.get_json()
         # Validate input data
-        required_fields = ["question", "answers", "images", "correct_answer"]
+        required_fields = ["number","question", "answers", "images", "correct_answer"]
         if not all(key in game_data for key in required_fields):
             return jsonify({"error": "Missing required fields"}), 400
         if len(game_data["answers"]) != len(game_data["images"]):

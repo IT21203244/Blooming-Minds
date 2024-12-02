@@ -8,10 +8,9 @@ const LessonsList = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const DEFAULT_IMAGE_URL = "https://via.placeholder.com/300x200?text=No+Image"; // Default image URL
+  const DEFAULT_IMAGE_URL = "https://via.placeholder.com/300x200?text=No+Image";
 
   useEffect(() => {
-    // Fetch lessons from the server
     axios
       .get("http://localhost:5000/api/get_lessons")
       .then((response) => {
@@ -21,8 +20,13 @@ const LessonsList = () => {
       .catch(() => setError("Failed to fetch lessons."));
   }, []);
 
-  const handleStart = (lessonId) => {
+  const handleStartAudioBook = (lessonId) => {
     navigate(`/lesson/${lessonId}`);
+  };
+
+  const handleStartAudioGame = (lessonIndex) => {
+    alert(`AudioGame ${lessonIndex + 1}`);
+    navigate(`/audiogame/${lessonIndex + 1}`); // Navigate to the audio game page
   };
 
   return (
@@ -31,10 +35,10 @@ const LessonsList = () => {
       {error && <p className="lessons_error">{error}</p>}
       {lessons.length > 0 ? (
         <div className="lessons_list">
-          {lessons.map((lesson) => (
+          {lessons.map((lesson, index) => (
             <div className="lesson_card" key={lesson._id}>
               <img
-                src={lesson.imageURL || DEFAULT_IMAGE_URL} // Use lesson's imageURL or default
+                src={lesson.imageURL || DEFAULT_IMAGE_URL}
                 alt={lesson.title}
                 className="lesson_image"
               />
@@ -42,9 +46,16 @@ const LessonsList = () => {
                 <h3 className="lesson_title">{lesson.title}</h3>
                 <button
                   className="lesson_button"
-                  onClick={() => handleStart(lesson._id)}
+                  onClick={() => handleStartAudioBook(lesson._id)}
                 >
-                  Start
+                  Start AudioBook
+                </button>
+                &nbsp;
+                <button
+                  className="lesson_button"
+                  onClick={() => handleStartAudioGame(index)}
+                >
+                  Start AudioGame
                 </button>
               </div>
             </div>

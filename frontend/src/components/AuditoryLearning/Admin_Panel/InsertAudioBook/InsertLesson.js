@@ -3,12 +3,13 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faTh, faUser, faChartLine, faCogs, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import './CSS/InsertLesson.css';
-import Logo from "./CSS/Logo.png"
+import Logo from "./CSS/Logo.png";
 
 const InsertLesson = () => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [imageURL, setImageURL] = useState("");
+  const [lnumber, setLnumber] = useState(""); // New state variable for lesson number
   const [questions, setQuestions] = useState([{ question: "", answer: "" }]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,6 +33,7 @@ const InsertLesson = () => {
       title,
       text: text.split("\n"),
       imageURL,
+      lnumber, // Include lnumber in the lesson data
       questions: questions.map((q, index) => ({
         question_id: index + 1,
         text: q.question,
@@ -46,6 +48,7 @@ const InsertLesson = () => {
         setTitle("");
         setText("");
         setImageURL("");
+        setLnumber(""); // Reset lnumber
         setQuestions([{ question: "", answer: "" }]);
       })
       .catch((error) => {
@@ -57,7 +60,6 @@ const InsertLesson = () => {
 
   return (
     <div className="insertlesson_container">
-      {/* Sidebar */}
       {/* Sidebar */}
       <div className="auditory_sidebar">
         <div className="auditory_logo">
@@ -128,6 +130,16 @@ const InsertLesson = () => {
                 required
               />
             </div>
+            {/* New Lesson Number input */}
+            <div className="insertlesson_input_group">
+              <label>Lesson Number:</label>
+              <input
+                type="text"
+                value={lnumber}
+                onChange={(e) => setLnumber(e.target.value)}
+                required
+              />
+            </div>
             <div className="insertlesson_questions_section">
               <h3>Questions</h3>
               {questions.map((q, index) => (
@@ -140,7 +152,7 @@ const InsertLesson = () => {
                       handleQuestionChange(index, "question", e.target.value)
                     }
                     required
-                  /> <tb></tb><tb></tb><tb></tb>
+                  />
                   <label>Answer:</label>
                   <input
                     type="text"
@@ -152,12 +164,14 @@ const InsertLesson = () => {
                   />
                 </div>
               ))}
-              <br></br>
+              <br />
               <button type="button" onClick={addQuestion} className="insertlesson_add_question">
                 Add Question
               </button>
             </div>
-            <button type="submit" className="insertlesson_submit_btn">Insert Lesson</button>
+            <button type="submit" className="insertlesson_submit_btn">
+              Insert Lesson
+            </button>
           </form>
         </div>
       </div>

@@ -6,6 +6,7 @@ const InsertGame = () => {
   const [answers, setAnswers] = useState([""]);
   const [images, setImages] = useState([""]);
   const [correctAnswer, setCorrectAnswer] = useState("");
+  const [number, setNumber] = useState(""); // New state for number
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -36,6 +37,7 @@ const InsertGame = () => {
       answers,
       images,
       correct_answer: correctAnswer,
+      number, // Include the new number field
     };
 
     axios
@@ -46,6 +48,7 @@ const InsertGame = () => {
         setAnswers([""]);
         setImages([""]);
         setCorrectAnswer("");
+        setNumber(""); // Reset the number field
       })
       .catch((error) => {
         setErrorMessage(error.response?.data?.error || "Failed to add the game.");
@@ -64,6 +67,15 @@ const InsertGame = () => {
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
+            required
+          />
+        </div>
+        <div className="insertgame_input_group">
+          <label>Number:</label> {/* New input for number */}
+          <input
+            type="number"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
             required
           />
         </div>
