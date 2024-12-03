@@ -1,6 +1,9 @@
 .student-records-container {
   padding: 0px 8%;
 }
+.pdf_continer {
+  padding: 25px 8%;
+}
 .table_name {
   text-align: center;
   text-transform: uppercase;
@@ -49,13 +52,24 @@
   padding: 3px 10px;
   border-radius: 2px;
 }
-.generate_report_btn {
+.generate_report_btn,
+.download_btn_king {
   padding: 5px 15px;
   background-color: #2b69b2;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 3px;
+}
+.compir_sectionn_main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.name_data_stdn {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 600;
 }
 .action_set_kin_admin {
   display: flex;
@@ -153,9 +167,20 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
+.select_date {
+  width: 200px;
+  padding: 3px 15px;
+  border: 1px solid #2b69b2;
+  border-radius: 3px;
+}
+.main_sectionfirst {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .card_play {
   border: 1px solid #2b69b2;
-  width: 200px;
+  width: 320px;
   height: 120px;
   border-radius: 2px;
   cursor: pointer;
@@ -168,9 +193,70 @@
   font-weight: 600;
   color: #2b69b2;
 }
-.tsk_data{
+.tsk_data {
   text-transform: capitalize;
   font-weight: 500;
+}
+.search_input_compair {
+  width: 150px;
+  border: 1px solid #2b69b2;
+  padding: 3px 10px;
+}
+.compir_sectionn {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  margin: 25px 0;
+  gap: 15px;
+}
+.compare_btn {
+  background-color: #2b69b2;
+  color: white;
+  padding: 5px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.progress-bar-container {
+  border-radius: 80px;
+  width: 100%;
+  height: 10px;
+  background-color: #2b6ab22d;
+  margin-top: 5px;
+  margin-bottom: 12px;
+}
+
+.progress-bar {
+  border-radius: 80px;
+  height: 100%;
+  background-color: #2b69b2;
+}
+.atempts_card {
+  width: 300px;
+  border: 1px solid #2b69b2;
+  padding: 15px;
+  border-radius: 3px;
+}
+.atempts_card_continer {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 25px;
+  margin: 25px 0;
+}
+.tsk_name_card {
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 25px;
+}
+.bar_head_set {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 17px;
+  text-transform: capitalize;
+  align-items: center;
 }
 @media (max-width: 990px) {
   .student-records-table {
