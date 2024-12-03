@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate hook for routing
-import Clap from './img/clap.jpg';
-import Cry from './img/cry.jpg';
-import Smile from './img/smile.jpg';
-import WinImage from './img/win.png';
-import Jump from './img/jump.jpg';
-import Run from './img/run.jpg';
-import Think from './img/think.jpg';
 import Logout from './img/logout.png'
 import Sad from './img/sad.png';
+import WinImage from './img/win.png';
 import './letter.css';
-
+import Clap from './Taskimg/clap.jpg';
+import Cry from './Taskimg/cry.jpg';
+import Smile from './Taskimg/smile.jpg';
+import Jump from './Taskimg/jump.jpg';
+import Run from './Taskimg/run.jpg';
+import Think from './Taskimg/think.jpg';
+import Dance from './Taskimg/dance.jpg';
+import Drink from './Taskimg/Drink.jpg';
+import Eat from './Taskimg/eat.jpg';
+import Sing from './Taskimg/Sing.jpg';
+import Sleep from './Taskimg/Sleep.jpg';
+import Angry from './Taskimg/Angry.jpeg';
 function LetterQuest() {
     const navigate = useNavigate();  // Hook for navigation
     const images = [
@@ -19,7 +24,13 @@ function LetterQuest() {
         { name: 'Think', src: Think },
         { name: 'Jump', src: Jump },
         { name: 'Run', src: Run },
-        { name: 'Smile', src: Smile }
+        { name: 'Smile', src: Smile },
+        { name: 'Dance', src: Dance },
+        { name: 'Drink', src: Drink },
+        { name: 'Eat', src: Eat },
+        { name: 'Sing', src: Sing },
+        { name: 'Sleep', src: Sleep },
+        { name: 'Angry', src: Angry },
     ];
 
     const [randomImage, setRandomImage] = useState(images[0]);

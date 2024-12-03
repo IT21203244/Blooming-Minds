@@ -1,5 +1,5 @@
 .student-records-container {
-  padding: 25px 8%;
+  padding: 0px 8%;
 }
 .table_name {
   text-align: center;
@@ -11,10 +11,21 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  margin-bottom: 40px;
   border: 1px solid #2b69b2; /* Adding a border around the table */
   border-radius: 5px; /* Optional: To round the corners of the table */
 }
-
+.kin_admin_nav_active_main {
+  color: #2b69b2;
+  border-radius: 3px;
+  padding: 5px 15px;
+  background-color: white;
+}
+.main_nav {
+  background-color: #2b69b2;
+  padding: 10px 8%;
+  color: white;
+}
 .student-records-table .tble_kin_head,
 .student-records-table .tble_kin_bd {
   padding: 12px;
@@ -133,6 +144,33 @@
   right: 0;
   height: 2px;
   background-color: #000; /* X-axis */
+}
+.top_students {
+  display: flex;
+  align-items: flex-start;
+  margin: 25px 0;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.card_play {
+  border: 1px solid #2b69b2;
+  width: 200px;
+  height: 120px;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+.tsk_name {
+  text-align: center;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #2b69b2;
+}
+.tsk_data{
+  text-transform: capitalize;
+  font-weight: 500;
 }
 @media (max-width: 990px) {
   .student-records-table {
