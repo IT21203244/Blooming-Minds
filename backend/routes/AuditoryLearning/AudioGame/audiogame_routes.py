@@ -1,7 +1,12 @@
 from flask import Blueprint, request, jsonify
+import tensorflow as tf
+import numpy as np
 from utils.AuditoryLearning.AudioGame.gamedb_utils import GameDatabase
 
 audiogame_routes = Blueprint("audiogame_routes", __name__)
+
+model = r'C:\Users\Dilshan\Desktop\Blooming-Minds\models\saved_models\Auditory\audio_game_model.h5'
+
 
 @audiogame_routes.route("/add_audiogame", methods=["POST"])
 def add_audiogame():
@@ -94,3 +99,27 @@ def get_audiogame_results():
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
+
+# New route to handle adding audiogame analysis
+@audiogame_routes.route("/add_audiogame_analysis", methods=["POST"])
+def add_audiogame_analysis():
+    db = GameDatabase()
+    try:
+        analysis_data = request.get_json()
+        required_fields = [
+            "user_id", "session_id", "question_id", "response_correctness", 
+            "response_time", 
+        ]
+
+        # Check if all required fields are present
+        if not all(field in analysis_data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Insert the analysis data into the database
+        analysis_id = db.insert_analysis(analysis_data)
+        return jsonify({"message": "Audiogame analysis added successfully", "id": analysis_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
+

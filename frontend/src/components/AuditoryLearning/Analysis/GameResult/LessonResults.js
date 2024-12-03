@@ -87,6 +87,31 @@ const GameResults = () => {
     setTotalSpentTime(totalTime);
   };
 
+  const handleInsertAnalysis = async (result) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/add_audiogame_analysis", {
+        user_id: result.user_id,
+        session_id: result.lesson_number,
+        question_id: result.question_number,
+        response_correctness: result.response_correctness,
+        response_time: result.response_time,
+      });
+  
+      // Check if the response is valid
+      if (response && response.data) {
+        console.log("Analysis inserted successfully:", response.data);
+        // Optionally, you can show a success message here
+      } else {
+        console.error("Invalid response:", response);
+        alert("Error: Invalid response from the server.");
+      }
+    } catch (error) {
+      console.error("Error inserting analysis:", error);
+      alert("Error occurred while inserting the analysis.");
+    }
+  };
+  
+
   if (error) {
     return <div className="error-message">{error}</div>;
   }
@@ -119,6 +144,7 @@ const GameResults = () => {
                 <th>Question Number</th>
                 <th>Response Correctness</th>
                 <th>Response Time</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -131,6 +157,14 @@ const GameResults = () => {
                     {result.response_correctness ? "Correct" : "Incorrect"}
                   </td>
                   <td>{result.response_time}s</td>
+                  <td>
+                    <button
+                      className="insert-btn"
+                      onClick={() => handleInsertAnalysis(result)}
+                    >
+                      Insert
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

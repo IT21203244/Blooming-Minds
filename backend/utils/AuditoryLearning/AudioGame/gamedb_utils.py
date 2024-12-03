@@ -112,3 +112,21 @@ class GameDatabase:
             return results
         except Exception as e:
             raise Exception(f"Error fetching data from audiogame_results: {e}")
+
+    # New method to insert analysis data into the "audiogame_analysis" collection
+    def insert_analysis(self, data):
+        """
+        Insert an analysis record into the audiogame_analysis collection.
+
+        Args:
+            data (dict): Data to be inserted.
+
+        Returns:
+            str: ID of the inserted document.
+        """
+        try:
+            collection = self.db["audiogame_analysis"]  # New collection for analysis data
+            result = collection.insert_one(data)
+            return str(result.inserted_id)
+        except Exception as e:
+            raise Exception(f"Error inserting data into audiogame_analysis: {e}")
