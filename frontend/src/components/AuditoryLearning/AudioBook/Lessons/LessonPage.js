@@ -17,13 +17,16 @@ const LessonPage = () => {
   const [countdown, setCountdown] = useState(5);
   const [transcription, setTranscription] = useState("");
   const [feedback, setFeedback] = useState("");
-
+  const [isRecording, setIsRecording] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
   useEffect(() => {
     const getVoices = () => {
       const allVoices = speechSynthesis.getVoices();
-      setVoices(allVoices.filter((voice) => voice.name.toLowerCase().includes("female")));
+      setVoices(
+        allVoices.filter((voice) => voice.name.toLowerCase().includes("female"))
+      );
     };
 
     if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -57,8 +60,12 @@ const LessonPage = () => {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(lesson.text[index]?.text || lesson.text[index]);
-    const selectedVoice = voices.find((voice) => voice.name.toLowerCase().includes("female"));
+    const utterance = new SpeechSynthesisUtterance(
+      lesson.text[index]?.text || lesson.text[index]
+    );
+    const selectedVoice = voices.find((voice) =>
+      voice.name.toLowerCase().includes("female")
+    );
 
     if (selectedVoice) {
       utterance.voice = selectedVoice;
@@ -69,7 +76,7 @@ const LessonPage = () => {
     utterance.lang = "en-US";
 
     utterance.onend = () => {
-      setAudioProgress((index + 1) / lesson.text.length * 100);
+      setAudioProgress(((index + 1) / lesson.text.length) * 100);
       if (lesson.questions && lesson.questions[index] && !isAskingQuestion) {
         setIsAskingQuestion(true);
         setQuestionIndex(index);
@@ -89,7 +96,9 @@ const LessonPage = () => {
       const questionUtterance = new SpeechSynthesisUtterance(question);
 
       if (voices.length > 0) {
-        const selectedVoice = voices.find((voice) => voice.name.toLowerCase().includes("female"));
+        const selectedVoice = voices.find((voice) =>
+          voice.name.toLowerCase().includes("female")
+        );
         if (selectedVoice) {
           questionUtterance.voice = selectedVoice;
         }
@@ -116,29 +125,32 @@ const LessonPage = () => {
       } else {
         clearInterval(countdownInterval);
         setCountdown(5);
-        activateSpeechRecognition(index);
+        activateSpeechRecognition(index, true);
       }
     }, 1000);
   };
 
-  const activateSpeechRecognition = (index) => {
-    setIsAskingQuestion(false);
-
+  const activateSpeechRecognition = (index, isForQuestion = false) => {
+    setIsRecording(true);
+    setError("");
+    setTranscription("");
+    setIsLoading(true);
+  
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
         const mediaRecorder = new MediaRecorder(stream);
         const audioChunks = [];
-
+  
         mediaRecorder.ondataavailable = (event) => {
           audioChunks.push(event.data);
         };
-
+  
         mediaRecorder.onstop = () => {
           const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
           const formData = new FormData();
           formData.append("file", audioBlob, "recorded_audio.wav");
-
+  
           axios
             .post("http://localhost:5000/record", formData, {
               headers: { "Content-Type": "multipart/form-data" },
@@ -146,31 +158,47 @@ const LessonPage = () => {
             .then((response) => {
               const userTranscription = response.data.transcription;
               setTranscription(userTranscription);
-
-              const correctAnswer = lesson.questions[questionIndex-1]?.answer;
-              if (userTranscription.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
-                setFeedback("Correct! Well done.");
+  
+              if (isForQuestion) {
+                const correctAnswer =
+                  lesson.questions[index]?.answer || "";
+                const isCorrect =
+                  userTranscription.trim().toLowerCase() ===
+                  correctAnswer.trim().toLowerCase();
+  
+                if (isCorrect) {
+                  setFeedback("Correct! Well done.");
+                  alert("Correct! Well done.");
+                } else {
+                  setFeedback(
+                    `Incorrect. The correct answer is: ${correctAnswer}`
+                  );
+                  alert(`Incorrect. The correct answer is: ${correctAnswer}`);
+                }
+  
                 setTimeout(() => {
                   setFeedback("");
-                  setCurrentIndex(index + 1);
-                  readLessonPart(index + 1);
+                  setIsAskingQuestion(false);
+                  if (lesson.text[index + 1]) {
+                    setCurrentIndex(index + 1);
+                    readLessonPart(index + 1);
+                  } else {
+                    setCurrentIndex(index + 1);
+                    setIsPlaying(false);
+                  }
                 }, 2000);
               } else {
-                setFeedback("Incorrect. Moving to the next part.");
-                setTimeout(() => {
-                  setFeedback("");
-                  setCurrentIndex(index + 1);
-                  readLessonPart(index + 1);
-                }, 2000);
+                setIsRecording(false);
+                setIsLoading(false);
               }
             })
             .catch(() => {
               setError("Failed to transcribe audio.");
-              setCurrentIndex(index + 1);
-              readLessonPart(index + 1);
+              setIsRecording(false);
+              setIsLoading(false);
             });
         };
-
+  
         mediaRecorder.start();
         setTimeout(() => {
           mediaRecorder.stop();
@@ -178,8 +206,11 @@ const LessonPage = () => {
       })
       .catch(() => {
         setError("Failed to access the microphone.");
+        setIsRecording(false);
+        setIsLoading(false);
       });
   };
+  
 
   if (error) return <p className="error-message">{error}</p>;
   if (!lesson) return <p className="loading-message">Loading...</p>;
@@ -198,21 +229,37 @@ const LessonPage = () => {
 
       {isAskingQuestion && (
         <div className="question-box">
-          <p className="question-text">Question: {lesson.questions[questionIndex]?.text}</p>
+          <p className="question-text">
+            Question: {lesson.questions[questionIndex]?.text}
+          </p>
+          <p className="answer-text">
+            Answer: {lesson.questions[questionIndex]?.answer}
+          </p>
         </div>
       )}
 
       <div className="controls">
-        <button className="control-button" onClick={playAudio} disabled={isPlaying}>
+        <button
+          className="control-button"
+          onClick={playAudio}
+          disabled={isPlaying}
+        >
           Play Audio
         </button>
-        <button className="control-button" onClick={stopAudio} disabled={!isPlaying}>
+        <button
+          className="control-button"
+          onClick={stopAudio}
+          disabled={!isPlaying}
+        >
           Stop Audio
         </button>
       </div>
 
       <div className="audio-progress-container">
-        <div className="audio-progress" style={{ width: `${audioProgress}%` }}></div>
+        <div
+          className="audio-progress"
+          style={{ width: `${audioProgress}%` }}
+        ></div>
       </div>
 
       <div className="speed-control">
@@ -232,16 +279,17 @@ const LessonPage = () => {
         <p className="countdown-timer">Countdown: {countdown} seconds</p>
       )}
 
-      {transcription && (
-        <div className="transcription-box">
-          <h3>Transcription Result:</h3>
-          <p>{transcription}</p>
-        </div>
-      )}
-
-      {feedback && <p className="feedback-message">{feedback}</p>}
-
-      <p className="question-text">Right Answer: {lesson.questions[questionIndex]?.answer}</p>
+      <div>
+        <h1>Audio Transcription</h1>
+        <button
+          onClick={() => activateSpeechRecognition(currentIndex)}
+          disabled={isRecording || isLoading}
+        >
+          {isRecording ? "Recording..." : "Start Recording"}
+        </button>
+        <p>{transcription}</p>
+        <p>{feedback}</p>
+      </div>
     </div>
   );
 };

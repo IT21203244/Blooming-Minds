@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify
 import logging
 from utils.AuditoryLearning.AudioBook.audio_utils import record_audio
 from utils.AuditoryLearning.AudioBook.transcription_utils import transcribe_audio
+import traceback
+
 
 record_routes = Blueprint("record_routes", __name__)
 
@@ -23,5 +25,5 @@ def record_and_transcribe():
             return jsonify({"error": "Failed to transcribe audio"}), 500
 
     except Exception as e:
-        logging.error(f"Error in /record route: {e}")
+        logging.error(f"Error in /record route: {e}\n{traceback.format_exc()}")
         return jsonify({"error": "Internal server error"}), 500
