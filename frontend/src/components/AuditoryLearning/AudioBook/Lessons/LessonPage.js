@@ -135,22 +135,22 @@ const LessonPage = () => {
     setError("");
     setTranscription("");
     setIsLoading(true);
-
+  
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
         const mediaRecorder = new MediaRecorder(stream);
         const audioChunks = [];
-
+  
         mediaRecorder.ondataavailable = (event) => {
           audioChunks.push(event.data);
         };
-
+  
         mediaRecorder.onstop = () => {
           const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
           const formData = new FormData();
           formData.append("file", audioBlob, "recorded_audio.wav");
-
+  
           axios
             .post("http://localhost:5000/record", formData, {
               headers: { "Content-Type": "multipart/form-data" },
@@ -158,23 +158,34 @@ const LessonPage = () => {
             .then((response) => {
               const userTranscription = response.data.transcription;
               setTranscription(userTranscription);
-
+  
               if (isForQuestion) {
                 const correctAnswer =
                   lesson.questions[index]?.answer || "";
-                if (
+                const isCorrect =
                   userTranscription.trim().toLowerCase() ===
-                  correctAnswer.trim().toLowerCase()
-                ) {
+                  correctAnswer.trim().toLowerCase();
+  
+                if (isCorrect) {
                   setFeedback("Correct! Well done.");
+                  alert("Correct! Well done.");
                 } else {
-                  setFeedback("Incorrect. Moving to the next part.");
+                  setFeedback(
+                    `Incorrect. The correct answer is: ${correctAnswer}`
+                  );
+                  alert(`Incorrect. The correct answer is: ${correctAnswer}`);
                 }
+  
                 setTimeout(() => {
                   setFeedback("");
-                  setCurrentIndex(index + 1);
                   setIsAskingQuestion(false);
-                  readLessonPart(index + 1);
+                  if (lesson.text[index + 1]) {
+                    setCurrentIndex(index + 1);
+                    readLessonPart(index + 1);
+                  } else {
+                    setCurrentIndex(index + 1);
+                    setIsPlaying(false);
+                  }
                 }, 2000);
               } else {
                 setIsRecording(false);
@@ -183,15 +194,11 @@ const LessonPage = () => {
             })
             .catch(() => {
               setError("Failed to transcribe audio.");
-              if (isForQuestion) {
-                setCurrentIndex(index + 1);
-                readLessonPart(index + 1);
-              }
               setIsRecording(false);
               setIsLoading(false);
             });
         };
-
+  
         mediaRecorder.start();
         setTimeout(() => {
           mediaRecorder.stop();
@@ -203,6 +210,7 @@ const LessonPage = () => {
         setIsLoading(false);
       });
   };
+  
 
   if (error) return <p className="error-message">{error}</p>;
   if (!lesson) return <p className="loading-message">Loading...</p>;
@@ -223,6 +231,9 @@ const LessonPage = () => {
         <div className="question-box">
           <p className="question-text">
             Question: {lesson.questions[questionIndex]?.text}
+          </p>
+          <p className="answer-text">
+            Answer: {lesson.questions[questionIndex]?.answer}
           </p>
         </div>
       )}
@@ -276,14 +287,8 @@ const LessonPage = () => {
         >
           {isRecording ? "Recording..." : "Start Recording"}
         </button>
-        {isLoading && <p>Transcribing...</p>}
-        {transcription && (
-          <div>
-            <h3>Transcription:</h3>
-            <p>{transcription}</p>
-          </div>
-        )}
-        {feedback && <p className="feedback-message">{feedback}</p>}
+        <p>{transcription}</p>
+        <p>{feedback}</p>
       </div>
     </div>
   );
