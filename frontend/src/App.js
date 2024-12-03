@@ -12,7 +12,7 @@ import InsertAudioGame from "./components/AuditoryLearning/Admin_Panel/InsertGam
 import AllAudioGames from "./components/AuditoryLearning/AudioGame/Game/Audiogame";
 import LessonResults from "./components/AuditoryLearning/Analysis/GameResult/LessonResults";
 import AdminHome from "./components/AuditoryLearning/Admin_Panel/AdminHome/AdminHome"; 
-
+import Transcription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
 
 /*Knesthetic Learning*/
 import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDetection";
@@ -40,6 +40,7 @@ const App = () => {
           <Route path="/InsertAudioGame" element={<InsertAudioGame />} />
           <Route path="/audiogames" element={< AllAudioGames />} />
           <Route path="/LessonResults" element={< LessonResults />} />
+          <Route path="/Transcription" element={< Transcription />} />
          
           {/* Knesthetic Learning*/}
           <Route path="/SmileDetection" element={<SmileDetection />} />
