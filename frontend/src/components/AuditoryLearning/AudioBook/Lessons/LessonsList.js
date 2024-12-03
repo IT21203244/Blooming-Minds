@@ -55,6 +55,7 @@ const LessonsList = () => {
                   className="lesson_image"
                 />
                 <div className="lesson_content">
+                <h3 className="lesson_title">Lesson - {lesson.lnumber}</h3>
                   <h3 className="lesson_title">{lesson.title}</h3>
                   <button
                     className="lesson_button"
