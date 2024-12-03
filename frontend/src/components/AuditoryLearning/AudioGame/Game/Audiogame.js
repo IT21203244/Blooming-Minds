@@ -14,7 +14,7 @@ const AudiogamesList = () => {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [spentTime, setSpentTime] = useState(0);
   const [responseCorrectness, setResponseCorrectness] = useState(0);
-  const [userId, setUserId] = useState("");  // User ID input state
+  const [userId, setUserId] = useState(""); // User ID input state
 
   const location = useLocation();
   const lessonLNumber = location.state?.lessonLNumber;
@@ -90,11 +90,11 @@ const AudiogamesList = () => {
     setIsTimerRunning(false);
     const correctness = selectedAnswer === correctAnswer ? 1 : 0;
     setResponseCorrectness(correctness);
-    
+
     if (correctness === 1) {
-      setMessage(`Correct! Time spent: ${spentTime} seconds`);
+      alert(`Correct! Time spent: ${spentTime} seconds`);
     } else {
-      setMessage("Incorrect. Try again.");
+      alert("Incorrect. Try again.");
     }
   };
 
@@ -105,7 +105,7 @@ const AudiogamesList = () => {
       setTimer(60);
       setResponseCorrectness(0); // Reset correctness
     } else {
-      setMessage("You've reached the last question!");
+      alert("You've reached the last question!");
     }
   };
 
@@ -168,11 +168,17 @@ const AudiogamesList = () => {
       <div className="game-card">
         {audiogames.length > 0 && (
           <>
-            <h3  >{`Question ${currentQuestionIndex + 1}: ${audiogames[currentQuestionIndex].question}`}</h3>
+            <h3>{`Question ${currentQuestionIndex + 1}: ${
+              audiogames[currentQuestionIndex].question
+            }`}</h3>
             <p>Game Number: {audiogames[currentQuestionIndex].number}</p>
             <p>Question Index: {currentQuestionIndex + 1}</p>
-            <p style={{ color: 'white' }}>Response Correctness: {responseCorrectness}</p>
-            <p style={{ color: 'white' }}>Time Taken to Answer: {spentTime} seconds</p>
+            <p style={{ color: "white" }}>
+              Response Correctness: {responseCorrectness}
+            </p>
+            <p style={{ color: "white" }}>
+              Time Taken to Answer: {spentTime} seconds
+            </p>
 
             {/* Play speed selector */}
             <label htmlFor="speed-select">Playback Speed:</label>
@@ -180,7 +186,12 @@ const AudiogamesList = () => {
               id="speed-select"
               value={playSpeed}
               onChange={(e) => setPlaySpeed(parseFloat(e.target.value))}
-              style={{ backgroundColor: "#f7d3f7", color: "#512a6b", borderRadius: "10px", padding: "5px" }}
+              style={{
+                backgroundColor: "#f7d3f7",
+                color: "#512a6b",
+                borderRadius: "10px",
+                padding: "5px",
+              }}
             >
               <option value="0.5">0.5x</option>
               <option value="1">1x</option>
@@ -192,7 +203,9 @@ const AudiogamesList = () => {
             <button
               className="play-audio"
               onClick={() =>
-                playAudio(`Simon says ${audiogames[currentQuestionIndex].question}`)
+                playAudio(
+                  `Simon says ${audiogames[currentQuestionIndex].question}`
+                )
               }
               style={{
                 backgroundColor: "#ffb3c1",
@@ -205,40 +218,35 @@ const AudiogamesList = () => {
               Play Question Audio
             </button>
 
-            <div className="timer" style={{ fontSize: "20px", color: "#ff6f61" }}>
+            <div
+              className="timer"
+              style={{ fontSize: "20px", color: "#ff6f61" }}
+            >
               <p>Time Left: {timer} seconds</p>
             </div>
 
-            <div className="answers" style={{ marginTop: "20px" }}>
+            <div className="answer_container" style={{ marginTop: "20px" }}>
               {audiogames[currentQuestionIndex].answers.map((answer, index) => (
-                <div key={index} className="answer-container" style={{ marginBottom: "15px" }}>
-                  <button
-                    className="answer"
+                <div key={index} className="">
+                  <div
                     onClick={() =>
                       handleAnswerSelection(
                         answer,
                         audiogames[currentQuestionIndex].correct_answer
                       )
                     }
-                    style={{
-                      backgroundColor: "#b5e4d6",
-                      color: "#512a6b",
-                      borderRadius: "15px",
-                      padding: "10px",
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                    }}
+                    className="answer_card"
                   >
-                    {answer}
-                  </button>
-                  {audiogames[currentQuestionIndex].images[index] && (
-                    <img
-                      src={audiogames[currentQuestionIndex].images[index]}
-                      alt={`Answer ${index + 1}`}
-                      className="answer-image"
-                      style={{ marginTop: "10px", borderRadius: "10px" }}
-                    />
-                  )}
+                    {audiogames[currentQuestionIndex].images[index] && (
+                      <img
+                        src={audiogames[currentQuestionIndex].images[index]}
+                        alt={`Answer ${index + 1}`}
+                        className="answer_image"
+                      />
+                    )}
+                    <br />
+                    <p >{answer}</p>
+                  </div>
                 </div>
               ))}
             </div>

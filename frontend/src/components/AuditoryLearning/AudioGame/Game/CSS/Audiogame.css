@@ -104,3 +104,26 @@ button:disabled {
   border-color: #ffb3c1;
   box-shadow: 0 0 8px rgba(255, 179, 193, 0.6);
 }
+.answer_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25px 12%;
+}
+.answer_card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #512a6b;
+  gap: 5px;
+  width: 250px;
+  font-size: 20px;
+  text-transform: uppercase;
+  flex-direction: column;
+}
+.answer_image{
+  width: 100%;
+  height: 160px;
+}
