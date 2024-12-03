@@ -168,11 +168,11 @@ const AudiogamesList = () => {
       <div className="game-card">
         {audiogames.length > 0 && (
           <>
-            <h3>{`Question ${currentQuestionIndex + 1}: ${audiogames[currentQuestionIndex].question}`}</h3>
+            <h3  >{`Question ${currentQuestionIndex + 1}: ${audiogames[currentQuestionIndex].question}`}</h3>
             <p>Game Number: {audiogames[currentQuestionIndex].number}</p>
             <p>Question Index: {currentQuestionIndex + 1}</p>
-            <p>Response Correctness: {responseCorrectness}</p>
-            <p>Time Taken to Answer: {spentTime} seconds</p>
+            <p style={{ color: 'white' }}>Response Correctness: {responseCorrectness}</p>
+            <p style={{ color: 'white' }}>Time Taken to Answer: {spentTime} seconds</p>
 
             {/* Play speed selector */}
             <label htmlFor="speed-select">Playback Speed:</label>

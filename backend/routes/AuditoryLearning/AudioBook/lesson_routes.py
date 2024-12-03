@@ -8,7 +8,7 @@ def add_lesson():
     db = Database()
     try:
         lesson_data = request.get_json()
-        if not all(key in lesson_data for key in (lnumber,"title", "text", "questions")):
+        if not all(key in lesson_data for key in ("lnumber","title", "text", "questions")):
             return jsonify({"error": "Missing required fields"}), 400
         inserted_id = db.insert_data("audio_lessons", lesson_data)
         return jsonify({"message": "Lesson added successfully", "id": str(inserted_id)}), 201
