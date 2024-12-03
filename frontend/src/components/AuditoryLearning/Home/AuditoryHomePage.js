@@ -20,9 +20,19 @@ import En from "./images/Envirnment.png"
 
 function AuditoryHomePage() {
   const navigate = useNavigate(); 
+
   const handleStartNowClick = () => {
     navigate('/AllLessons');
   };
+
+  const handleAdminNowClick = () => {
+    navigate('/AdminHome');
+  };
+
+  const handleAnalysisNowClick = () => {
+    navigate('/LessonResults');
+  };
+
   return (
     <div className="auditory_container">
       {/* Sidebar */}
@@ -70,8 +80,15 @@ function AuditoryHomePage() {
             <div className="auditory_start_button_container">
     <button 
     onClick={handleStartNowClick}
-    className="auditory_start_button">Start Now</button>
+    className="auditory_start_button">Start Now</button>&nbsp;&nbsp;
+        <button 
+    onClick={handleAdminNowClick}
+    className="auditory_start_button">Admin Panel</button>&nbsp;&nbsp;
+        <button 
+    onClick={handleAnalysisNowClick}
+    className="auditory_start_button">Analysis Part</button>
   </div>
+  
           </div>
 
           <div className="auditory_welcome_image">
