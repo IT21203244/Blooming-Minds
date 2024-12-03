@@ -8,16 +8,18 @@ function AddRecord() {
         description: '',
         actualProgress: '',
         randomImageName: '',
+        timeSpent: '',
     });
 
-    // Fetch data from localStorage when the component mounts
+    // Fetch data from localStorage when the component mounts 
     useEffect(() => {
         const savedActualProgress = localStorage.getItem('actualProgress') || '';
         const savedRandomImageName = localStorage.getItem('randomImageName') || '';
-
+        const savedTimeSpent = localStorage.getItem('timeSpent') || '';
         setFormData({
             actualProgress: savedActualProgress,
             randomImageName: savedRandomImageName,
+            timeSpent: savedTimeSpent,
         });
     }, []);
 
@@ -40,6 +42,7 @@ function AddRecord() {
             description: formData.description,
             actualProgress: formData.actualProgress,
             randomImageName: formData.randomImageName,
+            timeSpent: formData.timeSpent,
         };
 
         try {
@@ -70,7 +73,7 @@ function AddRecord() {
             <div>
                 <p className='topic_from_name'>Save Student Data</p>
                 <form className='from_add_data' onSubmit={handleSubmit}>
-                <label className="lable_from_kin">Student ID</label><br />
+                    <label className="lable_from_kin">Student ID</label><br />
                     <input
                         type="text"
                         name="studentID"
@@ -99,15 +102,15 @@ function AddRecord() {
                         required
                     /><br />
 
-                    <label className="lable_from_kin">Description</label><br />
-                    <textarea
-                        name="description"
-                        className="input_from_kin"
-                        rows={5}
-                        value={formData.description}
-                        onChange={handleChange}
-                    /><br />
 
+                    <label className="lable_from_kin">Spent Time to finish the task (In Seconds)</label><br />
+                    <input
+                        type="text"
+                        name="timeSpent"
+                        className="input_from_kin"
+                        readOnly
+                        value={formData.timeSpent}
+                    /><br />
                     <label className="lable_from_kin">Progress (%)</label><br />
                     <input
                         type="text"
@@ -125,7 +128,14 @@ function AddRecord() {
                         readOnly
                         value={formData.randomImageName}
                     /><br />
-
+                    <label className="lable_from_kin">Description</label><br />
+                    <textarea
+                        name="description"
+                        className="input_from_kin"
+                        rows={5}
+                        value={formData.description}
+                        onChange={handleChange}
+                    /><br />
                     <button type="submit" className='save_btn_from'>Save</button>
                 </form>
             </div>
