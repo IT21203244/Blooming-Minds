@@ -32,4 +32,5 @@ __pycache__/
 
 # Ignore specific file
 python-311.py
+audiogame_routes.cpython-311.pyc
 cpython-311.pyc
