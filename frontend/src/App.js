@@ -14,6 +14,7 @@ import LessonResults from "./components/AuditoryLearning/Analysis/GameResult/Les
 import AdminHome from "./components/AuditoryLearning/Admin_Panel/AdminHome/AdminHome"; 
 import Transcription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
 
+
 /*Knesthetic Learning*/
 import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDetection";
 import KnestheticHome from "./components/KnestheticLearning/KnestheticHome/KnestheticHome";
@@ -21,6 +22,8 @@ import LetterQuest from "./components/KnestheticLearning/LetterQuest/LetterQuest
 import Result from "./components/KnestheticLearning/LetterQuest/Result";
 import AddRecord from "./components/KnestheticLearning/LetterQuest/AddRecord";
 import AdminDashKnesthetic from "./components/KnestheticLearning/Admin/AdminDashKnesthetic";
+import RecordAnalysisKnesthetic from "./components/KnestheticLearning/Admin/RecordAnalysisKnesthetic";
+import SkilCompareKnesthetic from "./components/KnestheticLearning/Admin/SkilCompareKnesthetic";
 
 
 const App = () => {
@@ -49,6 +52,8 @@ const App = () => {
           <Route path="/result" element={<Result />} />
           <Route path="/saveRecordLetter" element={<AddRecord />} />
           <Route path="/KnestheticAdmin" element={<AdminDashKnesthetic />} />
+          <Route path="/recordAnalysisKnesthetic" element={<RecordAnalysisKnesthetic />} />
+          <Route path="/skilCompareKnesthetic" element={<SkilCompareKnesthetic />} />
         </Routes>
       </React.Fragment>
     </div>

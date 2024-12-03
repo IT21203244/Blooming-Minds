@@ -31,6 +31,109 @@
   border: none;
   cursor: pointer;
 }
+.search_bar_kin_admin {
+  width: 300px;
+  border: 1px solid #2b69b2;
+  font-size: 15px;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+.generate_report_btn {
+  padding: 5px 15px;
+  background-color: #2b69b2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.action_set_kin_admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 25px 0;
+}
+.nav_bar_kin_admin {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 25px;
+  justify-content: end;
+}
+.kin_admin_nav {
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 500;
+}
+.kin_admin_nav_active {
+  color: #2b69b2;
+  font-weight: bold;
+}
+
+.name_task_king {
+  font-weight: 600;
+  font-size: 25px;
+}
+
+.vertical-bar-chart-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  height: 500px; /* Full chart height */
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  margin-right: 10px;
+}
+
+.y-tick {
+  font-size: 12px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end; /* Align bars to the bottom */
+  gap: 20px; /* Space between bars */
+  flex-grow: 1;
+  position: relative;
+}
+
+.bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bar {
+  width: 40px; /* Fixed bar width */
+  border-radius: 4px 4px 0 0; /* Rounded top edges */
+  transition: height 0.3s ease-in-out;
+}
+
+.x-label {
+  margin-top: 10px;
+  font-size: 12px;
+  text-align: center;
+  word-break: break-word; /* Handle long task names */
+}
+
+.chart:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #000; /* X-axis */
+}
 @media (max-width: 990px) {
   .student-records-table {
     width: 100%;

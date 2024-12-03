@@ -8,18 +8,24 @@ function AddRecord() {
         description: '',
         actualProgress: '',
         randomImageName: '',
+        timeSpent: '',
     });
 
-    // Fetch data from localStorage when the component mounts
+    // Fetch data from localStorage when the component mounts 
     useEffect(() => {
         const savedActualProgress = localStorage.getItem('actualProgress') || '';
         const savedRandomImageName = localStorage.getItem('randomImageName') || '';
-
+        const savedTimeSpent = localStorage.getItem('timeSpent') || '';
+        const todayDate = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    
         setFormData({
             actualProgress: savedActualProgress,
             randomImageName: savedRandomImageName,
+            timeSpent: savedTimeSpent,
+            date: todayDate, // Set today's date
         });
     }, []);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,8 +37,6 @@ function AddRecord() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-
         const studentData = {
             studentID: formData.studentID,
             studentName: formData.studentName,
@@ -40,6 +44,8 @@ function AddRecord() {
             description: formData.description,
             actualProgress: formData.actualProgress,
             randomImageName: formData.randomImageName,
+            timeSpent: formData.timeSpent,
+            date: formData.date,
         };
 
         try {
@@ -55,7 +61,7 @@ function AddRecord() {
 
             if (response.ok) {
                 alert('Student record added successfully');
-                window.location.href = '/LetterQuest'
+                window.location.href = '/KnestheticHome'
             } else {
                 alert('Error: ' + result.error);
             }
@@ -70,7 +76,7 @@ function AddRecord() {
             <div>
                 <p className='topic_from_name'>Save Student Data</p>
                 <form className='from_add_data' onSubmit={handleSubmit}>
-                <label className="lable_from_kin">Student ID</label><br />
+                    <label className="lable_from_kin">Student ID</label><br />
                     <input
                         type="text"
                         name="studentID"
@@ -79,6 +85,51 @@ function AddRecord() {
                         onChange={handleChange}
                         required
                     /><br />
+                    <div className='input_row'>
+                        <div>
+                            <label className="lable_from_kin">Spent Time (In Seconds)</label><br />
+                            <input
+                                type="text"
+                                name="timeSpent"
+                                className="input_from_kin"
+                                readOnly
+                                value={formData.timeSpent}
+                            /><br />
+                        </div>
+                        <div>
+                            <label className="lable_from_kin">Progress (%)</label><br />
+                            <input
+                                type="text"
+                                name="actualProgress"
+                                className="input_from_kin"
+                                readOnly
+                                value={formData.actualProgress}
+                            /><br />
+                        </div>
+                    </div>
+                    <div className='input_row'>
+                        <div>
+                            <label className="lable_from_kin">Task Name</label><br />
+                            <input
+                                type="text"
+                                name="randomImageName"
+                                className="input_from_kin"
+                                readOnly
+                                value={formData.randomImageName}
+                            /><br />
+                        </div>
+                        <div>
+                            <label className="lable_from_kin">Date</label><br />
+                            <input
+                                type="text"
+                                name="date"
+                                className="input_from_kin"
+                                readOnly
+                                value={formData.date}
+                            /><br />
+                        </div>
+                    </div>
+
                     <label className="lable_from_kin">Student Name</label><br />
                     <input
                         type="text"
@@ -107,25 +158,6 @@ function AddRecord() {
                         value={formData.description}
                         onChange={handleChange}
                     /><br />
-
-                    <label className="lable_from_kin">Progress (%)</label><br />
-                    <input
-                        type="text"
-                        name="actualProgress"
-                        className="input_from_kin"
-                        readOnly
-                        value={formData.actualProgress}
-                    /><br />
-
-                    <label className="lable_from_kin">Task Name</label><br />
-                    <input
-                        type="text"
-                        name="randomImageName"
-                        className="input_from_kin"
-                        readOnly
-                        value={formData.randomImageName}
-                    /><br />
-
                     <button type="submit" className='save_btn_from'>Save</button>
                 </form>
             </div>
