@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 function SkilCompareKnesthetic() {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
@@ -15,7 +16,6 @@ function SkilCompareKnesthetic() {
         const result = await response.json();
         if (response.ok) {
           setStudents(result.students);
-          setFilteredStudents(result.students); // Set all students initially
         } else {
           console.error(result.error);
         }
@@ -40,6 +40,52 @@ function SkilCompareKnesthetic() {
     }
   };
 
+  // Analyze data to get task attempts and progress
+  const analyzeData = () => {
+    const taskAttempts = {};
+
+    filteredStudents.forEach((student) => {
+      // Calculate task attempts
+      const taskName = student.randomImageName;
+      const progress = student.actualProgress;
+
+      if (!taskAttempts[taskName]) {
+        taskAttempts[taskName] = [];
+      }
+      taskAttempts[taskName].push(progress); // Add the progress of each attempt for the task
+    });
+
+    return taskAttempts;
+  };
+
+  const taskAttempts = analyzeData();
+  const handleDownloadPDF = () => {
+    // Select the main container with the table and cards
+    const input = document.querySelector('.pdf_continer');
+
+    if (!input) {
+      alert('No data available to download!');
+      return;
+    }
+
+    // Use html2canvas to render the container into a canvas
+    html2canvas(input, {
+      scale: 2, // Improves resolution
+      useCORS: true, // Enables cross-origin content
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png'); // Convert canvas to image
+      const pdf = new jsPDF('p', 'mm', 'a4'); // Create a new PDF document
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight); // Add image to the PDF
+
+      pdf.save('Student_Records.pdf'); // Save the PDF
+    }).catch((error) => {
+      console.error('Error generating PDF:', error);
+    });
+  };
   return (
     <div>
       <div className='nav_bar_kin_admin main_nav'>
@@ -55,26 +101,59 @@ function SkilCompareKnesthetic() {
         </div>
       </div>
       <div className="student-records-container">
-        <h2 className='table_name'>Student Records</h2>
-        
-        {/* Input field to enter studentID */}
-        <input
-          type="text"
-          placeholder="Enter Student ID"
-          value={searchID}
-          onChange={(e) => setSearchID(e.target.value)} // Update search ID as user types
-          className="search-input"
-        />
-        
-        {/* Compare Button */}
-        <button onClick={handleSearch} className="compare-btn">Compare</button>
+        <h2 className='table_name'>compare Student Records</h2>
+
+        <div className='compir_sectionn_main'>
+          <div className='compir_sectionn'>
+            {/* Input field to enter studentID */}
+            <input
+              type="text"
+              placeholder="Enter Student ID"
+              value={searchID}
+              onChange={(e) => setSearchID(e.target.value)} // Update search ID as user types
+              className="search_input_compair"
+            />
+            <button onClick={handleSearch} className="compare_btn">Compare</button>
+          </div>
+          <button onClick={handleDownloadPDF} className="download_btn_king">Download PDF</button>
+        </div>
+
+      </div>
+      <div className='pdf_continer'>
+     
+        {filteredStudents.length > 0 && (
+          <p className='name_data_stdn'>Student ID : {filteredStudents[0].studentID}</p>
+        )}
+        <div className="task-attempts">
+          <div className='atempts_card_continer'>
+            {Object.entries(taskAttempts).map(([taskName, attempts], index) => (
+              <div className='atempts_card' key={taskName}>
+                <h4 className='tsk_name_card'>{taskName}</h4>
+                <div>
+                  {attempts.map((progress, attemptIndex) => (
+                    <div key={attemptIndex}>
+                      <div className='bar_head_set'>
+                        <p> attempt {attemptIndex + 1}</p>
+                        <p>{progress}%</p>
+                      </div>
+                      <div className="progress-bar-container">
+                        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {loading ? (
-          <div className="loading-message"></div>
+          <div className="loading-message">Loading...</div>
         ) : (
           isSearched && (
             <div>
-              {/* Display filtered students only after search */}
+
+
               <table className="student-records-table">
                 <thead>
                   <tr>
