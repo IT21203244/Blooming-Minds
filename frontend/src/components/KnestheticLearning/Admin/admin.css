@@ -153,9 +153,20 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
+.select_date {
+  width: 200px;
+  padding: 3px 15px;
+  border: 1px solid #2b69b2;
+  border-radius: 3px;
+}
+.main_sectionfirst{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .card_play {
   border: 1px solid #2b69b2;
-  width: 200px;
+  width: 320px;
   height: 120px;
   border-radius: 2px;
   cursor: pointer;
@@ -168,7 +179,7 @@
   font-weight: 600;
   color: #2b69b2;
 }
-.tsk_data{
+.tsk_data {
   text-transform: capitalize;
   font-weight: 500;
 }
