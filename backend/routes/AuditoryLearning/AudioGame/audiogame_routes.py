@@ -75,6 +75,41 @@ def get_audiogame(game_id):
     finally:
         db.close_connection()
 
+@audiogame_routes.route("/get_audiogame_results", methods=["GET"])
+def get_audiogame_results():
+    db = GameDatabase()
+    try:
+        # Fetch all audiogame results from the database
+        results = db.get_audiogame_results()  # Fetch results specifically from the audiogame_results collection
+        if not results:
+            return jsonify({"message": "No audiogame results found"}), 404
+        return jsonify({"audiogame_results": results}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
+
+
+# New route to handle adding audiogame analysis
+@audiogame_routes.route("/add_audiogame_analysis", methods=["POST"])
+def add_audiogame_analysis():
+    db = GameDatabase()
+    try:
+        analysis_data = request.get_json()
+        required_fields = [
+            "user_id", "session_id", "question_id", "response_correctness", 
+            "response_time", 
+        ]
+        # Check if all required fields are present
+        if not all(field in analysis_data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+        # Insert the analysis data into the database
+        analysis_id = db.insert_analysis(analysis_data)
+        return jsonify({"message": "Audiogame analysis added successfully", "id": analysis_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
 
 @audiogame_routes.route("/add_audiogame_result", methods=["POST"])
 def add_audiogame_result():
