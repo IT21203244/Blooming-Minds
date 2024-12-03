@@ -4,6 +4,10 @@ import Clap from './img/clap.jpg';
 import Cry from './img/cry.jpg';
 import Smile from './img/smile.jpg';
 import WinImage from './img/win.png';
+import Jump from './img/jump.jpg';
+import Run from './img/run.jpg';
+import Think from './img/think.jpg';
+import Logout from './img/logout.png'
 import Sad from './img/sad.png';
 import './letter.css';
 
@@ -12,6 +16,9 @@ function LetterQuest() {
     const images = [
         { name: 'Clap', src: Clap },
         { name: 'Cry', src: Cry },
+        { name: 'Think', src: Think },
+        { name: 'Jump', src: Jump },
+        { name: 'Run', src: Run },
         { name: 'Smile', src: Smile }
     ];
 
@@ -110,17 +117,19 @@ function LetterQuest() {
         const timeSpent = calculateTimeSpent();
         const remainingTime = timeLeft;
         const progress = calculateProgress();
-    
+
         // Navigate to the result page with the progress data and image info
-        navigate('/result', { state: { 
-            timeSpent, 
-            remainingTime, 
-            progress, 
-            randomImageName: randomImage.name,  // Pass the image name
-            randomImageSrc: randomImage.src     // Pass the image source
-        } });
+        navigate('/result', {
+            state: {
+                timeSpent,
+                remainingTime,
+                progress,
+                randomImageName: randomImage.name,  // Pass the image name
+                randomImageSrc: randomImage.src     // Pass the image source
+            }
+        });
     };
-    
+
 
     return (
         <div className='main_continer'>
@@ -184,6 +193,9 @@ function LetterQuest() {
                         )}
                     </div>
                 </div>
+            </div>
+            <div className='admin_btn' onClick={() => (window.location.href = '/KnestheticHome')}>
+                <img src={Logout} alt='admin icon' className='admin_acion' />
             </div>
         </div>
     );
