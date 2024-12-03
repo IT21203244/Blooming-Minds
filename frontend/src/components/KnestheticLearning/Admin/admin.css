@@ -31,6 +31,44 @@
   border: none;
   cursor: pointer;
 }
+.search_bar_kin_admin {
+  width: 300px;
+  border: 1px solid #2b69b2;
+  font-size: 15px;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+.generate_report_btn {
+  padding: 5px 15px;
+  background-color: #2b69b2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.action_set_kin_admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 25px 0;
+}
+.nav_bar_kin_admin {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 25px;
+  justify-content: end;
+}
+.kin_admin_nav {
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 500;
+}
+.kin_admin_nav_active {
+  color: #2b69b2;
+  font-weight: bold;
+}
 @media (max-width: 990px) {
   .student-records-table {
     width: 100%;
