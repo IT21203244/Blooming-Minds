@@ -147,7 +147,7 @@ const LessonPage = () => {
               const userTranscription = response.data.transcription;
               setTranscription(userTranscription);
 
-              const correctAnswer = lesson.questions[questionIndex]?.answer;
+              const correctAnswer = lesson.questions[questionIndex-1]?.answer;
               if (userTranscription.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
                 setFeedback("Correct! Well done.");
                 setTimeout(() => {

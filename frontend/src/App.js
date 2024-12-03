@@ -11,7 +11,7 @@ import LessonPage from "./components/AuditoryLearning/AudioBook/Lessons/LessonPa
 import InsertAudioGame from "./components/AuditoryLearning/Admin_Panel/InsertGame/AudiogameForm";
 import AllAudioGames from "./components/AuditoryLearning/AudioGame/Game/Audiogame";
 import LessonResults from "./components/AuditoryLearning/Analysis/GameResult/LessonResults";
-
+import AdminHome from "./components/AuditoryLearning/Admin_Panel/AdminHome/AdminHome"; 
 
 
 /*Knesthetic Learning*/
@@ -32,6 +32,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           {/* Auditory Learning*/}
           <Route path="/AuditoryHomePage" element={<AuditoryHomePage />} />
+          <Route path="/AdminHome" element={<AdminHome />} />
           <Route path="/AudioTranscription" element={<AudioTranscription />} />
           <Route path="/InsertLesson" element={<InsertLesson />} />
           <Route path="/AllLessons" element={<AllLessons />} />
