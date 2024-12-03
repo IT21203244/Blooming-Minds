@@ -20,7 +20,7 @@ function Result() {
         // Save the data to local storage
         localStorage.setItem("actualProgress", actualProgress);
         localStorage.setItem("randomImageName", randomImageName);
-
+        localStorage.setItem("timeSpent", timeSpent);
         window.location.href = '/saveRecordLetter';
     };
     return (
