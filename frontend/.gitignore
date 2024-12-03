@@ -32,4 +32,4 @@ __pycache__/
 
 # Ignore specific file
 python-311.py
-cpython-311.py
+cpython-311.pyc
