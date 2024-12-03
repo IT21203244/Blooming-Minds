@@ -69,6 +69,71 @@
   color: #2b69b2;
   font-weight: bold;
 }
+
+.name_task_king {
+  font-weight: 600;
+  font-size: 25px;
+}
+
+.vertical-bar-chart-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  height: 500px; /* Full chart height */
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  margin-right: 10px;
+}
+
+.y-tick {
+  font-size: 12px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end; /* Align bars to the bottom */
+  gap: 20px; /* Space between bars */
+  flex-grow: 1;
+  position: relative;
+}
+
+.bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bar {
+  width: 40px; /* Fixed bar width */
+  border-radius: 4px 4px 0 0; /* Rounded top edges */
+  transition: height 0.3s ease-in-out;
+}
+
+.x-label {
+  margin-top: 10px;
+  font-size: 12px;
+  text-align: center;
+  word-break: break-word; /* Handle long task names */
+}
+
+.chart:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #000; /* X-axis */
+}
 @media (max-width: 990px) {
   .student-records-table {
     width: 100%;
