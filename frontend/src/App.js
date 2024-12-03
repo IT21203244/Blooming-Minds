@@ -10,7 +10,7 @@ import AllLessons from "./components/AuditoryLearning/AudioBook/Lessons/LessonsL
 import LessonPage from "./components/AuditoryLearning/AudioBook/Lessons/LessonPage";
 import InsertAudioGame from "./components/AuditoryLearning/Admin_Panel/InsertGame/AudiogameForm";
 import AllAudioGames from "./components/AuditoryLearning/AudioGame/Game/Audiogame";
-import LessonResults from "./components/AuditoryLearning/AudioGame/LessonResults/LessonResults";
+import LessonResults from "./components/AuditoryLearning/Analysis/GameResult/LessonResults";
 
 
 

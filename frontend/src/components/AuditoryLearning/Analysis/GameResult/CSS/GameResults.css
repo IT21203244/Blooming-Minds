@@ -1,0 +1,153 @@
+/* Game Results Container */
+.game-results-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Page Title */
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Search Container */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.user-id-input {
+  width: 300px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.user-id-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Results Table */
+.results-table-container {
+  margin-top: 20px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.results-table th,
+.results-table td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.results-table th {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.results-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Error Message */
+.error-message {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+}
+
+/* No Results Message */
+.no-results-message {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Summary Container */
+.summary-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.session-summary {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.session-summary:last-child {
+  border-bottom: none;
+}
+
+.session-summary h4 {
+  font-size: 20px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.session-summary p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.session-summary h5 {
+  font-size: 18px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.session-summary ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  color: #444;
+}
+
+/* Total Time */
+.total-time {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .user-id-input {
+    width: 100%;
+  }
+
+  .results-table th,
+  .results-table td {
+    font-size: 14px;
+  }
+
+  .session-summary h4 {
+    font-size: 18px;
+  }
+
+  .session-summary p {
+    font-size: 14px;
+  }
+}
