@@ -1,10 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  PointElement,
+} from "chart.js";
 import "./CSS/GameResults.css";
+
+// Register the necessary elements for all charts
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  ArcElement, // Register for Pie chart
+  Title,
+  Tooltip,
+  Legend,
+  PointElement
+);
 
 const GameResults = () => {
   const [gameResults, setGameResults] = useState([]);
-  const [error, setError] = useState(null);
   const [userId, setUserId] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [userSessions, setUserSessions] = useState({});
@@ -20,7 +45,7 @@ const GameResults = () => {
         setFilteredResults(response.data.audiogame_results);
         calculateSummaries(response.data.audiogame_results);
       } catch (err) {
-        setError("An error occurred while fetching the game results.");
+        console.error("Error fetching game results:", err);
       }
     };
 
@@ -32,9 +57,7 @@ const GameResults = () => {
     setUserId(id);
 
     if (id) {
-      const filtered = gameResults.filter(
-        (result) => result.user_id === id
-      );
+      const filtered = gameResults.filter((result) => result.user_id === id);
       setFilteredResults(filtered);
       calculateSummaries(filtered);
     } else {
@@ -56,8 +79,10 @@ const GameResults = () => {
         sessionData[sessionNumber] = {
           totalQuestions: 0,
           correctResponses: 0,
+          incorrectResponses: 0,
           totalResponseTime: 0,
-          questions: [],
+          speedOfAnswering: 0,
+          memory: 0,
         };
       }
 
@@ -66,16 +91,14 @@ const GameResults = () => {
 
       if (result.response_correctness) {
         sessionData[sessionNumber].correctResponses += 1;
+      } else {
+        sessionData[sessionNumber].incorrectResponses += 1;
       }
 
-      sessionData[sessionNumber].questions.push({
-        questionNumber: result.question_number,
-        responseCorrectness: result.response_correctness,
-        responseTime: result.response_time,
-      });
+      sessionData[sessionNumber].speedOfAnswering += result.response_time;
+      sessionData[sessionNumber].memory += result.response_correctness ? 1 : 0;
     });
 
-    // Calculate average response time for each session
     for (const sessionNumber in sessionData) {
       const session = sessionData[sessionNumber];
       session.averageResponseTime = (
@@ -87,39 +110,102 @@ const GameResults = () => {
     setTotalSpentTime(totalTime);
   };
 
-  const handleInsertAnalysis = async (result) => {
-    try {
-      const response = await axios.post("http://localhost:5000/api/add_audiogame_analysis", {
-        user_id: result.user_id,
-        session_id: result.lesson_number,
-        question_id: result.question_number,
-        response_correctness: result.response_correctness,
-        response_time: result.response_time,
-      });
-  
-      // Check if the response is valid
-      if (response && response.data) {
-        console.log("Analysis inserted successfully:", response.data);
-        // Optionally, you can show a success message here
-      } else {
-        console.error("Invalid response:", response);
-        alert("Error: Invalid response from the server.");
-      }
-    } catch (error) {
-      console.error("Error inserting analysis:", error);
-      alert("Error occurred while inserting the analysis.");
-    }
-  };
-  
+  const generateSessionChart = (sessionNumber) => {
+    const session = userSessions[sessionNumber];
+    if (!session) return null;
 
-  if (error) {
-    return <div className="error-message">{error}</div>;
-  }
+    return (
+      <Bar
+        data={{
+          labels: ["Speed of Answering", "Memory"],
+          datasets: [
+            {
+              label: `Session ${sessionNumber} Metrics`,
+              data: [
+                session.speedOfAnswering / session.totalQuestions, 
+                session.memory, 
+              ],
+              backgroundColor: ["#36a2eb", "#ff6384"],
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: `Session ${sessionNumber}` },
+          },
+        }}
+      />
+    );
+  };
+
+  const generateComparisonChart = () => {
+    const sessionNumbers = Object.keys(userSessions);
+    return (
+      <Line
+        data={{
+          labels: sessionNumbers,
+          datasets: [
+            {
+              label: "Average Speed of Answering",
+              data: sessionNumbers.map(
+                (num) =>
+                  userSessions[num].speedOfAnswering /
+                  userSessions[num].totalQuestions
+              ),
+              borderColor: "#36a2eb",
+              tension: 0.3,
+            },
+            {
+              label: "Memory Score",
+              data: sessionNumbers.map((num) => userSessions[num].memory),
+              borderColor: "#ff6384",
+              tension: 0.3,
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: "Comparison Across Sessions" },
+          },
+        }}
+      />
+    );
+  };
+
+  const generatePieChart = (sessionNumber) => {
+    const session = userSessions[sessionNumber];
+    if (!session) return null;
+
+    return (
+      <Pie
+        data={{
+          labels: ["Correct", "Incorrect"],
+          datasets: [
+            {
+              label: `Session ${sessionNumber} Correctness`,
+              data: [session.correctResponses, session.incorrectResponses],
+              backgroundColor: ["#36a2eb", "#ff6384"],
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: `Session ${sessionNumber} Correctness` },
+          },
+        }}
+      />
+    );
+  };
 
   return (
     <div className="game-results-container">
       <h2 className="page-title">Audiogame Results</h2>
-
       <div className="search-container">
         <input
           type="text"
@@ -131,90 +217,59 @@ const GameResults = () => {
       </div>
 
       {filteredResults.length === 0 ? (
-        <p className="no-results-message">
-          No game results found for the entered user ID.
-        </p>
+        <p>No results found for the entered user ID.</p>
       ) : (
-        <div className="results-table-container">
-          <table className="results-table">
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>Session Number</th>
-                <th>Question Number</th>
-                <th>Response Correctness</th>
-                <th>Response Time</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredResults.map((result) => (
-                <tr key={result._id}>
-                  <td>{result.user_id}</td>
-                  <td>{result.lesson_number}</td>
-                  <td>{result.question_number}</td>
-                  <td>
-                    {result.response_correctness ? "Correct" : "Incorrect"}
-                  </td>
-                  <td>{result.response_time}s</td>
-                  <td>
-                    <button
-                      className="insert-btn"
-                      onClick={() => handleInsertAnalysis(result)}
-                    >
-                      Insert
-                    </button>
-                  </td>
+        <>
+          <div className="results-table-container">
+            <table className="results-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Session Number</th>
+                  <th>Question Number</th>
+                  <th>Response Correctness</th>
+                  <th>Response Time</th>
                 </tr>
+              </thead>
+              <tbody>
+                {filteredResults.map((result) => (
+                  <tr key={result._id}>
+                    <td>{result.user_id}</td>
+                    <td>{result.lesson_number}</td>
+                    <td>{result.question_number}</td>
+                    <td>{result.response_correctness ? "Correct" : "Incorrect"}</td>
+                    <td>{result.response_time}s</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="results-summary-container">
+            <h3>Summary for User ID: {userId}</h3>
+            <div className="summary-container">
+              {Object.keys(userSessions).map((sessionNumber) => (
+                <div className="session-summary" key={sessionNumber}>
+                  <h4>Session {sessionNumber}</h4>
+                  <p>Total Questions: {userSessions[sessionNumber].totalQuestions}</p>
+                  <p>
+                    Average Response Time:{" "}
+                    {userSessions[sessionNumber].averageResponseTime}s
+                  </p>
+                  <p>Correct Responses: {userSessions[sessionNumber].correctResponses}</p>
+                  <p>Incorrect Responses: {userSessions[sessionNumber].incorrectResponses}</p>
+                  <div className="chart-container">
+                    {generatePieChart(sessionNumber)}
+                  </div>
+                  <div className="chart-container">
+                    {generateSessionChart(sessionNumber)}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-
-          <div className="summary-container">
-            <h3>Session-wise Summary</h3>
-            {Object.keys(userSessions).map((sessionNumber) => (
-              <div className="session-summary" key={sessionNumber}>
-                <h4>Session {sessionNumber}</h4>
-                <p>
-                  Total Questions:{" "}
-                  {userSessions[sessionNumber].totalQuestions}
-                </p>
-                <p>
-                  Correct Responses:{" "}
-                  {userSessions[sessionNumber].correctResponses}
-                </p>
-                <p>
-                  Average Response Time:{" "}
-                  {userSessions[sessionNumber].averageResponseTime}s
-                </p>
-                <p>
-                  Total Time Spent:{" "}
-                  {userSessions[sessionNumber].totalResponseTime.toFixed(
-                    2
-                  )}s
-                </p>
-                <h5>Questions:</h5>
-                <ul>
-                  {userSessions[sessionNumber].questions.map(
-                    (question, index) => (
-                      <li key={index}>
-                        Question {question.questionNumber}:{" "}
-                        {question.responseCorrectness
-                          ? "Correct"
-                          : "Incorrect"}{" "}
-                        ({question.responseTime}s)
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-            ))}
+              <div className="chart-container">{generateComparisonChart()}</div>
+            </div>
           </div>
-
-          <div className="total-time">
-            <h3>Total Spent Time: {totalSpentTime.toFixed(2)} seconds</h3>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
