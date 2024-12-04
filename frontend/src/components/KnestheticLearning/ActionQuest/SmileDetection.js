@@ -7,6 +7,10 @@ const SmileDetection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0); // Start with 0 so the timer doesn't start initially
   const navigate = useNavigate(); // To navigate to /home
+  const [imagePath, setImagePath] = useState('');
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [smilePercentage, setSmilePercentage] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -41,7 +45,37 @@ const SmileDetection = () => {
       console.error('Error checking video feed:', error);
     }
   };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setUploadedImage(file);
+  };
 
+  const handleUploadCheck = async () => {
+    if (!uploadedImage) {
+      setError('Please upload an image first.');
+      return;
+    }
+    setError('');
+
+    const formData = new FormData();
+    formData.append('file', uploadedImage);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/smile_check', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSmilePercentage(data.smile_percentage.toFixed(2));
+      } else {
+        setError(data.error || 'An error occurred while checking the smile.');
+      }
+    } catch (err) {
+      setError('Failed to connect to the backend.');
+    }
+  };
   return (
     <div className='main_continer'>
       <div>
@@ -70,10 +104,44 @@ const SmileDetection = () => {
             <button className='btn_start' onClick={handleStartCamera}>
               Start Camera
             </button>
+            <div>
+              <p className='main_topic'>Smile Detection</p>
+              <div className='action_card_set'>
+
+
+                <div className="camara_side">
+                  <div>
+                    <input
+                      className="file_path"
+                      type="file"
+                      onChange={handleFileChange}
+                    />
+                    <button className="upload_btn" onClick={handleUploadCheck}>
+                      Check
+                    </button>
+                    {uploadedImage && (
+                      <div>
+                        <p>Uploaded Image:</p>
+                        <img
+                          src={URL.createObjectURL(uploadedImage)}
+                          alt="Uploaded"
+                          className="uploaded_image"
+                        />
+                      </div>
+                    )}
+                    {smilePercentage !== null && (
+                      <p>Smile Percentage: {smilePercentage}%</p>
+                    )}
+                    {error && <p className="error_message">{error}</p>}
+                  </div>
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
