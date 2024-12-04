@@ -39,25 +39,49 @@ function SkilCompareKnesthetic() {
       setFilteredStudents(filtered); // Filter students by exact studentID
     }
   };
-  
 
-  // Analyze data to get task attempts and progress
+  const getColor = (progress) => {
+    if (progress >= 80) {
+      return "#4a90e2"; // Blue for 80% or above
+    } else if (progress >= 50) {
+      return "green"; // Green for 50% or above
+    } else {
+      return "red"; // Red for less than 50%
+    }
+  };
+
   const analyzeData = () => {
     const taskAttempts = {};
 
     filteredStudents.forEach((student) => {
-      // Calculate task attempts
       const taskName = student.randomImageName;
       const progress = student.actualProgress;
+      const date = student.date; // Assuming 'date' is in a sortable format like 'YYYY-MM-DD'
+      const timeSpent = student.timeSpent; // Assuming 'timeSpent' is in seconds or another sortable unit
 
       if (!taskAttempts[taskName]) {
         taskAttempts[taskName] = [];
       }
-      taskAttempts[taskName].push(progress); // Add the progress of each attempt for the task
+
+      // Store the progress along with the date and time for sorting
+      taskAttempts[taskName].push({ progress, date, timeSpent });
+    });
+
+    // Sort by date first, and then by timeSpent for entries on the same date
+    Object.keys(taskAttempts).forEach(taskName => {
+      taskAttempts[taskName].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        if (dateA.getTime() === dateB.getTime()) {
+          return a.timeSpent - b.timeSpent; // Sort by timeSpent if the dates are the same
+        }
+        return dateA.getTime() - dateB.getTime(); // Sort by date
+      });
     });
 
     return taskAttempts;
   };
+
 
   const taskAttempts = analyzeData();
   const handleDownloadPDF = () => {
@@ -121,7 +145,7 @@ function SkilCompareKnesthetic() {
 
       </div>
       <div className='pdf_continer'>
-     
+
         {filteredStudents.length > 0 && (
           <p className='name_data_stdn'>Student ID : {filteredStudents[0].studentID}</p>
         )}
@@ -131,21 +155,27 @@ function SkilCompareKnesthetic() {
               <div className='atempts_card' key={taskName}>
                 <h4 className='tsk_name_card'>{taskName}</h4>
                 <div>
-                  {attempts.map((progress, attemptIndex) => (
+                  {attempts.map((attempt, attemptIndex) => (
                     <div key={attemptIndex}>
                       <div className='bar_head_set'>
-                        <p> attempt {attemptIndex + 1}</p>
-                        <p>{progress}%</p>
+                        {/* Render attempt date and progress */}
+                        <p>Attempt {attemptIndex + 1} on {attempt.date}</p>
+                        <p>{attempt.progress}%</p>
                       </div>
                       <div className="progress-bar-container">
-                        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                        <div
+                          className="progress-bar"
+                          style={{ width: `${attempt.progress}%`, backgroundColor: getColor(attempt.progress) }}
+                        />
                       </div>
+
                     </div>
                   ))}
                 </div>
               </div>
             ))}
           </div>
+
         </div>
 
         {loading ? (
@@ -163,9 +193,12 @@ function SkilCompareKnesthetic() {
                     <th className='tble_kin_head'>Progress</th>
                     <th className='tble_kin_head'>Spent time</th>
                     <th className='tble_kin_head'>Task Name</th>
+                    <th className='tble_kin_head'>Student Enter answer</th>
                     <th className='tble_kin_head'>Age</th>
                     <th className='tble_kin_head'>Date</th>
+                    <th className='tble_kin_head'>Allocated Time</th>
                     <th className='tble_kin_head'>Description</th>
+                   
                   </tr>
                 </thead>
                 <tbody>
@@ -181,8 +214,10 @@ function SkilCompareKnesthetic() {
                         <td className='tble_kin_bd'>{student.actualProgress}%</td>
                         <td className='tble_kin_bd'>{student.timeSpent} Seconds</td>
                         <td className='tble_kin_bd'>{student.randomImageName}</td>
+                        <td className='tble_kin_bd'>{student.clickedLetters || 'Not Entered'}</td>
                         <td className='tble_kin_bd'>{student.age}</td>
                         <td className='tble_kin_bd'>{student.date}</td>
+                        <td className='tble_kin_bd'>{student.taskCompletionTime}</td>
                         <td className='tble_kin_bd'>{student.description || 'No Description'}</td>
                       </tr>
                     ))

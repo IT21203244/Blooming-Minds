@@ -77,7 +77,7 @@ function AdminDashKnesthetic() {
             `${student.timeSpent} seconds`,
             student.age,
             student.date,
-            student.clickedLetters,
+            student.clickedLetters || 'Not Entered',
             student.description || 'No Description',
         ]);
 
@@ -161,7 +161,7 @@ function AdminDashKnesthetic() {
                                             <td className='tble_kin_bd'>{student.actualProgress}%</td>
                                             <td className='tble_kin_bd'>{student.timeSpent} Seconds</td>
                                             <td className='tble_kin_bd'>{student.randomImageName}</td>
-                                            <td className='tble_kin_bd'>{student.clickedLetters}</td>
+                                            <td className='tble_kin_bd'>{student.clickedLetters || 'Not Entered'}</td>
                                             <td className='tble_kin_bd'>{student.age}</td>
                                             <td className='tble_kin_bd'>{student.date}</td>
                                             <td className='tble_kin_bd'>{student.taskCompletionTime}</td>
