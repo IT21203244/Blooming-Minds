@@ -54,7 +54,7 @@ function AdminDashKnesthetic() {
         }
     };
     const generateReport = () => {
-        const doc = new jsPDF();
+        const doc = new jsPDF("landscape");
 
         // Title of the report
         doc.setFontSize(18);
@@ -64,7 +64,7 @@ function AdminDashKnesthetic() {
 
         // Define the table column headers
         const headers = [
-            ['Student ID', 'Name', 'Progress', 'Task Name', 'Spent Time', 'Age', 'Description']
+            ['Student ID', 'Name', 'Progress', 'Task Name', 'Enterd Word', 'Spent Time', 'Age', 'Date', 'Task Allocated Time', 'Description']
         ];
 
         // Map the student data to table rows
@@ -73,8 +73,11 @@ function AdminDashKnesthetic() {
             student.studentName,
             `${student.actualProgress}%`,
             student.randomImageName,
+            student.taskCompletionTime,
             `${student.timeSpent} seconds`,
             student.age,
+            student.date,
+            student.clickedLetters,
             student.description || 'No Description',
         ]);
 
@@ -142,8 +145,10 @@ function AdminDashKnesthetic() {
                                         <th className='tble_kin_head'>Progress</th>
                                         <th className='tble_kin_head'>Spent time</th>
                                         <th className='tble_kin_head'>Task Name</th>
+                                        <th className='tble_kin_head'>Student Enter answer</th>
                                         <th className='tble_kin_head'>Age</th>
                                         <th className='tble_kin_head'>Date</th>
+                                        <th className='tble_kin_head'>Allocated Time</th>
                                         <th className='tble_kin_head'>Description</th>
                                         <th className='tble_kin_head'>Actions</th>
                                     </tr>
@@ -156,8 +161,10 @@ function AdminDashKnesthetic() {
                                             <td className='tble_kin_bd'>{student.actualProgress}%</td>
                                             <td className='tble_kin_bd'>{student.timeSpent} Seconds</td>
                                             <td className='tble_kin_bd'>{student.randomImageName}</td>
+                                            <td className='tble_kin_bd'>{student.clickedLetters}</td>
                                             <td className='tble_kin_bd'>{student.age}</td>
                                             <td className='tble_kin_bd'>{student.date}</td>
+                                            <td className='tble_kin_bd'>{student.taskCompletionTime}</td>
                                             <td className='tble_kin_bd'>{student.description || 'No Description'}</td>
                                             <td className='tble_kin_bd'>
                                                 <button

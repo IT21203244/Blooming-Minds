@@ -1,10 +1,12 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 function Result() {
-    const { state } = useLocation();
-    const { timeSpent = 0, remainingTime = 0, progress = 0, randomImageName, randomImageSrc } = state || {};
-    const actualProgress = 100 - progress;
+    // Retrieve data from localStorage
+    const actualProgress = parseInt(localStorage.getItem("actualProgress")) || 0;
+    const timeSpent = parseInt(localStorage.getItem("timeSpent")) || 0;
+    const randomImageName = localStorage.getItem("randomImageName");
+    const randomImageSrc = localStorage.getItem("randomImageSrc");
+    const userEnteredWord = localStorage.getItem("userEnteredWord");
 
     // Determine the color based on the progress percentage
     const getColor = () => {
@@ -16,13 +18,15 @@ function Result() {
             return "red"; // Red for less than 50%
         }
     };
+
     const handleSaveRecord = () => {
-        // Save the data to local storage
+        // Save the data to local storage (again for other potential uses)
         localStorage.setItem("actualProgress", actualProgress);
         localStorage.setItem("randomImageName", randomImageName);
         localStorage.setItem("timeSpent", timeSpent);
-        window.location.href = '/saveRecordLetter';
+        window.location.href = '/saveRecordLetter'; // Redirect to save record page
     };
+
     return (
         <div>
             <div>
@@ -30,7 +34,7 @@ function Result() {
                 <div className="result_container">
                     <div className="new_boc">
                         <div>
-                            <p className="topic_train">result details</p>
+                            <p className="topic_train">Result Details</p>
                             <div className="data_set_mainone">
                                 <div
                                     className="progress_circle"
@@ -40,17 +44,18 @@ function Result() {
                                 >
                                     <span className="progress_text">{actualProgress}%</span>
                                 </div>
-                                <button className="save_btn" onClick={handleSaveRecord}>Save record</button>
+                                <button className="save_btn" onClick={handleSaveRecord}>Save Record</button>
                                 <button className="next_btn" onClick={() => (window.location.href = '/LetterQuest')}>Next Task</button>
                             </div>
                         </div>
                     </div>
                     <div className="resalt_second_container">
-                        <p className="topic_train">task details</p>
+                        <p className="topic_train">Task Details</p>
                         <div className="result_image">
                             <p className="matchname">{randomImageName}</p>
                             {randomImageSrc && <img src={randomImageSrc} alt={randomImageName} className="image_resalt" />}
                         </div>
+                        <p className="user_entered_word">You Entered: {userEnteredWord}</p> {/* Display the word entered by the user */}
                     </div>
                 </div>
             </div>

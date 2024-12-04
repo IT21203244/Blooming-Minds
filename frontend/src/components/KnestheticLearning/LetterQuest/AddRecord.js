@@ -9,23 +9,30 @@ function AddRecord() {
         actualProgress: '',
         randomImageName: '',
         timeSpent: '',
+        clickedLetters: '',
+        date: '',
+        taskCompletionTime: ''  // New field to store the task completion time
     });
 
-    // Fetch data from localStorage when the component mounts 
+    // Fetch data from localStorage when the component mounts
     useEffect(() => {
         const savedActualProgress = localStorage.getItem('actualProgress') || '';
         const savedRandomImageName = localStorage.getItem('randomImageName') || '';
         const savedTimeSpent = localStorage.getItem('timeSpent') || '';
-        const todayDate = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
-    
+        const clickedLetters = localStorage.getItem('userEnteredWord') || '';
+        const todayDate = new Date().toISOString().split('T')[0];  // Get today's date
+        const taskCompletionTime = localStorage.getItem('taskCompletionTime') || '';  // Fetch the saved time
+
+        // Setting the form data state
         setFormData({
             actualProgress: savedActualProgress,
             randomImageName: savedRandomImageName,
             timeSpent: savedTimeSpent,
-            date: todayDate, // Set today's date
+            clickedLetters: clickedLetters,
+            date: todayDate,
+            taskCompletionTime: taskCompletionTime, // Set the task completion time
         });
-    }, []);
-    
+    }, []);  // This useEffect runs only once on component mount
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,6 +53,8 @@ function AddRecord() {
             randomImageName: formData.randomImageName,
             timeSpent: formData.timeSpent,
             date: formData.date,
+            clickedLetters: formData.clickedLetters,
+            taskCompletionTime: formData.taskCompletionTime,  // Send task completion time as well
         };
 
         try {
@@ -61,7 +70,7 @@ function AddRecord() {
 
             if (response.ok) {
                 alert('Student record added successfully');
-                window.location.href = '/KnestheticHome'
+                window.location.href = '/KnestheticHome';
             } else {
                 alert('Error: ' + result.error);
             }
@@ -84,6 +93,15 @@ function AddRecord() {
                         value={formData.studentID}
                         onChange={handleChange}
                         required
+                    /><br />
+                    <label className="lable_from_kin">Student Entered Word</label><br />
+                    <input
+                        type="text"
+                        name="clickedLetters"
+                        className="input_from_kin"
+                        value={formData.clickedLetters}
+                        onChange={handleChange}
+                        readOnly
                     /><br />
                     <div className='input_row'>
                         <div>
@@ -130,6 +148,15 @@ function AddRecord() {
                         </div>
                     </div>
 
+                    <label className="lable_from_kin">Task Completion Time</label><br />
+                    <input
+                        type="text"
+                        name="taskCompletionTime"
+                        className="input_from_kin"
+                        value={formData.taskCompletionTime}
+                        readOnly
+                    /><br />
+
                     <label className="lable_from_kin">Student Name</label><br />
                     <input
                         type="text"
@@ -166,3 +193,4 @@ function AddRecord() {
 }
 
 export default AddRecord;
+

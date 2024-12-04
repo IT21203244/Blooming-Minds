@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate hook for routing
-import Logout from './img/logout.png'
+import Logout from './img/logout.png';
 import Sad from './img/sad.png';
 import WinImage from './img/win.png';
 import './letter.css';
@@ -16,6 +16,7 @@ import Eat from './Taskimg/eat.jpg';
 import Sing from './Taskimg/Sing.jpg';
 import Sleep from './Taskimg/Sleep.jpg';
 import Angry from './Taskimg/Angry.jpeg';
+
 function LetterQuest() {
     const navigate = useNavigate();  // Hook for navigation
     const images = [
@@ -36,7 +37,7 @@ function LetterQuest() {
     const [randomImage, setRandomImage] = useState(images[0]);
     const [timeLeft, setTimeLeft] = useState(60);
     const [randomLetters, setRandomLetters] = useState([]);
-    const [clickedLetters, setClickedLetters] = useState([]);
+    const [clickedLetters, setClickedLetters] = useState('');
     const [wordToGuess, setWordToGuess] = useState('');
     const [startTime, setStartTime] = useState(null);  // Track start time of the game
 
@@ -102,45 +103,43 @@ function LetterQuest() {
     }, [timeLeft]);
 
     const handleLetterClick = (letter) => {
-        if (clickedLetters.length < wordToGuess.length) {
-            setClickedLetters(prevClicked => [...prevClicked, letter]);
-        }
+        setClickedLetters((prevClicked) => prevClicked + letter);  // Add the clicked letter to the string
     };
 
-    const isCorrectGuess = clickedLetters.join('') === wordToGuess;
-    const isGameOver = timeLeft === 0 || (clickedLetters.length === wordToGuess.length && !isCorrectGuess);
+    const calculateProgress = () => {
+        const correctCount = [...clickedLetters].filter((letter, index) => letter === wordToGuess[index]).length;
+        return (correctCount / wordToGuess.length) * 100;
+    };
 
-    // Function to calculate time spent and remaining time
+    const isCorrectGuess = clickedLetters === wordToGuess;
+    const isGameOver = timeLeft === 0 || isCorrectGuess;
+    const handleGameOver = () => {
+        // Calculate progress and time spent
+        const progress = calculateProgress();
+        const timeSpent = calculateTimeSpent();
+        
+        // Get current date and time in local time (formatted as HH:mm AM/PM)
+        const localTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        // Save the data to localStorage
+        localStorage.setItem("actualProgress", progress);
+        localStorage.setItem("timeSpent", timeSpent);
+        localStorage.setItem("randomImageName", randomImage.name);  // Save the image name
+        localStorage.setItem("randomImageSrc", randomImage.src);    // Save the image source
+        localStorage.setItem("userEnteredWord", clickedLetters);    // Save the user-entered word
+        localStorage.setItem("taskCompletionTime", localTime); // Save the local task completion time
+        
+        // Navigate to the result page
+        navigate('/result');
+    };
+    
+
+
+    // Function to calculate time spent
     const calculateTimeSpent = () => {
         if (!startTime) return 0;
         return Math.floor((new Date().getTime() - startTime) / 1000);  // Return time in seconds
     };
-
-    const calculateProgress = () => {
-        const timeSpent = calculateTimeSpent();
-        const totalTime = 60; // Total time available is 60 seconds
-        const progress = Math.min((timeSpent / totalTime) * 100, 100);  // Ensure progress doesn't exceed 100%
-        return Math.floor(progress);
-    };
-
-    const handleGameOver = () => {
-        // Collect game progress data
-        const timeSpent = calculateTimeSpent();
-        const remainingTime = timeLeft;
-        const progress = calculateProgress();
-
-        // Navigate to the result page with the progress data and image info
-        navigate('/result', {
-            state: {
-                timeSpent,
-                remainingTime,
-                progress,
-                randomImageName: randomImage.name,  // Pass the image name
-                randomImageSrc: randomImage.src     // Pass the image source
-            }
-        });
-    };
-
 
     return (
         <div className='main_continer'>
@@ -157,7 +156,7 @@ function LetterQuest() {
                     <div className='letter_table'>
                         <div>
                             <div className="clicked_letters">
-                                <p>{clickedLetters.join(' ')}</p>
+                                <p>{clickedLetters}</p>
                             </div>
                             <div>
                                 <div className='leter_main_box'>
@@ -177,6 +176,9 @@ function LetterQuest() {
                                 </div>
                             </div>
                         </div>
+                        <div className="progress_container">
+                            <p>Progress: {Math.floor(calculateProgress())}%</p>
+                        </div>
                         {isCorrectGuess && (
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
@@ -188,7 +190,7 @@ function LetterQuest() {
                             </div>
                         )}
 
-                        {isGameOver && (
+                        {isGameOver && !isCorrectGuess && (
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
                                     <p className="correct_guess">
@@ -196,9 +198,7 @@ function LetterQuest() {
                                     </p>
                                     <img src={Sad} className='win_image' alt='sad' />
                                     <br />
-                                    <button className='try_btn' onClick={() => window.location.reload()}>
-                                        Try Again
-                                    </button>
+                                    {handleGameOver()}
                                 </div>
                             </div>
                         )}
