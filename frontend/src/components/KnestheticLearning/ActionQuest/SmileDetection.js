@@ -5,20 +5,18 @@ import Smile from './img/smile.jpeg';
 
 const SmileDetection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0); // Start with 0 so the timer doesn't start initially
-  const navigate = useNavigate(); // To navigate to /home
+  const [timeLeft, setTimeLeft] = useState(0);
+  const navigate = useNavigate();
   const [imagePath, setImagePath] = useState('');
   const [uploadedImage, setUploadedImage] = useState(null);
   const [smilePercentage, setSmilePercentage] = useState(null);
   const [error, setError] = useState('');
+  const [activeSection, setActiveSection] = useState('image'); // Default to image section
 
   useEffect(() => {
-    if (timeLeft === 0) {
-      return; // Do nothing if timer is not started yet
-    }
+    if (timeLeft === 0) return;
 
     if (timeLeft === 0) {
-      // Stop the camera and navigate to /home
       setIsLoaded(false);
       window.location.href = '/';
       return;
@@ -28,13 +26,12 @@ const SmileDetection = () => {
       setTimeLeft((prevTime) => prevTime - 1);
     }, 1000);
 
-    return () => clearInterval(timer); // Cleanup on component unmount
+    return () => clearInterval(timer);
   }, [timeLeft, navigate]);
 
   const handleStartCamera = async () => {
     try {
       const response = await fetch('http://localhost:5000/video_feed', { method: 'HEAD' });
-      console.log('Video feed response:', response);
       if (response.ok) {
         setIsLoaded(true);
         setTimeLeft(120); // Start the timer (2 minutes)
@@ -45,6 +42,7 @@ const SmileDetection = () => {
       console.error('Error checking video feed:', error);
     }
   };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setUploadedImage(file);
@@ -76,72 +74,111 @@ const SmileDetection = () => {
       setError('Failed to connect to the backend.');
     }
   };
+
+  const handleNavClick = (section) => {
+    setActiveSection(section);
+  };
+  const getColor = (percentage) => {
+    if (percentage >= 80) {
+      return "#4a90e2"; // Blue for 80% or above
+    } else if (percentage >= 50) {
+      return "green"; // Green for 50% or above
+    } else {
+      return "red"; // Red for less than 50%
+    }
+  };
   return (
     <div className='main_continer'>
       <div>
         <p className='main_topic'>Action Quest</p>
         <div className='action_card_set'>
           <div className='details_set'>
-            <p className='word_name'>SMILE</p>
-            <p
-              className='time_count'
-              style={{ color: timeLeft <= 5 ? 'red' : '#2b69b2' }} // Red when 5 seconds or less
-            >
-              {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} Minutes Left
-            </p>
+            <p className='word_name'>SMILE</p><br />
             <img src={Smile} alt='Smile' className='smile_kni' />
           </div>
-          <div className='camara_side'>
-            {!isLoaded ? (
-              <p className='no_word'>Camera not started. Click the button below to start.</p>
-            ) : (
-              <img
-                src="http://localhost:5000/video_feed"
-                alt="Smile Detection Feed"
-                className='camara_kni'
-              />
-            )}
-            <button className='btn_start' onClick={handleStartCamera}>
-              Start Camera
-            </button>
-            <div>
-              <p className='main_topic'>Smile Detection</p>
-              <div className='action_card_set'>
+          <div className='data_set_kin'>
+            <div className=''>
+              <div>
+                <div className='new_nav_barkin'>
+                  <p
+                    onClick={() => handleNavClick('image')}
+                    className={`nav_item_check ${activeSection === 'image' ? 'active' : ''}`}
+                  >
+                    By Image
+                  </p>
+                  <p
+                    onClick={() => handleNavClick('camera')}
+                    className={`nav_item_check ${activeSection === 'camera' ? 'active' : ''}`}
+                  >
+                    By Camera
+                  </p>
+                </div>
+                <div className={`by_Image_Section ${activeSection === 'image' ? 'active' : ''}`}>
+                  <div className="border_card_smile">
+                    <div>
+                      <p className='main_topic_new_sub_add'>Smile Detection By Image</p>
+                      <input
+                        className="file_path"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                      {smilePercentage !== null && (
+                        <div className="percentage_container_full_kin">
+                          <div className="percentage_column_data">
+                            <p>Smile Percentage:</p><p> {smilePercentage}%</p>
+                          </div>
+                          <div className="progress-column">
+                            <div
+                              className="progress_bar_kin"
+                              style={{
+                                width: `${smilePercentage}%`,
+                                backgroundColor: getColor(smilePercentage),
 
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                      {uploadedImage && (
+                        <div className='image_kin_set'>
+                          <p className='up_img_topic'>Uploaded Image:</p>
+                          <img
+                            src={URL.createObjectURL(uploadedImage)}
+                            alt="Uploaded"
+                            className="uploaded_image"
+                          />
+                        </div>
+                      )}
+                      <button className="upload_btn_kini" onClick={handleUploadCheck}>
+                        Check
+                      </button>
 
-                <div className="camara_side">
-                  <div>
-                    <input
-                      className="file_path"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                    <button className="upload_btn" onClick={handleUploadCheck}>
-                      Check
-                    </button>
-                    {uploadedImage && (
-                      <div>
-                        <p>Uploaded Image:</p>
-                        <img
-                          src={URL.createObjectURL(uploadedImage)}
-                          alt="Uploaded"
-                          className="uploaded_image"
-                        />
-                      </div>
-                    )}
-                    {smilePercentage !== null && (
-                      <p>Smile Percentage: {smilePercentage}%</p>
-                    )}
-                    {error && <p className="error_message">{error}</p>}
+                      {error && <p className="error_message">{error}</p>}
+                    </div>
                   </div>
                 </div>
-
+                <div className={`by_Camara_Section ${activeSection === 'camera' ? 'active' : ''}`}>
+                  <div className='border_card_smile'>
+                    {!isLoaded ? (
+                      <p className='no_word'>Camera not started. Click the button below to start.</p>
+                    ) : (
+                      <img
+                        src="http://localhost:5000/video_feed"
+                        alt="Smile Detection Feed"
+                        className='camara_kni'
+                      />
+                    )}
+                    <button className='btn_start' onClick={handleStartCamera}>
+                      Start Camera
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

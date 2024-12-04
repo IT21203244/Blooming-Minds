@@ -22,13 +22,13 @@
   margin: 0 auto;
 }
 .details_set {
-
   text-align: center;
   flex: 1;
 }
-.camara_side {
+.data_set_kin {
   flex: 1;
 }
+
 .camara_kni {
   width: 100%;
 }
@@ -49,6 +49,9 @@
   cursor: pointer;
   align-items: center;
 }
+.image_kin_set {
+  margin: 25px 0;
+}
 .word_name {
   text-align: center;
   font-size: 50px;
@@ -63,4 +66,95 @@
   padding-right: 50px;
   font-weight: 600;
   color: #2b69b2;
+}
+.main_topic_new_sub_add {
+  color: #2b69b2;
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+}
+.border_card_smile {
+  width: 100%;
+  border: 1px solid #2b69b2;
+  margin: 25px 0;
+  border-radius: 5px;
+  flex-direction: column;
+  gap: 25px;
+  display: flex;
+  padding: 15px;
+}
+.up_img_topic {
+  margin-bottom: 8px;
+}
+.file_path {
+  padding: 3px 10px;
+  border-radius: 2px;
+  width: 100%;
+  border: 1px solid #2b69b2;
+}
+.new_nav_barkin {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  justify-content: start;
+}
+
+.nav_item_check {
+  font-weight: 600;
+  cursor: pointer;
+  color: black;
+}
+
+.by_Image_Section,
+.by_Camara_Section {
+  display: none;
+}
+.by_Image_Section.active,
+.by_Camara_Section.active {
+  display: block;
+}
+.upload_btn_kini {
+  border: 1px solid #2b69b2;
+  margin: 25px auto 0 auto;
+  display: flex;
+  padding: 5px 15px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: white;
+  background-color: #2b69b2;
+}
+.uploaded_image {
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  height: 250px;
+  background-position: center;
+  border-radius: 8px;
+}
+
+.error_message {
+  color: red;
+  font-size: 14px;
+}
+.percentage_container_full_kin {
+  margin: 25px 0 0 0;
+}
+.progress-column {
+  background-color: #2b6ab228;
+  border-radius: 80px;
+  width: 100%;
+  height: 10px;
+}
+.progress_bar_kin {
+  height: 10px;
+  border-radius: 80px;
+}
+.percentage_column_data {
+  display: flex;
+  font-weight: 600;
+  color: #2b69b2;
+  font-size: 18px;
+  justify-content: space-between;
+  align-items: center;
 }
