@@ -148,9 +148,22 @@ function LetterQuest() {
                 <div className='letter_continer'>
                     <div className='letter_card'>
                         <p className='letter_name'>{randomImage.name}</p>
-                        <p className='time_cpunt' style={{ color: timeLeft <= 10 ? 'red' : '#2b69b2' }}>
-                            {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} Minutes Left
-                        </p>
+                        <div>
+    <p className='time_cpunt' style={{ color: timeLeft <= 10 ? 'red' : '#2b69b2' }}>
+        {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} Minutes Left
+    </p>
+    <div className="time_progress_bar">
+        <div
+            className="time_progress_fill"
+            style={{
+                width: `${(timeLeft / 60) * 100}%`, // Calculate width based on remaining time
+                backgroundColor: timeLeft <= 10 ? 'red' : '#2b69b2', // Change color dynamically
+                transition: 'width 0.5s ease', // Smooth transition for width changes
+            }}
+        ></div>
+    </div>
+</div>
+
                         <img src={randomImage.src} alt={randomImage.name} className='letter_img' />
                     </div>
                     <div className='letter_table'>

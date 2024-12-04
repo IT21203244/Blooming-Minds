@@ -77,7 +77,7 @@ function AdminDashKnesthetic() {
             `${student.timeSpent} seconds`,
             student.age,
             student.date,
-            student.clickedLetters,
+            student.clickedLetters || 'Not Entered',
             student.description || 'No Description',
         ]);
 
@@ -95,11 +95,12 @@ function AdminDashKnesthetic() {
         setSearchQuery(e.target.value.toLowerCase());
     };
 
-    const filteredStudents = students.filter(student =>
-        student.studentName.toLowerCase().includes(searchQuery) ||
-        student.studentID.toString().includes(searchQuery) ||
-        student.description.toLowerCase().includes(searchQuery)
-    );
+    const filteredStudents = students.filter(student => {
+        const name = student.studentName ? student.studentName.toLowerCase() : '';
+        const id = student.studentID ? student.studentID.toString() : '';
+        const description = student.description ? student.description.toLowerCase() : '';
+        return name.includes(searchQuery) || id.includes(searchQuery) || description.includes(searchQuery);
+    });
 
     return (
         <div>
@@ -161,7 +162,7 @@ function AdminDashKnesthetic() {
                                             <td className='tble_kin_bd'>{student.actualProgress}%</td>
                                             <td className='tble_kin_bd'>{student.timeSpent} Seconds</td>
                                             <td className='tble_kin_bd'>{student.randomImageName}</td>
-                                            <td className='tble_kin_bd'>{student.clickedLetters}</td>
+                                            <td className='tble_kin_bd'>{student.clickedLetters || 'Not Entered'}</td>
                                             <td className='tble_kin_bd'>{student.age}</td>
                                             <td className='tble_kin_bd'>{student.date}</td>
                                             <td className='tble_kin_bd'>{student.taskCompletionTime}</td>

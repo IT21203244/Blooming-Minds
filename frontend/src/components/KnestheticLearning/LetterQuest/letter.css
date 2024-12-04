@@ -14,6 +14,21 @@
 .progress_container_word{
   display: none;
 }
+.time_progress_bar {
+  width: 100%;
+  height: 10px;
+  background-color: #e0e0e0; /* Background color for the bar */
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.time_progress_fill {
+  height: 100%;
+  width: 0; /* Initial width, dynamically updated */
+  border-radius: 5px;
+}
+
 .user_entered_word{
 background-color: #2b6ab230;
 text-align: center;

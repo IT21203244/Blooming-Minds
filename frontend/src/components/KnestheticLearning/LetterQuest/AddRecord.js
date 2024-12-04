@@ -101,7 +101,7 @@ function AddRecord() {
                                 type="text"
                                 name="clickedLetters"
                                 className="input_from_kin"
-                                value={formData.clickedLetters}
+                                value={formData.clickedLetters  || 'Not Entered'}
                                 onChange={handleChange}
                                 readOnly
                             /><br />
