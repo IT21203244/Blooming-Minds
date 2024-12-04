@@ -10,6 +10,10 @@
   font-size: 30px;
   font-weight: 500;
 }
+.no-records{
+  text-align: center;
+  margin: 25px 0;
+}
 .student-records-table {
   width: 100%;
   border-collapse: collapse;
