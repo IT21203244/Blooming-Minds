@@ -176,7 +176,7 @@ function LetterQuest() {
                                 </div>
                             </div>
                         </div>
-                        <div className="progress_container">
+                        <div className="progress_container_word">
                             <p>Progress: {Math.floor(calculateProgress())}%</p>
                         </div>
                         {isCorrectGuess && (

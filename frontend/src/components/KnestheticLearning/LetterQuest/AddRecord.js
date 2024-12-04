@@ -94,15 +94,31 @@ function AddRecord() {
                         onChange={handleChange}
                         required
                     /><br />
-                    <label className="lable_from_kin">Student Entered Word</label><br />
-                    <input
-                        type="text"
-                        name="clickedLetters"
-                        className="input_from_kin"
-                        value={formData.clickedLetters}
-                        onChange={handleChange}
-                        readOnly
-                    /><br />
+                    <div  className='input_row'>
+                        <div>
+                            <label className="lable_from_kin">Student Entered Word</label><br />
+                            <input
+                                type="text"
+                                name="clickedLetters"
+                                className="input_from_kin"
+                                value={formData.clickedLetters}
+                                onChange={handleChange}
+                                readOnly
+                            /><br />
+                        </div>
+                        <div>
+                            <div>
+                                <label className="lable_from_kin">Task Name</label><br />
+                                <input
+                                    type="text"
+                                    name="randomImageName"
+                                    className="input_from_kin"
+                                    readOnly
+                                    value={formData.randomImageName}
+                                /><br />
+                            </div>
+                        </div>
+                    </div>
                     <div className='input_row'>
                         <div>
                             <label className="lable_from_kin">Spent Time (In Seconds)</label><br />
@@ -126,16 +142,7 @@ function AddRecord() {
                         </div>
                     </div>
                     <div className='input_row'>
-                        <div>
-                            <label className="lable_from_kin">Task Name</label><br />
-                            <input
-                                type="text"
-                                name="randomImageName"
-                                className="input_from_kin"
-                                readOnly
-                                value={formData.randomImageName}
-                            /><br />
-                        </div>
+
                         <div>
                             <label className="lable_from_kin">Date</label><br />
                             <input
@@ -146,9 +153,8 @@ function AddRecord() {
                                 value={formData.date}
                             /><br />
                         </div>
-                    </div>
-
-                    <label className="lable_from_kin">Task Completion Time</label><br />
+                        <div>
+                        <label className="lable_from_kin">Task Completion Time</label><br />
                     <input
                         type="text"
                         name="taskCompletionTime"
@@ -156,6 +162,10 @@ function AddRecord() {
                         value={formData.taskCompletionTime}
                         readOnly
                     /><br />
+                        </div>
+                    </div>
+
+                 
 
                     <label className="lable_from_kin">Student Name</label><br />
                     <input
@@ -181,7 +191,7 @@ function AddRecord() {
                     <textarea
                         name="description"
                         className="input_from_kin"
-                        rows={5}
+                        rows={2}
                         value={formData.description}
                         onChange={handleChange}
                     /><br />

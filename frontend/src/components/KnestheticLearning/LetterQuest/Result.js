@@ -53,9 +53,9 @@ function Result() {
                         <p className="topic_train">Task Details</p>
                         <div className="result_image">
                             <p className="matchname">{randomImageName}</p>
+                            <p className="user_entered_word">You Entered : {userEnteredWord}</p> 
                             {randomImageSrc && <img src={randomImageSrc} alt={randomImageName} className="image_resalt" />}
                         </div>
-                        <p className="user_entered_word">You Entered: {userEnteredWord}</p> {/* Display the word entered by the user */}
                     </div>
                 </div>
             </div>
