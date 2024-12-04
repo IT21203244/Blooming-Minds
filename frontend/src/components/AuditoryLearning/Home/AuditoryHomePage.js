@@ -100,7 +100,7 @@ function AuditoryHomePage() {
         {/* Continue Watching */}
         <div className="auditory_continue_section">
           <h2>
-            Continue Watching <span className="auditory_lessons_count">15 lessons</span>
+           Recomended Lessons<span className="auditory_lessons_count">15 lessons</span>
           </h2>
           <div className="auditory_lessons">
             <div className="auditory_lesson_card">

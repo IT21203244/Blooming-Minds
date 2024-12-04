@@ -11,7 +11,18 @@
   text-align: center;
   padding: 25px;
 }
-
+.progress_container_word{
+  display: none;
+}
+.user_entered_word{
+background-color: #2b6ab230;
+text-align: center;
+font-weight: 600;
+cursor: pointer;
+border-radius: 80px;
+padding: 8px 0;
+margin-bottom: 15px;
+}
 .letter_img {
   width: 450px;
   border-radius: 8px;
