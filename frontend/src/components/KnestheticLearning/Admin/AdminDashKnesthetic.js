@@ -95,11 +95,12 @@ function AdminDashKnesthetic() {
         setSearchQuery(e.target.value.toLowerCase());
     };
 
-    const filteredStudents = students.filter(student =>
-        student.studentName.toLowerCase().includes(searchQuery) ||
-        student.studentID.toString().includes(searchQuery) ||
-        student.description.toLowerCase().includes(searchQuery)
-    );
+    const filteredStudents = students.filter(student => {
+        const name = student.studentName ? student.studentName.toLowerCase() : '';
+        const id = student.studentID ? student.studentID.toString() : '';
+        const description = student.description ? student.description.toLowerCase() : '';
+        return name.includes(searchQuery) || id.includes(searchQuery) || description.includes(searchQuery);
+    });
 
     return (
         <div>
