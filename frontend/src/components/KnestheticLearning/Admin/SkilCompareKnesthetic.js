@@ -29,16 +29,17 @@ function SkilCompareKnesthetic() {
     fetchStudents();
   }, []);
 
-  // Function to handle search/filtering based on studentID
   const handleSearch = () => {
     setIsSearched(true); // Indicate that the search is done
     if (searchID === "") {
       setFilteredStudents([]); // If no ID is entered, clear the filtered list
     } else {
-      const filtered = students.filter(student => student.studentID.toString().includes(searchID));
-      setFilteredStudents(filtered); // Filter students by studentID
+      // Use exact match instead of `includes`
+      const filtered = students.filter(student => student.studentID.toString() === searchID);
+      setFilteredStudents(filtered); // Filter students by exact studentID
     }
   };
+  
 
   // Analyze data to get task attempts and progress
   const analyzeData = () => {
