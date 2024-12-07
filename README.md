@@ -47,4 +47,4 @@ The project uses the following technologies and libraries:
 
 1. Clone the repository:
    ```bash
-   git clone 
+   git clone https://github.com/IT21203244/Blooming-Minds.git
