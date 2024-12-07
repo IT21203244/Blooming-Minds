@@ -11,6 +11,9 @@ from routes.AuditoryLearning.AudioBook.record_routes import record_routes
 from routes.AuditoryLearning.AudioBook.lesson_routes import lesson_routes
 from routes.AuditoryLearning.AudioGame.audiogame_routes import audiogame_routes
 
+#ReadWrite Learning
+from routes.ReadWriteLearning.letter_routes import letter_routes
+
 # Flask app setup
 app = Flask(__name__)
 
@@ -28,6 +31,8 @@ app.register_blueprint(SmileFileRoute)
 app.register_blueprint(record_routes)
 app.register_blueprint(lesson_routes, url_prefix="/api")
 app.register_blueprint(audiogame_routes, url_prefix="/api")
+
+app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
 # Run the Flask app on port 5000
 if __name__ == "__main__":
     app.run(port=5000)
