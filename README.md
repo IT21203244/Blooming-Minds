@@ -1,3 +1,4 @@
+<div align="center">
   <h1>
     <span style="color: blue;">Blooming</span>
     <span style="color: yellow;">Minds</span>
