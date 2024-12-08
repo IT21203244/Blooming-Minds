@@ -1,4 +1,3 @@
-![suren drawio](https://github.com/user-attachments/assets/c5266266-51f3-4be6-bc43-30da908dc505)<div align="center">
   <h1>
     <span style="color: blue;">Blooming</span>
     <span style="color: yellow;">Minds</span>
