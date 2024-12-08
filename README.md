@@ -1,4 +1,4 @@
-<div align="center">
+![suren drawio](https://github.com/user-attachments/assets/c5266266-51f3-4be6-bc43-30da908dc505)<div align="center">
   <h1>
     <span style="color: blue;">Blooming</span>
     <span style="color: yellow;">Minds</span>
@@ -20,9 +20,23 @@ The platform is based on the **VARK theory**, providing a personalized, interact
 
 ## Architectural Diagram
 
-![systemdiagram drawio](https://github.com/user-attachments/assets/54b5fdc5-b914-4f94-abf6-bf1312bb5e82)
+  ### Component 01 Architectural Diagram - Visual Learning Enhancement System
+  
+![suren drawio](https://github.com/user-attachments/assets/f3169ebb-3c2e-4115-974f-99b4c70a3b98)
 
-> *This diagram illustrates the modular architecture of the Blooming Minds platform, highlighting backend services, machine learning integration, and user interface components.*
+  ### Component 02 Architectural Diagram - Auditory Learning Enhancement System
+  
+![sham](https://github.com/user-attachments/assets/904a9c8a-405b-40d7-9ebe-1276b9947fc1)
+
+  ### Component 03 Architectural Diagram - Read/Write Learning Enhancement System
+
+![janu drawio](https://github.com/user-attachments/assets/7e48f774-345f-4418-8ca5-b778762d05f3)
+
+  ### Component 04 Architectural Diagram - Kinesthetic Learning Enhancement System
+  
+![dilshan](https://github.com/user-attachments/assets/f8d04fe4-9782-41ec-91ee-70d50cd07bbb)
+
+> *This diagrams illustrates the modular architecture of the Blooming Minds platform, highlighting backend services, machine learning integration, and user interface components.*
 
 ---
 
