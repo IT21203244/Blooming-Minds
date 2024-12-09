@@ -3,7 +3,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image, ImageOps
 
 # Load the pre-trained model
-MODEL_PATH = 'E:/Jupyter/model_hand.keras'
+MODEL_PATH = 'F:/BM/Blooming-Minds/models/saved_models/ReadWrite/model_hand.keras'
 model = load_model(MODEL_PATH)
 
 # Label mapping (uppercase and lowercase letters)
