@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./FetchColorMatchingData.css";
-import "font-awesome/css/font-awesome.min.css"; // For the eye icon
+import "font-awesome/css/font-awesome.min.css"; 
 import { Pie } from "react-chartjs-2"; // Importing the Pie chart component
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 
