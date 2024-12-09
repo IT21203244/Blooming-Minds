@@ -26,6 +26,23 @@ import RecordAnalysisKnesthetic from "./components/KnestheticLearning/Admin/Reco
 import SkilCompareKnesthetic from "./components/KnestheticLearning/Admin/SkilCompareKnesthetic";
 
 
+/*ReadWrite Learning*/
+import ReadWriteHomePage from "./components/ReadWriteLearning/ReadWriteHomePage"; 
+import LetterWritingPage from "./components/ReadWriteLearning/LetterWritingPage"; 
+import UserLettersPage from "./components/ReadWriteLearning/UserLettersPage";
+import Canvas from "./components/ReadWriteLearning/canvas";
+import LetterAnalysisPage from "./components/ReadWriteLearning/LetterAnalysisPage";
+
+
+/*Visual Learning*/
+import VisualHomePage from "./components/VisualLearning/VisualHomePage";
+import ColorMatchingHome from "./components/VisualLearning/ColorMatchingHome";
+import ColorMatchingGame from "./components/VisualLearning/ColorMatchingGame";
+import FetchColorMatchingData from "./components/VisualLearning/FetchColorMatchingData";
+import FetchColorMatchingReport from "./components/VisualLearning/FetchColorMatchingReport";
+import ProgressDashboard from "./components/VisualLearning/ProgressDashboard";
+
+
 const App = () => {
   return (
     <div>
@@ -54,6 +71,21 @@ const App = () => {
           <Route path="/KnestheticAdmin" element={<AdminDashKnesthetic />} />
           <Route path="/recordAnalysisKnesthetic" element={<RecordAnalysisKnesthetic />} />
           <Route path="/skilCompareKnesthetic" element={<SkilCompareKnesthetic />} />
+
+          {/* ReadWrite Learning */}
+          <Route path="/rw-home" element={<ReadWriteHomePage />} />
+          <Route path="/letter-writing" element={<LetterWritingPage />} />
+          <Route path="/user-letters/:userId" element={<UserLettersPage />} />
+          <Route path="/canvas" element={<Canvas />} />
+          <Route path="/analysis/:userId/:letter" element={<LetterAnalysisPage />} />
+
+          {/* Visual Learning */}
+          <Route path="/v-home" element={<VisualHomePage/>} />
+          <Route path="/color-matching" element={<ColorMatchingHome/>} />
+          <Route path="/color-matching-game/:level" element={<ColorMatchingGame />} />
+          <Route path="/color-matching-data" element={<FetchColorMatchingData />} />
+          <Route path="/color-matching-report" element={<FetchColorMatchingReport />} />
+          <Route path="/progress-dashboard" element={<ProgressDashboard />} />
         </Routes>
       </React.Fragment>
     </div>

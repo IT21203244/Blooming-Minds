@@ -1,0 +1,31 @@
+.report-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .filters label {
+    display: block;
+    margin: 10px 0;
+  }
+  
+  .filters button {
+    margin-top: 10px;
+    padding: 5px 10px;
+  }
+  
+  .report-insights ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  .report-images img {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+  }
+  
