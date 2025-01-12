@@ -1,0 +1,342 @@
+/* Page header styling */
+.fetch-home h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #8e44ad; /* Soft purple */
+  margin-top: 20px;
+  text-shadow: 2px 2px 5px #d1c4e9;
+}
+
+/* Search section */
+.fetch-sub {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.fetch-sub label {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: #2e7d32; /* Calm green */
+}
+
+.fetch-sub input {
+  padding: 10px;
+  border: 2px solid #80deea; /* Light cyan border */
+  border-radius: 10px;
+  outline: none;
+  font-size: 1rem;
+  margin-right: 10px;
+  background-color: #e1f5fe; /* Soft cyan */
+}
+
+.fetch-sub input:focus {
+  border-color: #4fc3f7; /* Highlighted cyan */
+}
+
+.fetch-sub button {
+  padding: 10px 20px;
+  background-color: #ffcc80; /* Light orange */
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fetch-sub button:hover {
+  background-color: #ffa726; /* Deeper orange */
+  transform: scale(1.1);
+}
+
+/* Loading and error messages */
+p {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+p[style="color: red"] {
+  font-weight: bold;
+}
+
+/* Table styling */
+table {
+  width: 90%;
+  margin: 0 auto 20px;
+  border-collapse: collapse;
+  background-color: #ffffff; /* White background */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 2px solid #f3e5f5; /* Soft purple border */
+  color: #424242;
+}
+
+th {
+  background-color: #f8bbd0; /* Pastel pink */
+  font-size: 1.2rem;
+  color: #4a148c; /* Dark purple */
+}
+
+tr:nth-child(even) {
+  background-color: #fce4ec; /* Alternate row background */
+}
+
+tr:hover {
+  background-color: #ffecb3; /* Highlighted row */
+}
+
+/* Improve provided and child sequence text styling */
+td:nth-child(7), td:nth-child(8) {
+  font-family: "Courier New", monospace;
+  color: #8e24aa; /* Vibrant purple */
+  font-size: 0.9rem;
+}
+
+/* Add some spacing */
+td, th {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+}
+
+
+
+/* View button styling */
+button.view-btn {
+  padding: 8px 12px;
+  background-color: #77dd77; /* Pastel green background */
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+button.view-btn:hover {
+  background-color: #66cc66; /* Slightly darker pastel green on hover */
+}
+
+/* Modal styles */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker semi-transparent background */
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff; /* Pure white for contrast */
+  padding: 20px 30px;
+  border-radius: 10px;
+  width: 60%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Elevated shadow for modal */
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out; /* Smooth fade-in effect */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #8e44ad; /* Soft purple heading */
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f3e5f5;
+  padding-bottom: 10px;
+}
+
+.modal-content p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #424242; /* Neutral gray */
+}
+
+.modal-content p strong {
+  color: #2e7d32; /* Calm green for highlights */
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #8e44ad; /* Soft purple for close button */
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.close-btn:hover {
+  color: #e57373; /* Light red for hover */
+  transform: scale(1.2);
+}
+
+/* Pie chart container within modal */
+.pie-chart {
+  margin: 20px auto;
+  width: 300px;
+  height: 300px;
+}
+
+.color-sequence {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.color-ball {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.color-ball.correct {
+  background-color: #4caf50; /* Green for correct */
+}
+
+.color-ball.incorrect {
+  background-color: #f44336; /* Red for incorrect */
+}
+
+/* Modal responsiveness */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 80%;
+    padding: 20px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .color-ball {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pie-chart {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+/* Pagination styling */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  background-color: #81d4fa; /* Light blue */
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
+}
+
+.pagination button:disabled {
+  background-color: #b0bec5; /* Disabled gray */
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #29b6f6; /* Deeper blue */
+}
+
+.pagination span {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #424242; /* Dark gray */
+}
+
+
+/* Responsive design for tablets and mobile devices */
+@media (max-width: 768px) {
+  .fetch-sub {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .fetch-sub label {
+    margin-right: 0;
+    text-align: center;
+  }
+
+  .fetch-sub input {
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .fetch-sub button {
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  table {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  table, th, td {
+    border: 1px solid #dcdcdc;
+  }
+}
+
+@media (max-width: 480px) {
+  .fetch-sub input, .fetch-sub button {
+    width: 90%;
+  }
+
+  .fetch-home h1 {
+    font-size: 2rem;
+  }
+
+  th, td {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+
+}

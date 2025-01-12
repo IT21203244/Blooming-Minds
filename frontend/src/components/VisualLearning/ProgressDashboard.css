@@ -1,0 +1,136 @@
+
+  
+  .error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  /* Progress Dashboard Container */
+  .progress-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Search Bar */
+  .search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .search-bar label {
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+  
+  .search-bar input {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    margin-right: 10px;
+  }
+  
+  .search-bar button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .search-bar button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Charts and Report Section */
+  .charts {
+    margin-top: 30px;
+  }
+  
+  .line-chart,
+  .bar-chart {
+    margin-bottom: 20px;
+  }
+  
+  .chart-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+  }
+  
+  /* Mobile and Tablet Responsiveness */
+  @media (max-width: 768px) {
+    /* Adjust the progress dashboard padding */
+    .progress-dashboard {
+      padding: 15px;
+    }
+  
+    /* Stack search bar elements */
+    .search-bar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .search-bar label {
+      margin-bottom: 5px;
+    }
+  
+    .search-bar input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .search-bar button {
+      width: 100%;
+    }
+  
+    /* Adjust charts for smaller screens */
+    .line-chart,
+    .bar-chart {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    /* Adjust the progress dashboard padding */
+    .progress-dashboard {
+      padding: 10px;
+    }
+  
+    /* Make the header text a bit smaller */
+    h1 {
+      font-size: 1.5rem;
+    }
+  
+    /* Modify the error message text size */
+    .error {
+      font-size: 0.9rem;
+    }
+  
+    /* Ensure search bar is more compact */
+    .search-bar input {
+      padding: 6px 10px;
+      font-size: 0.9rem;
+    }
+  
+    .search-bar button {
+      font-size: 0.9rem;
+      padding: 8px 16px;
+    }
+  
+    /* Adjust chart containers for small screens */
+    .chart-container {
+      height: 300px;
+    }
+  }
+  

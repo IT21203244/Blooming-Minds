@@ -9,11 +9,11 @@ function Home() {
         <div>
             <p className='topic_home'>Blooming <span className='sub_topic'>Minds</span></p>
             <div className='action_card'>
-                <div className='card_home' onClick={() => (window.location.href = '/')}>
+                <div className='card_home' onClick={() => (window.location.href = '/rw-home')}>
                     <img src={ReadAndWrite} alt="ReadAndWrite" className='card_image' />
                     <p className='card_link' >Read / Write Learning</p>
                 </div>
-                <div className='card_home' onClick={() => (window.location.href = '/')}>
+                <div className='card_home' onClick={() => (window.location.href = '/v-home')}>
                     <img src={Visual} alt="Visual learning" className='card_image' />
                     <p className='card_link' >Visual Learning</p>
                 </div>

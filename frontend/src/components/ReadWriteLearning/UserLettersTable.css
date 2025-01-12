@@ -1,0 +1,63 @@
+.letters-table {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  .letters-table h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .letters-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .letters-table th, .letters-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .letters-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  .letter-squares-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .letter-square {
+    background-color: #f9c2ff;
+    color: #333;
+    border-radius: 15px;
+    padding: 20px;
+    min-width: 100px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  }
+  
+  .letter-square:hover {
+    transform: scale(1.1);
+    background-color: #f6a4e6;
+  }
+  
+  .letter {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .count {
+    display: block;
+    font-size: 14px;
+    margin-top: 5px;
+    color: #555;
+  }
+  

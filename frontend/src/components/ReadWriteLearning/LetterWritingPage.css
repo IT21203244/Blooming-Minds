@@ -1,0 +1,237 @@
+/* LetterWritingPage.css */
+
+.letter-write {
+  text-align: center;
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+/* Header Styling */
+h1 {
+  font-size: 40px;
+  font-weight: bold;
+  color: #5c6bc0;
+  text-align: center;
+  font-family: 'Comic Sans MS', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+h3 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #3d91b3;
+  text-align: center;
+  font-family: 'Comic Sans MS', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Styling */
+form {
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 15px auto 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  background-color: #f0f8ff; /* Alice Blue */
+  border: 1px solid #c8d6e5;
+  border-radius: 5px;
+  color: #5a6473;
+  transition: 0.3s ease-in-out;
+}
+
+input[type="file"]:focus {
+  outline: none;
+  border-color: #b0c4de; /* Light Steel Blue */
+  box-shadow: 0 0 8px rgba(176, 196, 222, 0.6);
+}
+
+button {
+  display: block;
+  width: 300px;
+  margin: 20px auto;
+  background-color: #a4cedb; /* Light Green */
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 20px;
+  font-family: 'Comic Sans MS', sans-serif;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: #66bb6a; /* Slightly darker green */
+  transform: scale(1.05);
+}
+
+button:disabled {
+  background-color: #dfe6e9; /* Light Grey */
+  color: #b2bec3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button:disabled:hover {
+  transform: none;
+}
+
+
+/* Flying Images */
+/* Floating Image Styling */
+.floating-image {
+  position: absolute;
+  top: 30px; /* Adjust to your desired position */
+  left: 120px; /* Adjust to your desired position */
+  width: 150px; /* Adjust size */
+  height: auto;
+  z-index: 1; /* Ensure it appears above the background but below buttons */
+}
+
+.floating-image1 {
+  position: absolute;
+  bottom: 40px; 
+  left: 130px; /* Adjust to your desired position */
+  width: 130px; /* Adjust size */
+  height: auto;
+  z-index: 1; /* Ensure it appears above the background but below buttons */
+}
+
+.floating-image2 {
+  position: absolute;
+  bottom: 330px; 
+  left: 140px; /* Adjust to your desired position */
+  width: 120px; /* Adjust size */
+  height: auto;
+  z-index: 1; /* Ensure it appears above the background but below buttons */
+}
+
+.floating-image3 {
+  position: absolute;
+  top: 50px; /* Adjust to your desired position */
+  right: 90px; /* Adjust to your desired position */
+  width: 150px; /* Adjust size */
+  height: auto;
+  z-index: 1; /* Ensure it appears above the background but below buttons */
+}
+
+.floating-image4 {
+  position: absolute;
+  bottom: 320px; /* Adjust to your desired position */
+  right: 90px; /* Adjust to your desired position */
+  width: 150px; /* Adjust size */
+  height: auto;
+  z-index: 1; /* Ensure it appears above the background but below buttons */
+}
+
+.floating-image5 {
+  position: absolute;
+  bottom: 50px; /* Adjust to your desired position */
+  right: 90px; /* Adjust to your desired position */
+  width: 160px; /* Adjust size */
+  height: auto;
+  z-index: 1; /* Ensure it appears above the background but below buttons */
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Sidebar (if needed) */
+.sidebar {
+  width: 10px;
+  height: 100%;
+  background-color: #4CAF50;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Popup Styling */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background: white;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.popup-content img {
+  max-width: 100px;
+  margin-bottom: 10px;
+}
+
+.popup-content p {
+  font-size: 16px;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+.popup-content button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #45a049;
+}
+
+.popup.mismatch .popup-content {
+  border: 2px solid red;
+}
+
+.popup.match .popup-content {
+  border: 2px solid green;
+}
+
+/* Status and Results Styling */
+p {
+  color: #333333;
+  margin: 5px 0;
+}
+
+h4 {
+  margin-top: 20px;
+  color: #4CAF50;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
