@@ -3,7 +3,8 @@ from tensorflow.keras.models import load_model
 from PIL import Image, ImageOps
 
 # Load the pre-trained model
-MODEL_PATH = 'F:/BM/Blooming-Minds/models/saved_models/ReadWrite/model_hand.keras'
+# MODEL_PATH = 'E:/Jupyter/model_hand.keras'
+MODEL_PATH = 'E:/Handwritten Letters/New folder (2)/model_hand_new.keras'
 model = load_model(MODEL_PATH)
 
 # Label mapping (uppercase and lowercase letters)
@@ -13,9 +14,14 @@ word_dict.update({i + 26: chr(i + 97) for i in range(26)})
 def preprocess_image(image):
     image = image.resize((28, 28))
     image = ImageOps.grayscale(image)
-    img_array = np.array(image) / 255.0
-    img_array = img_array.reshape(1, 28, 28, 1)
+    
+    # Invert the image (invert the pixel values)
+    image = ImageOps.invert(image)
+    
+    img_array = np.array(image) / 255.0  # Normalize the image
+    img_array = img_array.reshape(1, 28, 28, 1)  # Reshape for model input
     return img_array
+
 
 def predict_letter(image):
     try:

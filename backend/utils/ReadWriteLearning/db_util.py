@@ -31,6 +31,14 @@ class Database:
         except Exception as e:
             raise Exception(f"Fetch error: {e}")
 
+    def get_user_by_id(self, user_id):
+        try:
+            collection = self.db["users"]
+            result = collection.find_one({"user_id": user_id})
+            return result
+        except Exception as e:
+            raise Exception(f"Fetch user by ID error: {e}")
+
     def get_user_letters(self, user_id):
         """
         Fetch all letter records for a specific user.
@@ -49,7 +57,6 @@ class Database:
             return result
         except Exception as e:
             raise Exception(f"Fetch user letter by letter error: {e}")
-
 
     def close_connection(self):
         try:

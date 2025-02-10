@@ -79,7 +79,8 @@ const App = () => {
           <Route path="/skilCompareKnesthetic" element={<SkilCompareKnesthetic />} />
 
           {/* ReadWrite Learning */}
-          <Route path="/rw-home" element={<ReadWriteHomePage />} />
+          {/* Protected routes */}
+          <Route path="/rw-home" element={<PrivateRoute element={<ReadWriteHomePage />} />} />
           <Route path="/letter-writing" element={<LetterWritingPage />} />
           <Route path="/user-letters/:userId" element={<UserLettersPage />} />
           <Route path="/canvas" element={<Canvas />} />
