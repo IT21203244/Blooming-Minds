@@ -1,30 +1,103 @@
-from flask import Blueprint, request, jsonify
-from utils.VisualLearning.db_util import insert_color_matching_result, get_color_matching_results, analyze_color_matching_trends, plot_accuracy_vs_time, plot_avg_time_per_level, plot_error_frequency
+import logging
+import os
+from flask import Blueprint, request, jsonify, g
+from utils.VisualLearning.db_util import (
+    insert_color_matching_result,
+    get_color_matching_results,
+    get_first_result_per_level
+)
+from utils.auth.token_auth import token_required
+from utils.VisualLearning.rl_agent import RLAgent
+from utils.VisualLearning.state_action_manager import state_from_performance, action_to_level
+from utils.VisualLearning.reward_system import calculate_reward
+
+# Set up logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 color_matching_routes = Blueprint("color_matching_routes", __name__)
 
+LEVEL_CIRCLE_COUNTS = {"easy": 3, "medium": 5, "hard": 7}
+
+# Initialize RL agent with appropriate state and action sizes
+STATE_SIZE = 4  # Adjust based on state representation
+ACTION_SIZE = 3  # Number of difficulty levels
+MODEL_PATH = "E:/BloomingMinds/ml-models/scripts/VisualLearning/color_matching_model_weights.keras"
+
+# Check if model exists, and load it or initialize a new agent
+if os.path.exists(MODEL_PATH):
+    rl_agent = RLAgent(STATE_SIZE, ACTION_SIZE, model_path=MODEL_PATH)
+else:
+    rl_agent = RLAgent(STATE_SIZE, ACTION_SIZE)
+
+success_count = 0
+total_episodes = 0
+
 @color_matching_routes.route('/color_matching_game', methods=['POST'])
+@token_required
 def color_matching_game():
+    global success_count, total_episodes  # Declare variables as global
+
     try:
-        # Get JSON data from the request
         data = request.json
+        if not data:
+            return jsonify({"error": "No input data provided."}), 400
 
         # Extract required fields
-        user_id = data.get("user_id")
+        required_fields = [
+            "level", "wrong_takes", "correct_takes", "total_score",
+            "time_taken", "circle_count", "date"
+        ]
+        missing_fields = [field for field in required_fields if field not in data]
+        if missing_fields:
+            return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
         level = data.get("level")
-        wrong_takes = data.get("wrong_takes")
-        correct_takes = data.get("correct_takes")
-        total_score = data.get("total_score")
-        time_taken = data.get("time_taken")
-        provided_sequence = data.get("provided_sequence")
-        child_sequence = data.get("child_sequence")
+        wrong_takes = data.get("wrong_takes", 0)
+        correct_takes = data.get("correct_takes", 0)
+        total_score = data.get("total_score", 0)
+        time_taken = data.get("time_taken", 0)
+        provided_sequence = data.get("provided_sequence", [])
+        child_sequence = data.get("child_sequence", [])
+        circle_count = data.get("circle_count", 0)
         date = data.get("date")
 
-        # Validation
-        if not all([user_id, level, wrong_takes, correct_takes, total_score, time_taken, provided_sequence, child_sequence, date]):
-            return jsonify({"error": "All fields are required."}), 400
+        user_id = g.user_id
+        expected_circle_count = LEVEL_CIRCLE_COUNTS.get(level)
+        if expected_circle_count is None:
+            return jsonify({"error": "Invalid level provided."}), 400
 
-        # Insert into database
+        wrong_circle_count = abs(expected_circle_count - circle_count)
+
+        # Generate state and calculate additional metrics
+        performance = {
+            "level": level,
+            "wrong_takes": wrong_takes,
+            "correct_takes": correct_takes,
+            "time_taken": time_taken
+        }
+        state = state_from_performance(performance)
+        accuracy_percentage = (correct_takes / (correct_takes + wrong_takes)) * 100 if (correct_takes + wrong_takes) > 0 else 0
+        time_efficiency = 30 / time_taken if time_taken > 0 else 1  # Example average time benchmark
+
+        performance.update({"accuracy_percentage": accuracy_percentage, "time_efficiency": time_efficiency})
+
+        # Define terminal state condition based on accuracy
+        done = False
+        if accuracy_percentage >= 90:  # Terminal state if accuracy is above 90%
+            done = True
+            success_count += 1  # Increment success count for episodes with accuracy >= 90%
+
+        action = rl_agent.act(state)
+        recommended_level = action_to_level(action)
+        reward = calculate_reward(performance)
+
+        # Insert result into the database
         result_id = insert_color_matching_result(
             user_id=user_id,
             level=level,
@@ -34,68 +107,132 @@ def color_matching_game():
             time_taken=time_taken,
             provided_sequence=provided_sequence,
             child_sequence=child_sequence,
-            date=date
+            circle_count=circle_count,
+            wrong_circle_count=wrong_circle_count,
+            date=date,
+            accuracy=accuracy_percentage,
+            time_efficiency=time_efficiency,
+            reward=reward
         )
 
-        return jsonify({"message": "Result saved successfully.", "result_id": result_id}), 201
+        # Update RL agent with new experience
+        next_state = state_from_performance(performance)  # Assuming no significant state change
+        rl_agent.remember(state, action, reward, next_state, done=done)
+
+        # Replay and save model
+        if len(rl_agent.memory) >= 32:  # Adjust batch size threshold as needed
+            rl_agent.replay(batch_size=32)
+
+        rl_agent.save_model(MODEL_PATH)
+
+        # Calculate and log success rate
+        total_episodes += 1
+        success_rate = (success_count / total_episodes) * 100 if total_episodes > 0 else 0
+        logger.info(f"Success Rate: {success_rate:.2f}%")
+
+        return jsonify({
+            "message": "Result saved successfully.",
+            "result_id": result_id,
+            "recommended_level": recommended_level
+        }), 201
 
     except Exception as e:
+        logger.error(f"Error processing game data: {str(e)}")
         return jsonify({"error": str(e)}), 500
-    
+
 @color_matching_routes.route('/color_matching_game', methods=['GET'])
+@token_required
 def fetch_color_matching_results():
-    """
-    Fetches all color matching game results or filtered by user_id.
-    """
     try:
-        # Optional query parameter to filter by user_id
-        user_id = request.args.get("user_id")
-
-        # Fetch data from the database
-        results = get_color_matching_results(user_id=user_id)
-
+        user_id = g.user_id
+        results = get_color_matching_results(user_id=user_id) or []
         return jsonify({"results": results}), 200
     except Exception as e:
+        logger.error(f"Error fetching results: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@color_matching_routes.route('/generate_report', methods=['GET'])
-def generate_report():
+@color_matching_routes.route('/color_matching_game/first_result', methods=['GET'])
+@token_required
+def fetch_first_color_matching_result():
     try:
-        # Get user_id and date range from query parameters (optional)
-        user_id = request.args.get('user_id')
-        start_date = request.args.get('start_date')  # Format: YYYY-MM-DD
-        end_date = request.args.get('end_date')  # Format: YYYY-MM-DD
+        user_id = g.user_id
+        results = get_first_result_per_level(user_id=user_id)
 
-        # Analyze trends
-        df = analyze_color_matching_trends(user_id, start_date, end_date)
-        
-        # Plot trends
-        plot_accuracy_vs_time(df)
-        plot_avg_time_per_level(df)
-        plot_error_frequency(df)
+        if not results:
+            return jsonify({"message": "No results found for the user."}), 404
 
-        # Generate report insights
-        insights = []
-        avg_accuracy = df['accuracy'].mean()
-        if avg_accuracy > 75:
-            insights.append("Good accuracy overall!")
-        else:
-            insights.append("Accuracy could be improved, consider practicing more on higher levels.")
-
-        avg_error_freq = df['error_frequency'].mean()
-        if avg_error_freq < 10:
-            insights.append("Low error frequency across all levels.")
-        else:
-            insights.append("Struggling with errors, try revising lower levels.")
-
-        # Return the insights along with report images
-        return jsonify({
-            "message": "Report generated successfully.",
-            "insights": insights,
-            "accuracy_vs_time_image": "accuracy_vs_time.png",
-            "avg_time_per_level_image": "avg_time_per_level.png",
-            "error_frequency_image": "error_frequency.png"
-        }), 200
+        return jsonify({"results": results}), 200
 
     except Exception as e:
+        logger.error(f"Error fetching the first result: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@color_matching_routes.route('/compare_progress', methods=['GET'])
+@token_required
+def compare_progress():
+    try:
+        user_id = g.user_id
+
+        # Get the first results per level (easy, medium, hard)
+        first_results = get_first_result_per_level(user_id)
+
+        if not first_results:
+            return jsonify({"message": "No initial results found for the user."}), 404
+        
+        # Get all results for the user
+        all_results = get_color_matching_results(user_id)
+        
+        # Initialize a dictionary to store comparison results
+        progress_comparison = {}
+
+        # Group results by level (easy, medium, hard)
+        grouped_results = {'easy': [], 'medium': [], 'hard': []}
+        
+        for result in all_results:
+            level = result['level']
+            if level in grouped_results:
+                grouped_results[level].append(result)
+
+        # Compare each group of results with the first result and pair them
+        for level, results in grouped_results.items():
+            if not results:
+                continue
+
+            # Get the first result for the level
+            first_result = first_results.get(level)
+            if not first_result:
+                continue  # Skip if no first result for the level
+
+            # Initialize the comparison list for the level
+            comparison_data = []
+
+            # Pair the first result with subsequent results at the same level
+            for result in results:
+                comparison = {
+                    'first_result': {
+                        'accuracy': first_result['accuracy'],
+                        'time_efficiency': first_result['time_efficiency'],
+                        'reward': first_result['reward'],
+                        'date': first_result.get('date')
+                    },
+                    'current_result': {
+                        'accuracy': result['accuracy'],
+                        'time_efficiency': result['time_efficiency'],
+                        'reward': result['reward'],
+                        'date': result.get('date')
+                    },
+                    'accuracy_diff': result['accuracy'] - first_result['accuracy'],
+                    'time_efficiency_diff': result['time_efficiency'] - first_result['time_efficiency'],
+                    'reward_diff': result['reward'] - first_result['reward']
+                }
+                comparison_data.append(comparison)
+
+            # Store comparison data for the level
+            progress_comparison[level] = comparison_data
+        
+        return jsonify(progress_comparison), 200
+
+    except Exception as e:
+        logger.error(f"Error comparing progress: {str(e)}")
         return jsonify({"error": str(e)}), 500

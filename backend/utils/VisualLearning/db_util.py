@@ -1,7 +1,7 @@
 from pymongo import MongoClient
-import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
+import datetime
+import os
+import logging
 
 # MongoDB connection setup
 MONGO_URI = "mongodb+srv://blooming_minds:BsjsdM24@bloomingminds.n7ia1.mongodb.net/"
@@ -10,7 +10,11 @@ DATABASE_NAME = "blooming_minds"
 client = MongoClient(MONGO_URI)
 db = client[DATABASE_NAME]
 
-def insert_color_matching_result(user_id, level, wrong_takes, correct_takes, total_score, time_taken, provided_sequence, child_sequence, date):
+def insert_color_matching_result(
+    user_id, level, wrong_takes, correct_takes, total_score, time_taken,
+    provided_sequence, child_sequence, circle_count, wrong_circle_count,
+    date, accuracy, time_efficiency, reward
+):
     """
     Inserts a new color matching game result into the database.
     """
@@ -26,6 +30,11 @@ def insert_color_matching_result(user_id, level, wrong_takes, correct_takes, tot
         "time_taken": time_taken,
         "provided_sequence": provided_sequence,
         "child_sequence": child_sequence,
+        "circle_count": circle_count,  # Store the user's circle count input
+        "wrong_circle_count": wrong_circle_count,  # Store the difference between expected and actual circle count
+        "accuracy": accuracy,  # Accuracy of the game
+        "time_efficiency": time_efficiency,  # Efficiency based on time
+        "reward": reward,  # Reward points
         "date": date
     }
 
@@ -58,75 +67,63 @@ def get_color_matching_results(user_id=None):
             "time_taken": result.get("time_taken"),
             "provided_sequence": result.get("provided_sequence"),
             "child_sequence": result.get("child_sequence"),
+            "circle_count": result.get("circle_count"),  # User's circle count
+            "wrong_circle_count": result.get("wrong_circle_count"),  # Difference between expected and actual circle count
+            "accuracy": result.get("accuracy"),  # Accuracy of the game
+            "time_efficiency": result.get("time_efficiency"),  # Efficiency based on time
+            "reward": result.get("reward"),  # Reward points
             "date": result.get("date")
         }
         for result in results
     ]
 
-# Fetch all color matching results and convert them to a DataFrame for analysis
-def analyze_color_matching_trends(user_id=None, start_date=None, end_date=None):
+def get_first_result_per_level(user_id):
     """
-    Analyzes trends in color matching game results, such as accuracy, completion time, and error frequency.
-    Returns a DataFrame of aggregated data.
+    Fetches the first game result for each level (easy, medium, hard) for the given user_id.
     """
-    # Get results from the database
-    results = get_color_matching_results(user_id)
-    
-    # Filter by date range if provided
-    if start_date and end_date:
-        results = [result for result in results if start_date <= datetime.strptime(result['date'], "%Y-%m-%d").date() <= end_date]
-    
-    # Convert results to a DataFrame for easy analysis
-    df = pd.DataFrame(results)
-    
-    # Convert date to datetime object for plotting
-    df['date'] = pd.to_datetime(df['date'])
-    
-    # Compute accuracy as the ratio of correct_takes to total attempts (correct_takes + wrong_takes)
-    df['accuracy'] = df['correct_takes'] / (df['correct_takes'] + df['wrong_takes']) * 100
-    
-    # Calculate the average completion time per level
-    df['avg_time_per_level'] = df.groupby('level')['time_taken'].transform('mean')
-    
-    # Calculate error frequency
-    df['error_frequency'] = df['wrong_takes'] / (df['correct_takes'] + df['wrong_takes']) * 100
-    
-    return df
+    collection = db.color_matching_results
 
-# Function to generate a plot for accuracy over time
-def plot_accuracy_vs_time(df):
-    plt.figure(figsize=(10, 5))
-    for level in df['level'].unique():
-        level_data = df[df['level'] == level]
-        plt.plot(level_data['date'], level_data['accuracy'], label=f"Level {level}")
+    # Aggregation pipeline to fetch the first result per level
+    pipeline = [
+        {"$match": {"user_id": user_id}},
+        {"$sort": {"date": 1}},  # Ensure results are sorted by date ascending
+        {"$group": {
+            "_id": "$level",
+            "level": {"$first": "$level"},
+            "user_id": {"$first": "$user_id"},
+            "wrong_takes": {"$first": "$wrong_takes"},
+            "correct_takes": {"$first": "$correct_takes"},
+            "total_score": {"$first": "$total_score"},
+            "time_taken": {"$first": "$time_taken"},
+            "provided_sequence": {"$first": "$provided_sequence"},
+            "child_sequence": {"$first": "$child_sequence"},
+            "circle_count": {"$first": "$circle_count"},
+            "wrong_circle_count": {"$first": "$wrong_circle_count"},
+            "accuracy": {"$first": "$accuracy"},
+            "time_efficiency": {"$first": "$time_efficiency"},
+            "reward": {"$first": "$reward"},
+            "date": {"$first": "$date"}  # Ensure date is included
+        }}
+    ]
+
+    results = collection.aggregate(pipeline)
+    return {result["_id"]: result for result in results}
+
+
+# Finger Counting Game 
+def insert_finger_counting_session(user_id, number_data, total_attempt_count, date, level):
+    """
+    Inserts a new finger counting session result into the database.
+    """
+    collection = db.finger_counting_results
     
-    plt.title('Accuracy Over Time')
-    plt.xlabel('Date')
-    plt.ylabel('Accuracy (%)')
-    plt.legend()
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.savefig('accuracy_vs_time.png')
-    plt.close()
+    result_document = {
+        "user_id": user_id,
+        "number_data": number_data,
+        "total_attempt_count": total_attempt_count,
+        "date": date,
+        "level": level
+    }
 
-# Function to generate a plot for completion time per level
-def plot_avg_time_per_level(df):
-    avg_time = df.groupby('level')['avg_time_per_level'].mean()
-    avg_time.plot(kind='bar', figsize=(8, 5))
-    plt.title('Average Completion Time per Level')
-    plt.xlabel('Level')
-    plt.ylabel('Average Time (seconds)')
-    plt.tight_layout()
-    plt.savefig('avg_time_per_level.png')
-    plt.close()
-
-# Function to generate a plot for error frequency per level
-def plot_error_frequency(df):
-    error_freq = df.groupby('level')['error_frequency'].mean()
-    error_freq.plot(kind='bar', figsize=(8, 5), color='red')
-    plt.title('Error Frequency per Level')
-    plt.xlabel('Level')
-    plt.ylabel('Error Frequency (%)')
-    plt.tight_layout()
-    plt.savefig('error_frequency.png')
-    plt.close()
+    result = collection.insert_one(result_document)
+    return str(result.inserted_id)
