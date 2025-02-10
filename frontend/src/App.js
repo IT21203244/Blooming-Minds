@@ -43,6 +43,12 @@ import FetchColorMatchingReport from "./components/VisualLearning/FetchColorMatc
 import ProgressDashboard from "./components/VisualLearning/ProgressDashboard";
 
 
+/*Auth SignIn SignUp*/
+import SignIn from "./components/Auth/SignIn";
+import SignUp from "./components/Auth/SignUp";
+import PrivateRoute from "./components/Auth/PrivateRoute";
+
+
 const App = () => {
   return (
     <div>
@@ -86,6 +92,10 @@ const App = () => {
           <Route path="/color-matching-data" element={<FetchColorMatchingData />} />
           <Route path="/color-matching-report" element={<FetchColorMatchingReport />} />
           <Route path="/progress-dashboard" element={<ProgressDashboard />} />
+
+          {/* Auth */}
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </React.Fragment>
     </div>
