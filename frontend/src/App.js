@@ -41,6 +41,7 @@ import ColorMatchingGame from "./components/VisualLearning/ColorMatchingGame";
 import FetchColorMatchingData from "./components/VisualLearning/FetchColorMatchingData";
 import FetchColorMatchingReport from "./components/VisualLearning/FetchColorMatchingReport";
 import ProgressDashboard from "./components/VisualLearning/ProgressDashboard";
+import CompareProgressDashboard from "./components/VisualLearning/CompareProgressDashboard";
 
 
 /*Auth SignIn SignUp*/
@@ -87,12 +88,14 @@ const App = () => {
           <Route path="/analysis/:userId/:letter" element={<LetterAnalysisPage />} />
 
           {/* Visual Learning */}
-          <Route path="/v-home" element={<VisualHomePage/>} />
+          {/* Protected routes */}
+          <Route path="/v-home" element={<PrivateRoute element={<VisualHomePage />} />} />
           <Route path="/color-matching" element={<ColorMatchingHome/>} />
           <Route path="/color-matching-game/:level" element={<ColorMatchingGame />} />
           <Route path="/color-matching-data" element={<FetchColorMatchingData />} />
           <Route path="/color-matching-report" element={<FetchColorMatchingReport />} />
           <Route path="/progress-dashboard" element={<ProgressDashboard />} />
+          <Route path="/vl-compare-progress" element={<CompareProgressDashboard />} />
 
           {/* Auth */}
           <Route path="/signin" element={<SignIn />} />

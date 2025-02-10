@@ -5,9 +5,6 @@ import axios from "axios";
 
 const colors = ["red", "blue", "green", "yellow", "purple"];
 
-// User pool
-const userPool = ["user_123", "user_456", "user_789"];
-
 const levelConfig = {
   easy: {
     sequenceLength: 3,
@@ -29,8 +26,12 @@ const ColorMatchingGame = () => {
   const [inputSequence, setInputSequence] = useState([]);
   const [isHidden, setIsHidden] = useState(false);
   const [startDragTime, setStartDragTime] = useState(null);
-  const [errorCount, setErrorCount] = useState(0);
+  const [circleCount, setCircleCount] = useState(0);
   const [timeTaken, setTimeTaken] = useState(null);
+  const [resultData, setResultData] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+  const [availableCircles, setAvailableCircles] = useState(10);
+  const [recommendedLevel, setRecommendedLevel] = useState(null);
 
   useEffect(() => {
     const { sequenceLength, timeLimit } = levelConfig[level] || levelConfig.easy;
@@ -39,7 +40,6 @@ const ColorMatchingGame = () => {
       colors[Math.floor(Math.random() * colors.length)]
     );
     setSequence(generatedSequence);
-    setInputSequence(Array(sequenceLength).fill(""));
 
     const timer = setTimeout(() => {
       setIsHidden(true);
@@ -48,7 +48,17 @@ const ColorMatchingGame = () => {
     return () => clearTimeout(timer);
   }, [level]);
 
-  const handleDrop = (color, index) => {
+  const handleDropEmptyCircle = (index) => {
+    if (availableCircles > 0) {
+      const updatedSequence = [...inputSequence];
+      updatedSequence[index] = "empty";
+      setInputSequence(updatedSequence);
+      setCircleCount((prev) => prev + 1);
+      setAvailableCircles((prev) => prev - 1);
+    }
+  };
+
+  const handleDropColor = (color, index) => {
     const updatedSequence = [...inputSequence];
     updatedSequence[index] = color;
 
@@ -56,14 +66,10 @@ const ColorMatchingGame = () => {
       setStartDragTime(Date.now());
     }
 
-    if (color !== sequence[index]) {
-      setErrorCount((prev) => prev + 1);
-    }
-
     setInputSequence(updatedSequence);
   };
 
-  const handleDone = () => {
+  const handleDone = async () => {
     if (!startDragTime) {
       alert("No actions were performed!");
       return;
@@ -77,33 +83,65 @@ const ColorMatchingGame = () => {
       (color, idx) => color === sequence[idx]
     ).length;
 
+    const emptyCircles = inputSequence.filter((color) => color === "").length;
+    const wrongCount = sequence.length - correctCount - emptyCircles;
+
     const totalScore = Math.floor((correctCount / sequence.length) * 100);
 
-    // Randomly select a user_id from the user pool
-    const randomUserId = userPool[Math.floor(Math.random() * userPool.length)];
-
     const resultData = {
-      user_id: randomUserId,
       level,
-      wrong_takes: errorCount,
+      wrong_takes: wrongCount + emptyCircles,
       correct_takes: correctCount,
       total_score: totalScore,
       time_taken: totalTimeTaken,
-      provided_sequence: sequence, // Save the system-provided sequence
-      child_sequence: inputSequence, // Save the child's input sequence
-      date: new Date().toISOString(), // Capture the current date and time
+      provided_sequence: sequence,
+      child_sequence: inputSequence,
+      circle_count: circleCount,
+      date: new Date().toISOString(),
     };
 
-    axios
-      .post("http://localhost:5000/visual_learning/color_matching_game", resultData)
-      .then((response) => {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        alert("User is not authenticated. Please log in.");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:5000/visual_learning/color_matching_game",
+        resultData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data && response.data.result_id) {
         alert(
-          `User ID: ${randomUserId}\nSelected Level: ${level}\nWrong Takes: ${errorCount}\nCorrect Takes: ${correctCount}\nTotal Score: ${totalScore} / 100\nTime Taken: ${totalTimeTaken} seconds\nResult ID: ${response.data.result_id}`
+          `Selected Level: ${level}\nWrong Takes: ${
+            wrongCount + emptyCircles
+          }\nCorrect Takes: ${correctCount}\nTotal Score: ${totalScore} / 100\nTime Taken: ${totalTimeTaken} seconds\nResult ID: ${response.data.result_id}`
         );
-      })
-      .catch((error) => {
-        alert(`Error saving result: ${error.response?.data?.error || error.message}`);
-      });
+
+        setResultData(response.data);
+        setFeedback(response.data.feedback);
+        setRecommendedLevel(response.data.recommended_level); // Handle the recommended level
+      } else {
+        alert("Failed to save result, please try again.");
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        alert("Authentication failed. Please log in again.");
+      } else {
+        alert(
+          `Error saving result: ${
+            error.response?.data?.error || error.message
+          }`
+        );
+      }
+    }
   };
 
   return (
@@ -130,12 +168,24 @@ const ColorMatchingGame = () => {
               key={index}
               className="empty-circle"
               onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => handleDrop(e.dataTransfer.getData("color"), index)}
+              onDrop={(e) => {
+                const data = e.dataTransfer.getData("type");
+                if (data === "empty-circle") {
+                  handleDropEmptyCircle(index);
+                } else {
+                  handleDropColor(data, index);
+                }
+              }}
             >
               {inputSequence[index] && (
                 <div
                   className="filled-circle"
-                  style={{ backgroundColor: inputSequence[index] }}
+                  style={{
+                    backgroundColor:
+                      inputSequence[index] === "empty"
+                        ? "lightgray"
+                        : inputSequence[index],
+                  }}
                 ></div>
               )}
             </div>
@@ -148,8 +198,19 @@ const ColorMatchingGame = () => {
               key={color}
               className="color-option"
               draggable
-              onDragStart={(e) => e.dataTransfer.setData("color", color)}
+              onDragStart={(e) => e.dataTransfer.setData("type", color)}
               style={{ backgroundColor: color }}
+            ></div>
+          ))}
+        </div>
+
+        <div className="empty-circle-pool">
+          {Array.from({ length: availableCircles }).map((_, index) => (
+            <div
+              key={index}
+              className="empty-circle"
+              draggable
+              onDragStart={(e) => e.dataTransfer.setData("type", "empty-circle")}
             ></div>
           ))}
         </div>
@@ -157,6 +218,32 @@ const ColorMatchingGame = () => {
         <button className="done-button" onClick={handleDone}>
           Done
         </button>
+
+        <div className="circle-count">
+          <h3>Circles Filled: {circleCount}</h3>
+        </div>
+
+        {feedback && (
+          <div className="feedback">
+            <h3>Feedback</h3>
+            <p>{feedback}</p>
+          </div>
+        )}
+
+        {resultData && (
+          <div className="result-summary">
+            <h3>Result Summary</h3>
+            <p><strong>Level:</strong> {level}</p>
+            <p><strong>Wrong Takes:</strong> {resultData.wrong_takes}</p>
+            <p><strong>Correct Takes:</strong> {resultData.correct_takes}</p>
+            <p><strong>Total Score:</strong> {resultData.total_score} / 100</p>
+            <p><strong>Time Taken:</strong> {resultData.time_taken} seconds</p>
+            <p><strong>Circle Count:</strong> {resultData.circle_count}</p>
+            {recommendedLevel && (
+              <p><strong>Recommended Level:</strong> {recommendedLevel}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

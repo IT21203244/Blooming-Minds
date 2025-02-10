@@ -1,199 +1,213 @@
+/* General styles for the game */
 .color-matching-game {
+  font-family: Arial, sans-serif;
   display: flex;
-  font-family: "Comic Sans MS", cursive, sans-serif;
-  height: 100vh;
-  flex-direction: row;
-  background-color: #fdf6e3;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f7f7f7;
+  min-height: 100vh;
 }
 
-/* Sidebar Styling (Left side) */
-.sidebar {
+/* Sidebar styling */
+.color-matching-game .sidebar {
   width: 80px;
   background-color: #5c6bc0;
   border-radius: 15px;
-  margin: 15px;
-  height: calc(100vh - 30px);
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  margin-left: 15px;
+  height: calc(100vh - 20px);
 }
 
-/* Main Game Area */
-.game-container {
-  flex: 1;
-  text-align: center;
+/* Game container */
+.color-matching-game .game-container {
+  max-width: 800px;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
   padding: 20px;
+  margin-top: 20px;
 }
 
-.color-sequence {
+/* Level heading */
+.color-matching-game h1 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Color sequence */
+.color-matching-game .circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 10px;
+  transition: opacity 0.3s ease;
+}
+
+.color-matching-game .circle.hidden {
+  opacity: 0;
+}
+
+.color-matching-game .color-sequence {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
-  position: relative;
+  margin-bottom: 20px;
+  position: relative; 
 }
 
-.circle {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  margin: 0 15px;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.circle:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
-.hidden {
-  visibility: hidden;
-}
-
-.overlay {
+/* Overlay - only covers the color sequence */
+.color-matching-game .overlay {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
-  background-color: #d3d3d3;
-  opacity: 0.8;
-  border-radius: 10px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 1; 
 }
 
+/* Drop zone */
 .drop-zone {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  position: relative;
+  border-radius: 12px; /* Round corners for drop zone */
+  border: 2px solid #ccc; /* Add border to show drop zone boundary */
+  padding: 20px; /* Optional padding inside the drop zone */
+  background-color: #ffffff; /* Optional background color */
 }
 
+/* Optional: Style for empty circles if needed */
 .empty-circle {
-  width: 70px;
-  height: 70px;
-  border: 3px dashed #b0c4de;
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
   border-radius: 50%;
-  margin: 0 15px;
+  background-color: #f0f0f0; /* Light background color for visibility */
+  margin: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background-color: #f0f8ff;
-  transition: transform 0.3s;
+  justify-content: center;
 }
 
-.empty-circle:hover {
-  transform: scale(1.1);
+.empty-circle-dz {
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  border-radius: 50%;
+  background-color: #fafafa; /* Light background color for visibility */
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Filled circle hidden but the drop zone remains active */
 .filled-circle {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 50%; /* To keep it round if visible */
 }
 
-.color-options {
+
+/* Color options */
+.color-matching-game .color-options {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
-.color-option {
-  width: 70px;
-  height: 70px;
+.color-matching-game .color-option {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin: 0 15px;
+  margin: 0 10px;
   cursor: grab;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s;
 }
 
-.color-option:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+/* Empty circle pool */
+.color-matching-game .empty-circle-pool-container {
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* Color Palettes (Pastel Colors) */
-.color-option[style*="red"] {
-  background-color: #ffb3ba;
+.color-matching-game .empty-circle-pool {
+  display: flex;
+  justify-content: center;
 }
 
-.color-option[style*="blue"] {
-  background-color: #bae1ff;
-}
-
-.color-option[style*="green"] {
-  background-color: #baffc9;
-}
-
-.color-option[style*="yellow"] {
-  background-color: #ffffba;
-}
-
-.color-option[style*="purple"] {
-  background-color: #e2b3ff;
-}
-
-.done-button {
-  padding: 15px 25px;
-  font-size: 18px;
-  background-color: #ffde59;
-  color: #4a4a4a;
+.color-matching-game .done-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-.done-button:hover {
-  background-color: #ffd700;
-  transform: scale(1.1);
+.color-matching-game .done-button:hover {
+  background-color: #0056b3;
 }
 
-/* Media Queries for Responsiveness */
+/* Circle count */
+.color-matching-game .circle-count {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Feedback */
+.color-matching-game .feedback {
+  background-color: #e7f9e7;
+  border: 1px solid #c8e6c9;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Result summary */
+.color-matching-game .result-summary {
+  background-color: #fffbe7;
+  border: 1px solid #ffe082;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.result-summary p {
+  margin: 5px 0;
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
-  .color-matching-game {
-    flex-direction: column;
-    height: auto;
+  .color-matching-game .game-container {
+    padding: 15px;
   }
 
-  .sidebar {
-    width: 100%;
-    margin: 0;
-    height: auto;
-    display: none;
+  .color-matching-game .circle,
+  .color-matching-game .empty-circle,
+  .color-matching-game .color-option {
+    width: 40px;
+    height: 40px;
   }
 
-  .game-container {
-    padding: 10px;
-  }
-
-  .circle,
-  .empty-circle,
-  .color-option {
-    width: 60px;
-    height: 60px;
-    margin: 5px;
-  }
-
-  .done-button {
-    padding: 12px 20px;
-    font-size: 16px;
-    width: 100%;
+  .color-matching-game h1 {
+    font-size: 1.2rem;
   }
 }
 
 @media (max-width: 480px) {
-  .color-sequence,
-  .drop-zone,
-  .color-options {
-    flex-direction: row;
+  .color-matching-game .circle,
+  .color-matching-game .empty-circle,
+  .color-matching-game .color-option {
+    width: 30px;
+    height: 30px;
   }
 
-  .circle,
-  .empty-circle,
-  .color-option {
-    width: 50px;
-    height: 50px;
-  }
-
-  .done-button {
-    padding: 10px 15px;
-    font-size: 14px;
+  .color-matching-game h1 {
+    font-size: 1rem;
   }
 }
