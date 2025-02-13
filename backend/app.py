@@ -12,10 +12,10 @@ from routes.AuditoryLearning.AudioBook.lesson_routes import lesson_routes
 from routes.AuditoryLearning.AudioGame.audiogame_routes import audiogame_routes
 
 #ReadWrite Learning
-from routes.ReadWriteLearning.letter_routes import letter_routes
+#from routes.ReadWriteLearning.letter_routes import letter_routes
 
 #Visual Learning
-from routes.VisualLearning.color_matching_routes import color_matching_routes
+#from routes.VisualLearning.color_matching_routes import color_matching_routes
 
 # Flask app setup
 app = Flask(__name__)
@@ -35,9 +35,9 @@ app.register_blueprint(record_routes)
 app.register_blueprint(lesson_routes, url_prefix="/api")
 app.register_blueprint(audiogame_routes, url_prefix="/api")
 
-app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
+#app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
 
-app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
+#app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
 
 # Run the Flask app on port 5000
 if __name__ == "__main__":
