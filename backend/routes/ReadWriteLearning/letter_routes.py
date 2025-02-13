@@ -10,7 +10,11 @@ from utils.auth.token_auth import token_required
 
 letter_routes = Blueprint('letter_routes', __name__)
 
-UPLOAD_FOLDER = "E:/BloomingMinds/backend/uploaded_letters"
+# Get the absolute path of the backend directory
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+
+# Define upload folder dynamically
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "backend", "uploaded_letters")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @letter_routes.route('/predict_and_compare', methods=['POST'])

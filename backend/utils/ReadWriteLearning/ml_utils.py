@@ -1,10 +1,15 @@
+import os
 import numpy as np
 from tensorflow.keras.models import load_model
 from PIL import Image, ImageOps
 
+# Get the absolute path of the backend directory
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+
+# Define model path dynamically
+MODEL_PATH = os.path.join(BASE_DIR, "backend", "utils", "ReadWriteLearning", "model_hand_new.keras")
+
 # Load the pre-trained model
-# MODEL_PATH = 'E:/Jupyter/model_hand.keras'
-MODEL_PATH = 'E:/Handwritten Letters/New folder (2)/model_hand_new.keras'
 model = load_model(MODEL_PATH)
 
 # Label mapping (uppercase and lowercase letters)
@@ -21,7 +26,6 @@ def preprocess_image(image):
     img_array = np.array(image) / 255.0  # Normalize the image
     img_array = img_array.reshape(1, 28, 28, 1)  # Reshape for model input
     return img_array
-
 
 def predict_letter(image):
     try:
