@@ -6,7 +6,7 @@ from utils.AuditoryLearning.AudioGame.gamedb_utils import GameDatabase
 audiogame_routes = Blueprint("audiogame_routes", __name__)
 
 # Load the model globally
-MODEL_PATH = r'C:\Users\Dilshan\Desktop\Blooming-Minds\models\saved_models\Auditory\audio_game_model.h5'
+MODEL_PATH = r'backend/routes/AuditoryLearning/audio_game_model.h5'
 
 try:
     model = tf.keras.models.load_model(
