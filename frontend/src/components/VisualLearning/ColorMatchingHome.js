@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import './ColorMatchingHome.css';
 
 // Importing images
-import sun from './img/sun.jpg';
-import bfly from './img/bfly.jpg';
-import mroom from './img/mroom.jpg';
-import rbow from './img/rbow.jpg';
-import star from './img/star.jpg';
-import cloud from './img/Picture1.png';
+import sun from './img/sun3.png';
+import bfly from './img/bfly1.png';
+import mroom from './img/mroom1.png';
+import rbow from './img/rbow1.png';
+import star from './img/star1.png';
+import cloud from './img/c1.png';
 
 const ColorMatchingHome = () => {
   return (

@@ -1,0 +1,154 @@
+/* SignIn.css */
+
+/* Body and container styling */
+.signin-page {
+    background: linear-gradient(135deg, #fdfd96, #b3e5fc); /* Pastel yellow to pastel blue */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+    flex-direction: row-reverse; /* Swap positions of the image and container */
+  }
+  
+  .signin-page .signin-container {
+    background-color: #ffffff; /* White background */
+    border-radius: 15px;
+    padding: 0px 30px 20px 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    margin: 0 20px; 
+  }
+  
+  .signin-page .signin-heading {
+    font-size: 35px;
+    font-weight: bold;
+    color: #5c6bc0;
+    text-align: center;
+    font-family: 'Comic Sans MS', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+  }
+  
+  .signin-page .signin-form label {
+    display: block;
+    font-size: 1rem;
+    color: #424242;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+  
+  .signin-page .signin-form input {
+    width: 350px;
+    height: 25px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #b3e5fc; /* Light pastel blue border */
+    border-radius: 5px;
+    outline: none;
+    font-size: 1rem;
+  }
+  
+  .signin-page .signin-form input:focus {
+    border-color: #0277bd; /* Pastel blue on focus */
+    box-shadow: 0 0 5px rgba(2, 119, 189, 0.5);
+  }
+  
+  .signin-page .signin-btn {
+    background-color: #fdd835; /* Pastel yellow button */
+    color: #5c6bc0;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+  }
+  
+  .signin-page .signin-btn:hover {
+    background-color: #fbc02d; /* Darker pastel yellow on hover */
+  }
+  
+  .signin-page .error-message {
+    background-color: #ffcdd2; /* Light red */
+    color: #b71c1c;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .signin-page .signup-link {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .signin-page .signup-link a {
+    color: #0277bd; /* Pastel blue */
+    text-decoration: none;
+  }
+  
+  .signin-page .signup-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Image on the left side */
+  .image-container {
+    max-width: 50%; /* Restrict the image width to half the page */
+    height: auto;
+    margin-right: 20px; /* Add spacing between image and container */
+    flex-shrink: 0; /* Prevent the image from shrinking */
+    object-fit: contain;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .signin-page {
+      flex-direction: column; /* Stack items vertically on smaller screens */
+    }
+  
+    .signin-page .signin-container {
+      max-width: 90%;
+      padding: 15px;
+      margin: 10px 0;
+    }
+  
+    .signin-page .signin-heading {
+      font-size: 1.5rem;
+    }
+  
+    .signin-page .signin-form input {
+      padding: 8px;
+      font-size: 0.9rem;
+    }
+  
+    .signin-page .signin-btn {
+      font-size: 0.9rem;
+      padding: 8px;
+    }
+  
+    .signin-page .image-container {
+      max-width: 90%; /* Reduce the image size for smaller screens */
+      margin: 0 auto 20px auto; /* Center the image */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .signin-page .signin-heading {
+      font-size: 1.2rem;
+    }
+  
+    .signin-page .signin-btn {
+      font-size: 0.8rem;
+      padding: 7px;
+    }
+  
+    .signin-page .image-container {
+      max-width: 100%;
+      margin-bottom: 15px;
+    }
+  }
+  
