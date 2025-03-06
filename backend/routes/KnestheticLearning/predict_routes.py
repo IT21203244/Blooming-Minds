@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 import os
 
-model_path = 'backend/routes/KnestheticLearning/smile_detection_model.h5'
+model_path = r'C:\Users\Dilshan\Desktop\Blooming-Minds\backend\routes\KnestheticLearning\smile_detection_model.h5'
 
 if not os.path.exists(model_path):
     print(f"Model file not found: {model_path}")

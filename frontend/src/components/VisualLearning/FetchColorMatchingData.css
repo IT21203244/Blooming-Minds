@@ -63,49 +63,48 @@ p[style="color: red"] {
 }
 
 /* Table styling */
-table {
+/* table {
   width: 90%;
   margin: 0 auto 20px;
   border-collapse: collapse;
-  background-color: #ffffff; /* White background */
+  background-color: #ffffff; 
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
-}
+} */
 
-th, td {
+/* th, td {
   text-align: center;
   padding: 10px;
-  border-bottom: 2px solid #f3e5f5; /* Soft purple border */
+  border-bottom: 2px solid #f3e5f5; 
   color: #424242;
-}
+} */
 
-th {
-  background-color: #f8bbd0; /* Pastel pink */
+/* th {
+  background-color: #f8bbd0; 
   font-size: 1.2rem;
-  color: #4a148c; /* Dark purple */
-}
-
+  color: #4a148c; 
+} */
+/* 
 tr:nth-child(even) {
-  background-color: #fce4ec; /* Alternate row background */
+  background-color: #fce4ec; 
 }
 
 tr:hover {
-  background-color: #ffecb3; /* Highlighted row */
-}
+  background-color: #ffecb3; 
+} */
 
-/* Improve provided and child sequence text styling */
-td:nth-child(7), td:nth-child(8) {
+
+/* td:nth-child(7), td:nth-child(8) {
   font-family: "Courier New", monospace;
-  color: #8e24aa; /* Vibrant purple */
+  color: #8e24aa; 
   font-size: 0.9rem;
 }
 
-/* Add some spacing */
 td, th {
   border: 1px solid #e0e0e0;
   padding: 12px;
-}
+} */
 
 
 
