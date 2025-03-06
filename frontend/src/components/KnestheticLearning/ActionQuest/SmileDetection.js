@@ -29,19 +29,6 @@ const SmileDetection = () => {
     return () => clearInterval(timer);
   }, [timeLeft, navigate]);
 
-  const handleStartCamera = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/video_feed', { method: 'HEAD' });
-      if (response.ok) {
-        setIsLoaded(true);
-        setTimeLeft(120); // Start the timer (2 minutes)
-      } else {
-        console.error('Video feed not available');
-      }
-    } catch (error) {
-      console.error('Error checking video feed:', error);
-    }
-  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -75,9 +62,6 @@ const SmileDetection = () => {
     }
   };
 
-  const handleNavClick = (section) => {
-    setActiveSection(section);
-  };
   const getColor = (percentage) => {
     if (percentage >= 80) {
       return "#4a90e2"; // Blue for 80% or above
@@ -99,20 +83,7 @@ const SmileDetection = () => {
           <div className='data_set_kin'>
             <div className=''>
               <div>
-                <div className='new_nav_barkin'>
-                  <p
-                    onClick={() => handleNavClick('image')}
-                    className={`nav_item_check ${activeSection === 'image' ? 'active' : ''}`}
-                  >
-                    By Image
-                  </p>
-                  <p
-                    onClick={() => handleNavClick('camera')}
-                    className={`nav_item_check ${activeSection === 'camera' ? 'active' : ''}`}
-                  >
-                    By Camera
-                  </p>
-                </div>
+                
                 <div className={`by_Image_Section ${activeSection === 'image' ? 'active' : ''}`}>
                   <div className="border_card_smile">
                     <div>
@@ -157,22 +128,7 @@ const SmileDetection = () => {
                     </div>
                   </div>
                 </div>
-                <div className={`by_Camara_Section ${activeSection === 'camera' ? 'active' : ''}`}>
-                  <div className='border_card_smile'>
-                    {!isLoaded ? (
-                      <p className='no_word'>Camera not started. Click the button below to start.</p>
-                    ) : (
-                      <img
-                        src="http://localhost:5000/video_feed"
-                        alt="Smile Detection Feed"
-                        className='camara_kni'
-                      />
-                    )}
-                    <button className='btn_start' onClick={handleStartCamera}>
-                      Start Camera
-                    </button>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>

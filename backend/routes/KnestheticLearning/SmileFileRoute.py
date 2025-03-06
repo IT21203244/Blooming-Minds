@@ -16,11 +16,12 @@ upload_folder = r"backend/routes/KnestheticLearning/uploads/"
 os.makedirs(upload_folder, exist_ok=True)
 
 def preprocess_image(image_path):
-    img = load_img(image_path, target_size=(150, 150))
+    img = load_img(image_path, target_size=(128, 128))  # Change to 128x128
     img_array = img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     img_array = img_array / 255.0
     return img_array
+
 
 @SmileFileRoute.route('/api/smile_check', methods=['POST'])
 def smile_check():
