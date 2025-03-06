@@ -8,7 +8,7 @@ import numpy as np
 SmileFileRoute = Blueprint('SmileFileRoute', __name__)
 
 # Path to the trained model
-model_path = r"backend/routes/KnestheticLearning/best_smile_model.keras"
+model_path = r"C:\Users\Dilshan\Desktop\Blooming-Minds\backend\routes\KnestheticLearning\smile_detection_model.h5"
 model = load_model(model_path)
 
 # Directory to save uploaded images temporarily

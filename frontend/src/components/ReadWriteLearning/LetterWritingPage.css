@@ -57,12 +57,12 @@ input[type="file"]:focus {
   border-color: #b0c4de; /* Light Steel Blue */
   box-shadow: 0 0 8px rgba(176, 196, 222, 0.6);
 }
-
+/* 
 button {
   display: block;
   width: 300px;
   margin: 20px auto;
-  background-color: #a4cedb; /* Light Green */
+  background-color: #a4cedb; 
   color: white;
   padding: 12px 25px;
   border: none;
@@ -72,7 +72,7 @@ button {
   font-family: 'Comic Sans MS', sans-serif;
   transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+} */
 
 button:hover {
   background-color: #66bb6a; /* Slightly darker green */
@@ -227,7 +227,6 @@ h4 {
 img {
   max-width: 100%;
   height: auto;
-  margin-top: 10px;
   border-radius: 5px;
 }
 
