@@ -86,6 +86,7 @@ const SmileDetection = () => {
         alert('Data saved successfully!');
         setShowUsernameInput(false);
         setUsername('');
+        window.location.reload();
       } else {
         setError(data.error || 'Failed to save data.');
       }
