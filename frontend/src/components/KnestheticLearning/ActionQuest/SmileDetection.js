@@ -7,11 +7,12 @@ const SmileDetection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const navigate = useNavigate();
-  const [imagePath, setImagePath] = useState('');
   const [uploadedImage, setUploadedImage] = useState(null);
   const [smilePercentage, setSmilePercentage] = useState(null);
   const [error, setError] = useState('');
-  const [activeSection, setActiveSection] = useState('image'); // Default to image section
+  const [activeSection, setActiveSection] = useState('image');
+  const [username, setUsername] = useState(''); // New state for username
+  const [showUsernameInput, setShowUsernameInput] = useState(false); // Toggle input visibility
 
   useEffect(() => {
     if (timeLeft === 0) return;
@@ -28,7 +29,6 @@ const SmileDetection = () => {
 
     return () => clearInterval(timer);
   }, [timeLeft, navigate]);
-
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -54,6 +54,7 @@ const SmileDetection = () => {
       const data = await response.json();
       if (response.ok) {
         setSmilePercentage(data.smile_percentage.toFixed(2));
+        setShowUsernameInput(true); // Show username input after smile detection
       } else {
         setError(data.error || 'An error occurred while checking the smile.');
       }
@@ -62,15 +63,43 @@ const SmileDetection = () => {
     }
   };
 
-  const getColor = (percentage) => {
-    if (percentage >= 80) {
-      return "#4a90e2"; // Blue for 80% or above
-    } else if (percentage >= 50) {
-      return "green"; // Green for 50% or above
-    } else {
-      return "red"; // Red for less than 50%
+  const handleSaveData = async () => {
+    if (!username.trim()) {
+      setError('Please enter your name.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/save_smile_data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          smile_percentage: smilePercentage,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Data saved successfully!');
+        setShowUsernameInput(false);
+        setUsername('');
+      } else {
+        setError(data.error || 'Failed to save data.');
+      }
+    } catch (err) {
+      setError('Failed to connect to the backend.');
     }
   };
+
+  const getColor = (percentage) => {
+    if (percentage >= 80) return "#4a90e2";
+    if (percentage >= 50) return "green";
+    return "red";
+  };
+
   return (
     <div className='main_continer'>
       <div>
@@ -81,54 +110,46 @@ const SmileDetection = () => {
             <img src={Smile} alt='Smile' className='smile_kni' />
           </div>
           <div className='data_set_kin'>
-            <div className=''>
-              <div>
-                
-                <div className={`by_Image_Section ${activeSection === 'image' ? 'active' : ''}`}>
-                  <div className="border_card_smile">
-                    <div>
-                      <p className='main_topic_new_sub_add'>Smile Detection By Image</p>
-                      <input
-                        className="file_path"
-                        type="file"
-                        onChange={handleFileChange}
-                      />
-                      {smilePercentage !== null && (
-                        <div className="percentage_container_full_kin">
-                          <div className="percentage_column_data">
-                            <p>Smile Percentage:</p><p> {smilePercentage}%</p>
-                          </div>
-                          <div className="progress-column">
-                            <div
-                              className="progress_bar_kin"
-                              style={{
-                                width: `${smilePercentage}%`,
-                                backgroundColor: getColor(smilePercentage),
+            <div className='by_Image_Section active'>
+              <div className="border_card_smile">
+                <p className='main_topic_new_sub_add'>Smile Detection By Image</p>
+                <input className="file_path" type="file" onChange={handleFileChange} />
 
-                              }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
-                      {uploadedImage && (
-                        <div className='image_kin_set'>
-                          <p className='up_img_topic'>Uploaded Image:</p>
-                          <img
-                            src={URL.createObjectURL(uploadedImage)}
-                            alt="Uploaded"
-                            className="uploaded_image"
-                          />
-                        </div>
-                      )}
-                      <button className="upload_btn_kini" onClick={handleUploadCheck}>
-                        Check
-                      </button>
-
-                      {error && <p className="error_message">{error}</p>}
+                {smilePercentage !== null && (
+                  <div className="percentage_container_full_kin">
+                    <div className="percentage_column_data">
+                      <p>Smile Percentage:</p>
+                      <p> {smilePercentage}%</p>
                     </div>
+                    <div className="progress-column">
+                      <div className="progress_bar_kin" style={{ width: `${smilePercentage}%`, backgroundColor: getColor(smilePercentage) }}></div>
+                    </div>
+                    {showUsernameInput && (
+                        <div className="save_input_container">
+                          <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} />
+                          <button className="upload_btn_kini" onClick={handleSaveData}>Save</button>
+                        </div>
+                      )}
                   </div>
+                )}
+
+                {uploadedImage && (
+                  <div className='image_kin_set'>
+                    <p className='up_img_topic'>Uploaded Image:</p>
+                    <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className="uploaded_image" />
+                  </div>
+                )}
+
+                <div className='btn_continer_simele'>
+                  <button className="upload_btn_kini" onClick={handleUploadCheck}>Check</button>
+                  {smilePercentage !== null && (
+                    <>
+                    
+                    
+                    </>
+                  )}
                 </div>
-                
+                {error && <p className="error_message">{error}</p>}
               </div>
             </div>
           </div>
