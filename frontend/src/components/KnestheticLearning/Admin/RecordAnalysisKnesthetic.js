@@ -108,7 +108,7 @@ function RecordAnalysisKnesthetic() {
     <div>
       <div className='nav_bar_kin_admin main_nav'>
         <p className='kin_admin_nav kin_admin_nav_active_main' onClick={() => (window.location.href = '/recordAnalysisKnesthetic')}>letter Quest</p>
-        <p className='kin_admin_nav '>Action Quest</p>
+        <p className='kin_admin_nav ' onClick={() => (window.location.href = '/actionQuestAdmin')}>Action Quest</p>
         <p className='kin_admin_nav' onClick={() => (window.location.href = '/KnestheticHome')}>Logout</p>
       </div>
       <div className="student-records-container">

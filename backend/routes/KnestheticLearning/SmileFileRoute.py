@@ -74,3 +74,16 @@ def get_smile_data():
     smile_data = list(smile_results_collection.find({}, {"_id": 0}))
 
     return jsonify(smile_data)
+
+@SmileFileRoute.route('/api/delete_smile_data/<student_id>', methods=['DELETE'])
+def delete_smile_data(student_id):
+    try:
+        # Try to find and delete the document by student_id
+        result = smile_results_collection.delete_one({"username": student_id})
+        
+        if result.deleted_count > 0:
+            return jsonify({"message": "Student deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Student not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

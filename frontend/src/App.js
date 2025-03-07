@@ -48,6 +48,7 @@ import CompareProgressDashboard from "./components/VisualLearning/CompareProgres
 import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
 import PrivateRoute from "./components/Auth/PrivateRoute";
+import ActionQuestAdmin from "./components/KnestheticLearning/Admin/ActionQuestAdmin";
 
 
 const App = () => {
@@ -78,7 +79,7 @@ const App = () => {
           <Route path="/KnestheticAdmin" element={<AdminDashKnesthetic />} />
           <Route path="/recordAnalysisKnesthetic" element={<RecordAnalysisKnesthetic />} />
           <Route path="/skilCompareKnesthetic" element={<SkilCompareKnesthetic />} />
-
+          <Route path="/actionQuestAdmin" element={<ActionQuestAdmin />} />
           {/* ReadWrite Learning */}
           {/* Protected routes */}
           <Route path="/rw-home" element={<PrivateRoute element={<ReadWriteHomePage />} />} />
