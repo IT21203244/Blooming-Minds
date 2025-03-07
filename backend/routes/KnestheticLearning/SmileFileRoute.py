@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
-
+from datetime import datetime
 # MongoDB connection
 client = MongoClient("mongodb+srv://blooming_minds:BsjsdM24@bloomingminds.n7ia1.mongodb.net/")
 db = client["blooming_minds"]
@@ -54,13 +54,20 @@ def save_smile_data():
     if not username or smile_percentage is None:
         return jsonify({"error": "Username and Smile Percentage are required"}), 400
 
-    # Save data to MongoDB
+    # Get the current date and time
+    current_datetime = datetime.now()
+    current_date = current_datetime.date().strftime("%Y-%m-%d")  # Date in YYYY-MM-DD format
+    current_time = current_datetime.time().strftime("%H:%M:%S")  # Time in HH:MM:SS format
+
+    # Save data to MongoDB with date and time
     smile_results_collection.insert_one({
         "username": username,
-        "smile_percentage": smile_percentage
+        "smile_percentage": smile_percentage,
+        "date": current_date,
+        "time": current_time
     })
 
-    return jsonify({'message': 'Data saved successfully'}), 201
+    return jsonify({'message': 'Data saved successfully'}), 200
 
 @SmileFileRoute.route('/api/get_smile_data', methods=['GET'])
 def get_smile_data():
