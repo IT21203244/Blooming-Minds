@@ -57,7 +57,7 @@ const App = () => {
       <React.Fragment>
         <Routes>
           {/*Home*/}
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           {/* Auditory Learning*/}
           <Route path="/AuditoryHomePage" element={<AuditoryHomePage />} />
           <Route path="/AdminHome" element={<AdminHome />} />
@@ -99,7 +99,7 @@ const App = () => {
           <Route path="/vl-compare-progress" element={<CompareProgressDashboard />} />
 
           {/* Auth */}
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>
       </React.Fragment>

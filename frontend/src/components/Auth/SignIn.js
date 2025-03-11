@@ -26,7 +26,8 @@ const SignIn = () => {
     if (response.ok) {
       // Save token to localStorage
       localStorage.setItem("authToken", data.token);
-      navigate("/"); // Redirect to the home page after login
+      localStorage.setItem("userId", data.userId);
+      navigate("/home"); // Redirect to the home page after login
     } else {
       setError(data.error || "Something went wrong");
     }
@@ -34,7 +35,6 @@ const SignIn = () => {
 
   return (
     <div className="signin-page">
-      
       <div className="signin-container">
         <h2 className="signin-heading">Sign In</h2>
         {error && <div className="error-message">{error}</div>}

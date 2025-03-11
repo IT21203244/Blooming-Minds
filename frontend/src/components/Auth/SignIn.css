@@ -41,7 +41,7 @@
   }
   
   .signin-page .signin-form input {
-    width: 350px;
+    width: 100%;
     height: 25px;
     padding: 10px;
     margin-bottom: 15px;
