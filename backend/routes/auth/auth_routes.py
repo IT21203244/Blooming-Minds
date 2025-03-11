@@ -58,6 +58,7 @@ def signin():
     return jsonify({
         "message": "Login successful",
         "token": token,
+        "userId": str(user["_id"]),  
         "username": user["username"],
         "email": user["email"]
     }), 200
