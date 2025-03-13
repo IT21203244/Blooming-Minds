@@ -7,220 +7,63 @@ const LessonPage = () => {
   const { lessonId } = useParams();
   const [lesson, setLesson] = useState(null);
   const [error, setError] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentAudioIndex, setCurrentAudioIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioProgress, setAudioProgress] = useState(0);
   const [audioSpeed, setAudioSpeed] = useState(1);
-  const [isAskingQuestion, setIsAskingQuestion] = useState(false);
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [voices, setVoices] = useState([]);
-  const [countdown, setCountdown] = useState(5);
-  const [transcription, setTranscription] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
+  let audioPlayer = null; // Store audio object
 
   useEffect(() => {
-    const getVoices = () => {
-      const allVoices = speechSynthesis.getVoices();
-      setVoices(
-        allVoices.filter((voice) => voice.name.toLowerCase().includes("female"))
-      );
-    };
-
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = getVoices;
-    } else {
-      getVoices();
-    }
-
     axios
       .get(`http://localhost:5000/api/get_lesson/${lessonId}`)
-      .then((response) => setLesson(response.data.lesson))
+      .then((response) => {
+        const lessonData = response.data.lesson;
+        if (lessonData && lessonData.audio_files) {
+          // Convert stored relative paths to absolute URLs
+          lessonData.audio_files = lessonData.audio_files.map(
+            (file) => `http://localhost:5000/${file}`
+          );          
+        }
+        setLesson(lessonData);
+      })
       .catch(() => setError("Failed to fetch lesson."));
   }, [lessonId]);
 
-  const playAudio = () => {
-    if (lesson && lesson.text) {
-      setIsPlaying(true);
-      readLessonPart(currentIndex);
+  const playAudio = (index = 0) => {
+    if (!lesson || !lesson.audio_files || lesson.audio_files.length === 0) {
+      return;
     }
-  };
 
-  const stopAudio = () => {
-    speechSynthesis.cancel();
-    setIsPlaying(false);
-    setAudioProgress(0);
-  };
-
-  const readLessonPart = (index) => {
-    if (index >= lesson.text.length) {
+    if (index >= lesson.audio_files.length) {
       setIsPlaying(false);
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(
-      lesson.text[index]?.text || lesson.text[index]
-    );
-    const selectedVoice = voices.find((voice) =>
-      voice.name.toLowerCase().includes("female")
-    );
+    setIsPlaying(true);
+    setCurrentAudioIndex(index);
 
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
+    const audio = new Audio(lesson.audio_files[index]);
+    audio.playbackRate = audioSpeed;
 
-    utterance.rate = audioSpeed;
-    utterance.pitch = 1.2;
-    utterance.lang = "en-US";
-
-    utterance.onend = () => {
-      setAudioProgress(((index + 1) / lesson.text.length) * 100);
-      if (lesson.questions && lesson.questions[index] && !isAskingQuestion) {
-        setIsAskingQuestion(true);
-        setQuestionIndex(index);
-        askQuestion(index);
-      } else {
-        setCurrentIndex(index + 1);
-        readLessonPart(index + 1);
-      }
+    audio.onended = () => {
+      playAudio(index + 1); // Play next audio file
     };
 
-    speechSynthesis.speak(utterance);
+    audio.onerror = () => {
+      console.error("Failed to load audio file:", lesson.audio_files[index]);
+      setIsPlaying(false);
+    };
+
+    audio.play();
+    audioPlayer = audio;
   };
 
-  const askQuestion = (index) => {
-    if (lesson.questions && lesson.questions[index]) {
-      const question = lesson.questions[index].text;
-      const questionUtterance = new SpeechSynthesisUtterance(question);
-
-      if (voices.length > 0) {
-        const selectedVoice = voices.find((voice) =>
-          voice.name.toLowerCase().includes("female")
-        );
-        if (selectedVoice) {
-          questionUtterance.voice = selectedVoice;
-        }
-      }
-
-      questionUtterance.rate = audioSpeed;
-      questionUtterance.pitch = 1.2;
-      questionUtterance.lang = "en-US";
-
-      questionUtterance.onend = () => {
-        startCountdown(index);
-      };
-
-      speechSynthesis.speak(questionUtterance);
+  const stopAudio = () => {
+    if (audioPlayer) {
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
     }
-  };
-
-  const startCountdown = (index) => {
-    let countdownTimer = countdown;
-    const countdownInterval = setInterval(() => {
-      if (countdownTimer > 0) {
-        setCountdown(countdownTimer);
-        countdownTimer--;
-      } else {
-        clearInterval(countdownInterval);
-        setCountdown(5);
-        activateSpeechRecognition(index, true);
-      }
-    }, 1000);
-  };
-
-  const activateSpeechRecognition = (index, isForQuestion = false) => {
-    setIsRecording(true);
-    setError("");
-    setTranscription("");
-    setIsLoading(true);
-
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        const mediaRecorder = new MediaRecorder(stream);
-        const audioChunks = [];
-
-        mediaRecorder.ondataavailable = (event) => {
-          audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-          const formData = new FormData();
-          formData.append("file", audioBlob, "recorded_audio.wav");
-
-          axios
-            .post("http://localhost:5000/record", formData, {
-              headers: { "Content-Type": "multipart/form-data" },
-            })
-            .then((response) => {
-              const userTranscription = response.data.transcription;
-              setTranscription(userTranscription);
-
-              if (isForQuestion) {
-                compareTranscriptionWithAnswer(userTranscription, index);
-              } else {
-                setIsRecording(false);
-                setIsLoading(false);
-              }
-            })
-            .catch(() => {
-              setError("Failed to transcribe audio.");
-              setIsRecording(false);
-              setIsLoading(false);
-            });
-        };
-
-        mediaRecorder.start();
-        setTimeout(() => {
-          mediaRecorder.stop();
-        }, 5000);
-      })
-      .catch(() => {
-        setError("Failed to access the microphone.");
-        setIsRecording(false);
-        setIsLoading(false);
-      });
-  };
-
-  const compareTranscriptionWithAnswer = (userTranscription, index) => {
-    const correctAnswer = lesson.questions[index]?.answer || "";
-    let correctCount = 0;
-    let incorrectCount = 0;
-
-    // Compare letter-by-letter
-    for (let i = 0; i < userTranscription.length; i++) {
-      if (userTranscription[i].toLowerCase() === correctAnswer[i]?.toLowerCase()) {
-        correctCount++;
-      } else {
-        incorrectCount++;
-      }
-    }
-
-    if (correctCount === correctAnswer.length) {
-      setFeedback("Correct! Well done.");
-      alert("Correct! Well done.");
-    } else {
-      setFeedback(
-        `Incorrect. You got ${correctCount} out of ${correctAnswer.length} letters correct. The correct answer is: ${correctAnswer}`
-      );
-      alert(`Incorrect. You got ${correctCount} out of ${correctAnswer.length} letters correct. The correct answer is: ${correctAnswer}`);
-    }
-
-    setTimeout(() => {
-      setFeedback("");
-      setIsAskingQuestion(false);
-      setIsRecording(false); // Turn off the microphone
-      if (lesson.text[index + 1]) {
-        setCurrentIndex(index + 1);
-        readLessonPart(index + 1);
-      } else {
-        setCurrentIndex(index + 1);
-        setIsPlaying(false);
-      }
-    }, 2000);
+    setIsPlaying(false);
   };
 
   if (error) return <p className="error-message">{error}</p>;
@@ -235,42 +78,31 @@ const LessonPage = () => {
         className="lesson-image"
       />
       <p className="lesson-text">
-        {lesson.text[currentIndex]?.text || lesson.text[currentIndex]}
+        {lesson.text}
       </p>
 
-      {isAskingQuestion && (
-        <div className="question-box">
-          <p className="question-text">
-            Question: {lesson.questions[questionIndex]?.text}
-          </p>
-          <p className="answer-text">
-            Answer: {lesson.questions[questionIndex]?.answer}
-          </p>
+      {/* Display Audio Files */}
+      {lesson.audio_files && lesson.audio_files.length > 0 && (
+        <div className="audio-files">
+          <h3>Lesson Audio</h3>
+          {lesson.audio_files.map((audioFile, index) => (
+            <div key={index} className="audio-file">
+              <audio controls>
+                <source src={audioFile} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          ))}
         </div>
       )}
 
       <div className="controls">
-        <button
-          className="control-button"
-          onClick={playAudio}
-          disabled={isPlaying}
-        >
-          Play Audio
+        <button className="control-button" onClick={() => playAudio()} disabled={isPlaying}>
+          Play All
         </button>
-        <button
-          className="control-button"
-          onClick={stopAudio}
-          disabled={!isPlaying}
-        >
-          Stop Audio
+        <button className="control-button" onClick={stopAudio} disabled={!isPlaying}>
+          Stop
         </button>
-      </div>
-
-      <div className="audio-progress-container">
-        <div
-          className="audio-progress"
-          style={{ width: `${audioProgress}%` }}
-        ></div>
       </div>
 
       <div className="speed-control">
@@ -281,17 +113,9 @@ const LessonPage = () => {
           max="2"
           step="0.1"
           value={audioSpeed}
-          onChange={(e) => setAudioSpeed(e.target.value)}
+          onChange={(e) => setAudioSpeed(parseFloat(e.target.value))}
         />
       </div>
-
-      {isRecording && (
-        <div className="loading-spinner">
-          <p>Recording...</p>
-        </div>
-      )}
-
-      {feedback && <p className="feedback">{feedback}</p>}
     </div>
   );
 };
