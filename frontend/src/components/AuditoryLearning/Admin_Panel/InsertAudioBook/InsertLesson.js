@@ -9,8 +9,9 @@ const InsertLesson = () => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [imageURL, setImageURL] = useState("");
-  const [lnumber, setLnumber] = useState(""); // New state variable for lesson number
+  const [lnumber, setLnumber] = useState("");
   const [questions, setQuestions] = useState([{ question: "", answer: "" }]);
+  const [audioFiles, setAudioFiles] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -24,32 +25,44 @@ const InsertLesson = () => {
     setQuestions([...questions, { question: "", answer: "" }]);
   };
 
+  const handleFileChange = (e) => {
+    setAudioFiles([...e.target.files]);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setSuccessMessage("");
     setErrorMessage("");
 
-    const lessonData = {
-      title,
-      text: text.split("\n"),
-      imageURL,
-      lnumber, // Include lnumber in the lesson data
-      questions: questions.map((q, index) => ({
-        question_id: index + 1,
-        text: q.question,
-        answer: q.answer,
-      })),
-    };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("text", text);
+    formData.append("imageURL", imageURL);
+    formData.append("lnumber", lnumber);
+    formData.append("questions", JSON.stringify(questions.map((q, index) => ({
+      question_id: index + 1,
+      text: q.question,
+      answer: q.answer,
+    }))));
+
+    audioFiles.forEach((file) => {
+      formData.append("audio_files", file);
+    });
 
     axios
-      .post("http://localhost:5000/api/add_lesson", lessonData)
+      .post("http://localhost:5000/api/add_lesson", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         setSuccessMessage("Lesson added successfully!");
         setTitle("");
         setText("");
         setImageURL("");
-        setLnumber(""); // Reset lnumber
+        setLnumber("");
         setQuestions([{ question: "", answer: "" }]);
+        setAudioFiles([]);
       })
       .catch((error) => {
         setErrorMessage(
@@ -130,13 +143,22 @@ const InsertLesson = () => {
                 required
               />
             </div>
-            {/* New Lesson Number input */}
             <div className="insertlesson_input_group">
               <label>Lesson Number:</label>
               <input
                 type="text"
                 value={lnumber}
                 onChange={(e) => setLnumber(e.target.value)}
+                required
+              />
+            </div>
+            <div className="insertlesson_input_group">
+              <label>Audio Files (MP3):</label>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                multiple
+                accept=".mp3"
                 required
               />
             </div>
