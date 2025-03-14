@@ -54,12 +54,7 @@
   color: #fff;
 }
 
-/* Content Section */
-.content {
-  flex-grow: 1;
-  padding: 20px;
-  text-align: center;
-}
+
 
 .lessons_title {
   font-size: 30px;
@@ -148,3 +143,96 @@
     padding: 10px 20px;
   }
 }
+
+
+/* Lessons List Container */
+.audio_lessonlist_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f8ff;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Lessons Grid */
+.audio_lessonlist_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Individual Lesson Card */
+.audio_lessonlist_card {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  text-align: center;
+}
+
+.audio_lessonlist_card:hover {
+  transform: translateY(-10px);
+}
+
+/* Lesson Image */
+.audio_lessonlist_image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Lesson Content */
+.audio_lessonlist_content {
+  padding: 10px;
+}
+
+/* Lesson Title */
+.audio_lessonlist_title {
+  font-size: 22px;
+  font-family: 'Comic Sans MS', sans-serif;
+  color: #5f6fa0;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.audio_lessonlist_button {
+  background-color: #b2ebf2;
+  color: rgb(104, 87, 97);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  transition: background-color 0.3s;
+}
+
+.audio_lessonlist_button:hover {
+  background-color: #82d8e6;
+}
+
+/* No Lessons Message */
+.audio_lessonlist_empty {
+  font-size: 18px;
+  color: #7b7b7b;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .audio_lessonlist_grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .audio_lessonlist_grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+

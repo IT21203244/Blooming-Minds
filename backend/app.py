@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import logging
 
+
 # Flask app setup
 app = Flask(__name__)
 
