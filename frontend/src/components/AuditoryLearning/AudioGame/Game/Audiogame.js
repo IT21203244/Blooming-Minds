@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./CSS/Audiogame.css";
+import axios from "axios";
 
 const AudiogamesList = () => {
   const [audiogames, setAudiogames] = useState([]);
   const [error, setError] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [voices, setVoices] = useState([]);
-  const [selectedVoice, setSelectedVoice] = useState(null);
   const [playSpeed, setPlaySpeed] = useState(1);
   const [message, setMessage] = useState("");
   const [timer, setTimer] = useState(60);
@@ -18,7 +17,6 @@ const AudiogamesList = () => {
 
   const location = useLocation();
   const lessonLNumber = location.state?.lessonLNumber;
-
   useEffect(() => {
     fetch("http://localhost:5000/api/get_audiogames")
       .then((response) => response.json())
@@ -27,7 +25,12 @@ const AudiogamesList = () => {
           const filteredAudiogames = data.audiogames.filter(
             (game) => game.number === lessonLNumber
           );
-          setAudiogames(filteredAudiogames);
+          // Ensure the audio paths are correctly formatted
+          const updatedAudiogames = filteredAudiogames.map(game => ({
+            ...game,
+            audio: `http://localhost:5000/api/${game.audio}`
+          }));
+          setAudiogames(updatedAudiogames);
         } else {
           setError(data.message);
         }
@@ -35,23 +38,6 @@ const AudiogamesList = () => {
       .catch(() => {
         setError("An error occurred while fetching the audiogames.");
       });
-
-    const getVoices = () => {
-      const voicesList = window.speechSynthesis.getVoices();
-      setVoices(voicesList);
-
-      const femaleVoice = voicesList.find(
-        (voice) =>
-          voice.lang.startsWith("en") &&
-          voice.name.toLowerCase().includes("female")
-      );
-      setSelectedVoice(femaleVoice || voicesList[0]);
-    };
-
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = getVoices;
-    }
-    getVoices();
   }, [lessonLNumber]);
 
   useEffect(() => {
@@ -68,17 +54,11 @@ const AudiogamesList = () => {
     return () => clearInterval(countdown);
   }, [isTimerRunning, timer]);
 
-  const playAudio = (text) => {
-    if (!selectedVoice) return;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = selectedVoice;
-    utterance.rate = playSpeed;
-    utterance.pitch = 1;
-
-    window.speechSynthesis.speak(utterance);
-
-    utterance.onend = () => {
+  const playAudio = (audioUrl) => {
+    const audio = new Audio(audioUrl);
+    audio.play();
+  
+    audio.onended = () => {
       setMessage(""); // Clear previous messages
       setTimer(60); // Reset the timer
       setSpentTime(0); // Reset spent time
@@ -152,7 +132,7 @@ const AudiogamesList = () => {
       <h1>Lesson {lessonLNumber}</h1>
       {message && <p className="message">{message}</p>}
       {error && <p className="error">{error}</p>}
-
+  
       {/* User ID Input */}
       <div className="user-id-section">
         <label htmlFor="user-id">User ID:</label>
@@ -164,13 +144,11 @@ const AudiogamesList = () => {
           placeholder="Enter your User ID"
         />
       </div>
-
+  
       <div className="game-card">
         {audiogames.length > 0 && (
           <>
-            <h3>{`Question ${currentQuestionIndex + 1}: ${
-              audiogames[currentQuestionIndex].question
-            }`}</h3>
+            <h3>{`Question ${currentQuestionIndex + 1}`}</h3>
             <p>Game Number: {audiogames[currentQuestionIndex].number}</p>
             <p>Question Index: {currentQuestionIndex + 1}</p>
             <p style={{ color: "white" }}>
@@ -179,7 +157,7 @@ const AudiogamesList = () => {
             <p style={{ color: "white" }}>
               Time Taken to Answer: {spentTime} seconds
             </p>
-
+  
             {/* Play speed selector */}
             <label htmlFor="speed-select">Playback Speed:</label>
             <select
@@ -198,15 +176,11 @@ const AudiogamesList = () => {
               <option value="1.5">1.5x</option>
               <option value="2">2x</option>
             </select>
-
+  
             {/* Play question audio */}
             <button
               className="play-audio"
-              onClick={() =>
-                playAudio(
-                  `Simon says ${audiogames[currentQuestionIndex].question}`
-                )
-              }
+              onClick={() => playAudio(audiogames[currentQuestionIndex].audio)}
               style={{
                 backgroundColor: "#ffb3c1",
                 color: "#512a6b",
@@ -217,14 +191,14 @@ const AudiogamesList = () => {
             >
               Play Question Audio
             </button>
-
+  
             <div
               className="timer"
               style={{ fontSize: "20px", color: "#ff6f61" }}
             >
               <p>Time Left: {timer} seconds</p>
             </div>
-
+  
             <div className="answer_container" style={{ marginTop: "20px" }}>
               {audiogames[currentQuestionIndex].answers.map((answer, index) => (
                 <div key={index} className="">
@@ -245,12 +219,12 @@ const AudiogamesList = () => {
                       />
                     )}
                     <br />
-                    <p >{answer}</p>
+                    <p>{answer}</p>
                   </div>
                 </div>
               ))}
             </div>
-
+  
             <div className="navigation-buttons" style={{ marginTop: "20px" }}>
               <button
                 className="prev-button"
@@ -282,7 +256,7 @@ const AudiogamesList = () => {
                 Next
               </button>
             </div>
-
+  
             <button
               className="submit-button"
               onClick={handleSubmit}
