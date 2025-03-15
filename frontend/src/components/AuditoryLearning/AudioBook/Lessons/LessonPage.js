@@ -83,6 +83,17 @@ const LessonPage = () => {
       });
   };
 
+  const compareAnswers = (correct, user) => {
+    if (!correct || !user) return 0;
+    let count = 0;
+    for (let i = 0; i < Math.min(correct.length, user.length); i++) {
+      if (correct[i].toLowerCase() === user[i].toLowerCase()) {
+        count++;
+      }
+    }
+    return count;
+  };
+
   if (error) return <p className="audiolessonpage-error-message">{error}</p>;
   if (!lesson) return <p className="audiolessonpage-loading-message">Loading...</p>;
 
@@ -96,7 +107,7 @@ const LessonPage = () => {
       />
       <p className="audiolessonpage-text">{lesson.text}</p>
 
-      {/* Audio File Section */}
+      {/* Audio File Section (Unchanged) */}
       {lesson.audio_files?.length > 0 && (
         <div className="audiolessonpage-audio-question-section">
           <h3>Lesson Audio {audioIndex + 1}/{lesson.audio_files.length}</h3>
@@ -104,8 +115,6 @@ const LessonPage = () => {
             <source src={lesson.audio_files[audioIndex]} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
-
-          {/* Next/Previous buttons for audio */}
           <div className="audiolessonpage-navigation-buttons">
             <button
               onClick={() => setAudioIndex((prev) => Math.max(prev - 1, 0))}
@@ -135,30 +144,22 @@ const LessonPage = () => {
           </audio>
           <p><strong>Correct Answer:</strong> {lesson.questions[questionIndex].answer}</p>
 
-          {/* Tell Answer Button */}
           <button onClick={startRecording} disabled={isRecording}>
             {isRecording ? "Listening..." : "Tell Answer"}
           </button>
 
-          {/* Display Transcription Result */}
           {userTranscription && (
             <div className="transcription-result">
               <h3>Your Response:</h3>
               <p>{userTranscription}</p>
               <p>
-                <strong>Result: </strong>
-                {userTranscription.toLowerCase().trim() ===
-                lesson.questions[questionIndex].answer.toLowerCase().trim()
-                  ? "✅ Correct!"
-                  : "❌ Incorrect!"}
+                <strong>Matching Letters:</strong> {compareAnswers(lesson.questions[questionIndex].answer, userTranscription)}
               </p>
             </div>
           )}
 
-          {/* Show recording error if any */}
           {recordingError && <p className="error-message">{recordingError}</p>}
 
-          {/* Next/Previous buttons for questions */}
           <div className="audiolessonpage-navigation-buttons">
             <button
               onClick={() => setQuestionIndex((prev) => Math.max(prev - 1, 0))}

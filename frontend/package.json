@@ -12,6 +12,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.7",
     "cors": "^2.8.5",
+    "fast-levenshtein": "^3.0.0",
     "font-awesome": "^4.7.0",
     "fortawesome": "^0.0.1-security",
     "html2canvas": "^1.4.1",
