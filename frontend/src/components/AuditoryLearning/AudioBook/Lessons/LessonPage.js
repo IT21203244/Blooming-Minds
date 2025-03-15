@@ -18,6 +18,8 @@ const LessonPage = () => {
   const [countdown, setCountdown] = useState(0); // Countdown time
   const [isCounting, setIsCounting] = useState(false); // To track if countdown is active
   const [timerId, setTimerId] = useState(null);
+  const [transcriptionResults, setTranscriptionResults] = useState([]); // To store transcription results
+  const [showResults, setShowResults] = useState(false); // To toggle results visibility
 
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
@@ -139,6 +141,57 @@ const LessonPage = () => {
     setMatchPercentage(Math.round(percentage));
   };
 
+  const handleNextQuestion = async () => {
+    const userId = localStorage.getItem("userId"); // Get userId from local storage
+
+    if (!userId) {
+      alert("User not logged in!");
+      return;
+    }
+
+    const transcriptionData = {
+      userId: userId,
+      lessonId: lessonId,
+      correctness: matchPercentage, // Accuracy from progress bar
+    };
+
+    try {
+      await axios.post("http://localhost:5000/api/insert_transcription", transcriptionData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      console.log("Data inserted successfully");
+
+      setQuestionIndex((prev) => Math.min(prev + 1, lesson.questions.length - 1));
+      setUserTranscription("");
+      setRecordingError("");
+      setMatchPercentage(0);
+    } catch (error) {
+      console.error("Error inserting transcription data:", error);
+    }
+  };
+
+  const fetchTranscriptionResults = async () => {
+    try {
+      const userId = localStorage.getItem("userId"); // Get userId from local storage
+      if (!userId) {
+        alert("User not logged in!");
+        return;
+      }
+
+      const response = await axios.get("http://localhost:5000/api/get_transcriptions");
+      const allResults = response.data.transcriptions;
+
+      // Filter results for the current user
+      const userResults = allResults.filter((result) => result.userId === userId);
+
+      setTranscriptionResults(userResults);
+      setShowResults(true); // Show results section
+    } catch (error) {
+      console.error("Error fetching transcription results:", error);
+    }
+  };
+
   if (error) return <p className="audiolessonpage-error-message">{error}</p>;
   if (!lesson) return <p className="audiolessonpage-loading-message">Loading...</p>;
 
@@ -146,7 +199,6 @@ const LessonPage = () => {
     <div className="audiolessonpage-page">
       <h2 className="audiolessonpage-title">{lesson.title} </h2>
       <h5 className="-title">Lesson ID: {lessonId}</h5>
-
 
       <img
         src={lesson.imageURL || DEFAULT_IMAGE_URL}
@@ -236,6 +288,7 @@ const LessonPage = () => {
                 setUserTranscription("");
                 setRecordingError("");
                 setMatchPercentage(0);
+                handleNextQuestion(0);
               }}
               disabled={questionIndex === lesson.questions.length - 1}
             >
@@ -244,6 +297,32 @@ const LessonPage = () => {
           </div>
         </div>
       )}
+
+      {/* Button to check final results */}
+      <div className="audiolessonpage-results-section">
+        <button onClick={fetchTranscriptionResults} className="results-button">
+          Check Final Results
+        </button>
+
+        {showResults && (
+          <div className="results-display">
+            <h3>Today's Transcription Results</h3>
+            {transcriptionResults.length > 0 ? (
+              <ul>
+                {transcriptionResults.map((result, index) => (
+                  <li key={index}>
+                    <p><strong>User ID:</strong> {result.userId}</p>
+                    <p><strong>Lesson ID:</strong> {result.lessonId}</p>
+                    <p><strong>Correctness:</strong> {result.correctness}%</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No results found for today.</p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

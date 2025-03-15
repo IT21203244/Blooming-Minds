@@ -90,3 +90,41 @@
 .audiobookpage-progress-bar .CircularProgressbar-trail {
   stroke: #eee;
 }
+.audiolessonpage-results-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.results-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.results-button:hover {
+  background-color: #218838;
+}
+
+.results-display {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.results-display ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.results-display li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
