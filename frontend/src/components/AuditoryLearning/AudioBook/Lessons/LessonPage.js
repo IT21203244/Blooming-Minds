@@ -8,6 +8,7 @@ const LessonPage = () => {
   const [lesson, setLesson] = useState(null);
   const [error, setError] = useState("");
   const [audioSpeed, setAudioSpeed] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
   useEffect(() => {
@@ -16,7 +17,6 @@ const LessonPage = () => {
       .then((response) => {
         const lessonData = response.data.lesson;
         if (lessonData) {
-          // Convert stored relative paths to absolute URLs
           if (lessonData.audio_files) {
             lessonData.audio_files = lessonData.audio_files.map(
               (file) => `http://localhost:5000/${file}`
@@ -37,47 +37,55 @@ const LessonPage = () => {
   if (error) return <p className="error-message">{error}</p>;
   if (!lesson) return <p className="loading-message">Loading...</p>;
 
+  const totalSteps = Math.max(lesson.audio_files?.length || 0, lesson.questions?.length || 0);
+  const stepSize = 4; // Number of sections displayed at once
+
   return (
     <div className="lesson-page">
       <h2 className="lesson-title">{lesson.title}</h2>
-      <img
-        src={lesson.imageURL || DEFAULT_IMAGE_URL}
-        alt={lesson.title}
-        className="lesson-image"
-      />
+      <img src={lesson.imageURL || DEFAULT_IMAGE_URL} alt={lesson.title} className="lesson-image" />
       <p className="lesson-text">{lesson.text}</p>
 
-      {/* Display Audio Files */}
-      {lesson.audio_files && lesson.audio_files.length > 0 && (
-        <div className="audio-files">
-          <h3>Lesson Audio</h3>
-          {lesson.audio_files.map((audioFile, index) => (
-            <div key={index} className="audio-file">
-              <audio controls>
-                <source src={audioFile} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Step-by-Step Audio Navigation */}
+      <div className="step-navigation">
+        <h3>Lesson Audio & Questions</h3>
+        {[...Array(stepSize)].map((_, index) => {
+          const stepIndex = currentStep + index;
+          return stepIndex < totalSteps ? (
+            <div key={stepIndex} className="audio-question-section">
+              {lesson.audio_files?.[stepIndex] && (
+                <div className="audio-file">
+                  <h4>Lesson Audio {stepIndex + 1}</h4>
+                  <audio controls>
+                    <source src={lesson.audio_files[stepIndex]} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              )}
 
-      {/* Display Questions & Answers */}
-      {lesson.questions && lesson.questions.length > 0 && (
-        <div className="questions-section">
-          <h3>Related Questions</h3>
-          {lesson.questions.map((q, index) => (
-            <div key={index} className="question-item">
-              <h4>Question {index + 1}</h4>
-              <audio controls>
-                <source src={q.audio} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-              <p><strong>Answer:</strong> {q.answer}</p>
+              {lesson.questions?.[stepIndex] && (
+                <div className="question-item">
+                  <h4>Question {stepIndex + 1}</h4>
+                  <audio controls>
+                    <source src={lesson.questions[stepIndex].audio} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                  <p><strong>Answer:</strong> {lesson.questions[stepIndex].answer}</p>
+                </div>
+              )}
             </div>
-          ))}
+          ) : null;
+        })}
+
+        <div className="navigation-buttons">
+          <button onClick={() => setCurrentStep((prev) => Math.max(prev - stepSize, 0))} disabled={currentStep === 0}>
+            Previous
+          </button>
+          <button onClick={() => setCurrentStep((prev) => Math.min(prev + stepSize, totalSteps - stepSize))} disabled={currentStep >= totalSteps - stepSize}>
+            Next
+          </button>
         </div>
-      )}
+      </div>
 
       {/* Speed Control */}
       <div className="speed-control">
