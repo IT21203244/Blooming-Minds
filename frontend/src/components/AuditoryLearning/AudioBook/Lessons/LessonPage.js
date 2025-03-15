@@ -15,6 +15,9 @@ const LessonPage = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingError, setRecordingError] = useState("");
   const [matchPercentage, setMatchPercentage] = useState(0);
+  const [countdown, setCountdown] = useState(0); // Countdown time
+  const [isCounting, setIsCounting] = useState(false); // To track if countdown is active
+  const [timerId, setTimerId] = useState(null);
 
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
@@ -45,6 +48,26 @@ const LessonPage = () => {
     setIsRecording(true);
     setRecordingError("");
     setUserTranscription("");
+    setMatchPercentage(0);
+
+    // Delay for 7 seconds before starting the countdown
+    setTimeout(() => {
+      setIsCounting(true); // Start counting
+      setCountdown(5); // Set countdown to 5 seconds (or any desired time)
+
+      const id = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(id);
+            setIsCounting(false); // Stop counting
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      setTimerId(id);
+    }, 7000); // 7-second delay
 
     navigator.mediaDevices
       .getUserMedia({ audio: true })
@@ -70,21 +93,27 @@ const LessonPage = () => {
               setUserTranscription(userText);
               calculateMatchPercentage(lesson.questions[questionIndex].answer, userText);
               setIsRecording(false);
+              clearInterval(timerId); // Stop the countdown
+              setIsCounting(false); // Stop counting
             })
             .catch(() => {
               setRecordingError("Failed to transcribe audio.");
               setIsRecording(false);
+              clearInterval(timerId); // Stop the countdown
+              setIsCounting(false); // Stop counting
             });
         };
 
         mediaRecorder.start();
         setTimeout(() => {
           mediaRecorder.stop();
-        }, 5000);
+        }, 12000); // Stop recording after 12 seconds (7s delay + 5s countdown)
       })
       .catch(() => {
         setRecordingError("Failed to access the microphone.");
         setIsRecording(false);
+        clearInterval(timerId); // Stop the countdown
+        setIsCounting(false); // Stop counting
       });
   };
 
@@ -93,32 +122,32 @@ const LessonPage = () => {
       setMatchPercentage(0);
       return;
     }
-  
+
     const correctText = correct.toLowerCase().replace(/\s+/g, ""); // Remove spaces
     const userText = user.toLowerCase().replace(/\s+/g, ""); // Remove spaces
-  
+
     let matchCount = 0;
     for (let i = 0; i < Math.min(correctText.length, userText.length); i++) {
       if (correctText[i] === userText[i]) {
         matchCount++;
       }
     }
-  
+
     const totalLetters = correctText.length;
     const percentage = (matchCount / totalLetters) * 100;
-  
+
     setMatchPercentage(Math.round(percentage));
   };
-  
-  
-  
 
   if (error) return <p className="audiolessonpage-error-message">{error}</p>;
   if (!lesson) return <p className="audiolessonpage-loading-message">Loading...</p>;
 
   return (
     <div className="audiolessonpage-page">
-      <h2 className="audiolessonpage-title">{lesson.title}</h2>
+      <h2 className="audiolessonpage-title">{lesson.title} </h2>
+      <h5 className="-title">Lesson ID: {lessonId}</h5>
+
+
       <img
         src={lesson.imageURL || DEFAULT_IMAGE_URL}
         alt={lesson.title}
@@ -162,7 +191,7 @@ const LessonPage = () => {
           <p><strong>Correct Answer:</strong> {lesson.questions[questionIndex].answer}</p>
 
           <button onClick={startRecording} disabled={isRecording}>
-            {isRecording ? "Listening..." : "Tell Answer"}
+            {isRecording ? (isCounting ? `Countdown: ${countdown}s` : "Listening...") : "Tell Answer"}
           </button>
 
           {userTranscription && (
@@ -170,22 +199,20 @@ const LessonPage = () => {
               <h3>Your Response:</h3>
               <p>{userTranscription}</p>
               <div className="audiobookpage-progress-container">
-  <h3>Accuracy</h3>
-  <div className="audiobookpage-progress-bar">
-  <CircularProgressbar
-  value={matchPercentage}
-  text={`${matchPercentage}%`}
-  styles={buildStyles({
-    textColor: "#000",
-    pathColor: matchPercentage > 70 ? "green" : matchPercentage > 40 ? "orange" : "red",
-    trailColor: "#eee",
-    textSize: "16px",
-  })}
-/>
-
-  </div>
-</div>
-
+                <h3>Accuracy</h3>
+                <div className="audiobookpage-progress-bar">
+                  <CircularProgressbar
+                    value={matchPercentage}
+                    text={`${matchPercentage}%`}
+                    styles={buildStyles({
+                      textColor: "#000",
+                      pathColor: matchPercentage > 70 ? "green" : matchPercentage > 40 ? "orange" : "red",
+                      trailColor: "#eee",
+                      textSize: "16px",
+                    })}
+                  />
+                </div>
+              </div>
             </div>
           )}
 
