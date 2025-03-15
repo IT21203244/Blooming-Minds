@@ -49,14 +49,12 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 from routes.AuditoryLearning.AudioBook.record_routes import record_routes
 from routes.AuditoryLearning.Guiders.lesson_routes import lesson_routes
 from routes.AuditoryLearning.AudioGame.audiogame_routes import audiogame_routes
-from routes.AuditoryLearning.AudioBook.save_progress import save_progress
 from routes.auth.auth_routes import auth_routes
 
 # Register Blueprints for Auditory Learning
 CORS(record_routes, origins="http://localhost:3000")
 app.register_blueprint(record_routes)
 app.register_blueprint(lesson_routes, url_prefix="/api")
-app.register_blueprint(save_progress, url_prefix="/api")
 app.register_blueprint(audiogame_routes, url_prefix="/api")
 app.register_blueprint(auth_routes, url_prefix='/auth')
 
