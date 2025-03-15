@@ -39,46 +39,43 @@ const LessonsList = () => {
   };
 
   return (
-    <div className="lessons_container">
- 
-
-      <div className="content">
-        <h2 className="lessons_title">All Lessons</h2>
-        {error && <p className="lessons_error">{error}</p>}
-        {lessons.length > 0 ? (
-          <div className="lessons_list">
-            {lessons.map((lesson) => (
-              <div className="lesson_card" key={lesson._id}>
-                <img
-                  src={lesson.imageURL || DEFAULT_IMAGE_URL}
-                  alt={lesson.title}
-                  className="lesson_image"
-                />
-                <div className="lesson_content">
-                <h3 className="lesson_title">Lesson - {lesson.lnumber}</h3>
-                  <h3 className="lesson_title">{lesson.title}</h3>
-                  <button
-                    className="lesson_button"
-                    onClick={() => handleStartAudioBook(lesson._id)}
-                  >
-                    Start AudioBook
-                  </button>
-                  <button
-                    className="lesson_button"
-                    onClick={() => handleStartAudioGame(lesson.lnumber)}
-                  >
-                    Start AudioGame
-                  </button>
-                </div>
+    <div className="audio_lessonlist_container">
+      <h2 className="audio_lessonlist_title">All Lessons</h2>
+      {error && <p className="audio_lessonlist_error">{error}</p>}
+      {lessons.length > 0 ? (
+        <div className="audio_lessonlist_grid">
+          {lessons.map((lesson) => (
+            <div className="audio_lessonlist_card" key={lesson._id}>
+              <img
+                src={lesson.imageURL || DEFAULT_IMAGE_URL}
+                alt={lesson.title}
+                className="audio_lessonlist_image"
+              />
+              <div className="audio_lessonlist_content">
+                <h3 className="audio_lessonlist_title">Lesson - {lesson.lnumber}</h3>
+                <h3 className="audio_lessonlist_title">{lesson.title}</h3>
+                <button
+                  className="audio_lessonlist_button"
+                  onClick={() => handleStartAudioBook(lesson._id)}
+                >
+                  Start AudioBook
+                </button>
+                <button
+                  className="audio_lessonlist_button"
+                  onClick={() => handleStartAudioGame(lesson.lnumber)}
+                >
+                  Start AudioGame
+                </button>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="lessons_empty">No lessons found</p>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="audio_lessonlist_empty">No lessons found</p>
+      )}
     </div>
   );
+  
 };
 
 export default LessonsList;
