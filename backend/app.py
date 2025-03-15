@@ -21,6 +21,7 @@ app = Flask(__name__)
 
 # Apply CORS properly AFTER initializing app
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/auth/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 # Disable pymongo debug logs
 logging.getLogger("pymongo").setLevel(logging.ERROR)
