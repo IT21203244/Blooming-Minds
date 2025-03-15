@@ -61,3 +61,32 @@
 .audiolessonpage-navigation-buttons button:hover {
   background-color: #4fc3f7;
 }
+.audiobookpage-progress-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.audiobookpage-progress-container h3 {
+  font-size: 20px;
+  color: #00796b;
+  margin-bottom: 10px;
+}
+
+.audiobookpage-progress-bar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.audiobookpage-progress-bar .CircularProgressbar-text {
+  font-size: 16px;
+  fill: #000;
+}
+
+.audiobookpage-progress-bar .CircularProgressbar-path {
+  stroke-width: 10px;
+}
+
+.audiobookpage-progress-bar .CircularProgressbar-trail {
+  stroke: #eee;
+}

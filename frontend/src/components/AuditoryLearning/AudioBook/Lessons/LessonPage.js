@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import "./CCS/LessonPage.css";
 
 const LessonPage = () => {
@@ -12,6 +14,7 @@ const LessonPage = () => {
   const [userTranscription, setUserTranscription] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [recordingError, setRecordingError] = useState("");
+  const [matchPercentage, setMatchPercentage] = useState(0);
 
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
@@ -63,7 +66,9 @@ const LessonPage = () => {
               headers: { "Content-Type": "multipart/form-data" },
             })
             .then((response) => {
-              setUserTranscription(response.data.transcription);
+              const userText = response.data.transcription;
+              setUserTranscription(userText);
+              calculateMatchPercentage(lesson.questions[questionIndex].answer, userText);
               setIsRecording(false);
             })
             .catch(() => {
@@ -83,16 +88,30 @@ const LessonPage = () => {
       });
   };
 
-  const compareAnswers = (correct, user) => {
-    if (!correct || !user) return 0;
-    let count = 0;
-    for (let i = 0; i < Math.min(correct.length, user.length); i++) {
-      if (correct[i].toLowerCase() === user[i].toLowerCase()) {
-        count++;
+  const calculateMatchPercentage = (correct, user) => {
+    if (!correct || !user) {
+      setMatchPercentage(0);
+      return;
+    }
+  
+    const correctText = correct.toLowerCase().replace(/\s+/g, ""); // Remove spaces
+    const userText = user.toLowerCase().replace(/\s+/g, ""); // Remove spaces
+  
+    let matchCount = 0;
+    for (let i = 0; i < Math.min(correctText.length, userText.length); i++) {
+      if (correctText[i] === userText[i]) {
+        matchCount++;
       }
     }
-    return count;
+  
+    const totalLetters = correctText.length;
+    const percentage = (matchCount / totalLetters) * 100;
+  
+    setMatchPercentage(Math.round(percentage));
   };
+  
+  
+  
 
   if (error) return <p className="audiolessonpage-error-message">{error}</p>;
   if (!lesson) return <p className="audiolessonpage-loading-message">Loading...</p>;
@@ -107,7 +126,6 @@ const LessonPage = () => {
       />
       <p className="audiolessonpage-text">{lesson.text}</p>
 
-      {/* Audio File Section (Unchanged) */}
       {lesson.audio_files?.length > 0 && (
         <div className="audiolessonpage-audio-question-section">
           <h3>Lesson Audio {audioIndex + 1}/{lesson.audio_files.length}</h3>
@@ -134,7 +152,6 @@ const LessonPage = () => {
         </div>
       )}
 
-      {/* Question Section */}
       {lesson.questions?.length > 0 && (
         <div className="audiolessonpage-audio-question-section">
           <h3>Question {questionIndex + 1}/{lesson.questions.length}</h3>
@@ -152,9 +169,23 @@ const LessonPage = () => {
             <div className="transcription-result">
               <h3>Your Response:</h3>
               <p>{userTranscription}</p>
-              <p>
-                <strong>Matching Letters:</strong> {compareAnswers(lesson.questions[questionIndex].answer, userTranscription)}
-              </p>
+              <div className="audiobookpage-progress-container">
+  <h3>Accuracy</h3>
+  <div className="audiobookpage-progress-bar">
+  <CircularProgressbar
+  value={matchPercentage}
+  text={`${matchPercentage}%`}
+  styles={buildStyles({
+    textColor: "#000",
+    pathColor: matchPercentage > 70 ? "green" : matchPercentage > 40 ? "orange" : "red",
+    trailColor: "#eee",
+    textSize: "16px",
+  })}
+/>
+
+  </div>
+</div>
+
             </div>
           )}
 
@@ -162,15 +193,23 @@ const LessonPage = () => {
 
           <div className="audiolessonpage-navigation-buttons">
             <button
-              onClick={() => setQuestionIndex((prev) => Math.max(prev - 1, 0))}
+              onClick={() => {
+                setQuestionIndex((prev) => Math.max(prev - 1, 0));
+                setUserTranscription("");
+                setRecordingError("");
+                setMatchPercentage(0);
+              }}
               disabled={questionIndex === 0}
             >
               Previous
             </button>
             <button
-              onClick={() =>
-                setQuestionIndex((prev) => Math.min(prev + 1, lesson.questions.length - 1))
-              }
+              onClick={() => {
+                setQuestionIndex((prev) => Math.min(prev + 1, lesson.questions.length - 1));
+                setUserTranscription("");
+                setRecordingError("");
+                setMatchPercentage(0);
+              }}
               disabled={questionIndex === lesson.questions.length - 1}
             >
               Next
