@@ -13,10 +13,10 @@ app = Flask(__name__)
 #from routes.KnestheticLearning.SmileFileRoute import SmileFileRoute
 
 #ReadWrite Learning
-#from routes.ReadWriteLearning.letter_routes import letter_routes
+from routes.ReadWriteLearning.letter_routes import letter_routes
 
 #Visual Learning
-#from routes.VisualLearning.color_matching_routes import color_matching_routes
+from routes.VisualLearning.color_matching_routes import color_matching_routes
 
 
 # Apply CORS properly AFTER initializing app
@@ -40,9 +40,9 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 #app.register_blueprint(LetterRoutes) 
 #app.register_blueprint(SmileFileRoute)
 
-#app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
+app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
 
-#app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
+app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
 
 
 # Import routes AFTER initializing Flask app

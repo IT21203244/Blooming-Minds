@@ -10,19 +10,25 @@ const InsertLesson = () => {
   const [text, setText] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [lnumber, setLnumber] = useState("");
-  const [questions, setQuestions] = useState([{ question: "", answer: "" }]);
+  const [questions, setQuestions] = useState([{ audioFile: null, answer: "" }]);
   const [audioFiles, setAudioFiles] = useState([""]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleQuestionChange = (index, field, value) => {
+  const handleQuestionAudioChange = (index, file) => {
     const updatedQuestions = [...questions];
-    updatedQuestions[index][field] = value;
+    updatedQuestions[index].audioFile = file;
+    setQuestions(updatedQuestions);
+  };
+
+  const handleQuestionAnswerChange = (index, value) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].answer = value;
     setQuestions(updatedQuestions);
   };
 
   const addQuestion = () => {
-    setQuestions([...questions, { question: "", answer: "" }]);
+    setQuestions([...questions, { audioFile: null, answer: "" }]);
   };
 
   const handleAudioChange = (index, file) => {
@@ -45,11 +51,13 @@ const InsertLesson = () => {
     formData.append("text", text);
     formData.append("imageURL", imageURL);
     formData.append("lnumber", lnumber);
-    formData.append("questions", JSON.stringify(questions.map((q, index) => ({
-      question_id: index + 1,
-      text: q.question,
-      answer: q.answer,
-    }))));
+
+    questions.forEach((q, index) => {
+      if (q.audioFile) {
+        formData.append(`question_audio_${index + 1}`, q.audioFile);
+      }
+      formData.append(`question_answer_${index + 1}`, q.answer);
+    });
 
     audioFiles.forEach((file) => {
       if (file) formData.append("audio_files", file);
@@ -67,7 +75,7 @@ const InsertLesson = () => {
         setText("");
         setImageURL("");
         setLnumber("");
-        setQuestions([{ question: "", answer: "" }]);
+        setQuestions([{ audioFile: null, answer: "" }]);
         setAudioFiles([""]);
       })
       .catch((error) => {
@@ -108,16 +116,16 @@ const InsertLesson = () => {
             <button type="button" onClick={addAudioField} className="insertlesson_add_audio">Add Another Audio</button>
           </div>
           <div className="insertlesson_questions_section">
-            <h3>Questions</h3>
+            <h3>Audio-Based Questions</h3>
             {questions.map((q, index) => (
               <div key={index} className="insertlesson_question_group">
-                <label>Question {index + 1}:</label>
-                <input type="text" value={q.question} onChange={(e) => handleQuestionChange(index, "question", e.target.value)} required />
+                <label>Question Audio {index + 1}:</label>
+                <input type="file" accept=".mp3" onChange={(e) => handleQuestionAudioChange(index, e.target.files[0])} required />
                 <label>Answer:</label>
-                <input type="text" value={q.answer} onChange={(e) => handleQuestionChange(index, "answer", e.target.value)} required />
+                <input type="text" value={q.answer} onChange={(e) => handleQuestionAnswerChange(index, e.target.value)} required />
               </div>
             ))}
-            <button type="button" onClick={addQuestion} className="insertlesson_add_question">Add Question</button>
+            <button type="button" onClick={addQuestion} className="insertlesson_add_question">Add Another Question</button>
           </div>
           <button type="submit" className="insertlesson_submit_btn">Insert Lesson</button>
         </form>
