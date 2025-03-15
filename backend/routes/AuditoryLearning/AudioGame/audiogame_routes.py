@@ -1,6 +1,8 @@
+import os
 from flask import Blueprint, request, jsonify
 import tensorflow as tf
 import numpy as np
+from werkzeug.utils import secure_filename
 from utils.AuditoryLearning.AudioGame.gamedb_utils import GameDatabase
 
 audiogame_routes = Blueprint("audiogame_routes", __name__)
@@ -17,17 +19,31 @@ except Exception as e:
     model = None
     print(f"Error loading the model: {e}")
 
+UPLOAD_FOLDER = 'uploads/audio'
+ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg'}
+
+# Ensure the upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @audiogame_routes.route("/add_audiogame", methods=["POST"])
 def add_audiogame():
     db = GameDatabase()
     try:
-        game_data = request.get_json()
+        # Get form data
+        game_data = request.form
         if "number" not in game_data or "questions" not in game_data:
             return jsonify({"error": "Missing required fields"}), 400
 
-        for question in game_data["questions"]:
-            required_fields = ["question", "answers", "images", "correct_answer"]
+        import json
+        questions = json.loads(game_data["questions"])
+
+        for index, question in enumerate(questions):
+            required_fields = ["answers", "images", "correct_answer"]
             if not all(key in question for key in required_fields):
                 return jsonify({"error": "Missing fields in a question"}), 400
             if len(question["answers"]) != len(question["images"]):
@@ -37,7 +53,16 @@ def add_audiogame():
                     {"error": "Correct answer must be one of the provided answers"}
                 ), 400
 
-        for question in game_data["questions"]:
+            # Handle multiple audio file uploads
+            audio_key = f"audio_{index}"
+            if audio_key in request.files:
+                audio_file = request.files[audio_key]
+                if audio_file and allowed_file(audio_file.filename):
+                    filename = secure_filename(audio_file.filename)
+                    file_path = os.path.join(UPLOAD_FOLDER, filename)
+                    audio_file.save(file_path)
+                    question["audio"] = file_path  # Store path in DB
+
             question["number"] = game_data["number"]
             db.insert_game("audiogames", question)
 
@@ -46,7 +71,6 @@ def add_audiogame():
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
-
 
 @audiogame_routes.route("/get_audiogames", methods=["GET"])
 def get_audiogames():
@@ -74,6 +98,7 @@ def get_audiogame(game_id):
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
+
 
 @audiogame_routes.route("/get_audiogame_results", methods=["GET"])
 def get_audiogame_results():

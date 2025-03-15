@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import './CSS/InsertGame.css';
+import "./CSS/InsertGame.css";
 
 const InsertGame = () => {
   const [number, setNumber] = useState("");
@@ -11,13 +11,13 @@ const InsertGame = () => {
   const addQuestion = () => {
     setQuestions([
       ...questions,
-      { question: "", answers: [""], images: [""], correct_answer: "" },
+      { audio: null, answers: [""], images: [""], correct_answer: "" },
     ]);
   };
 
-  const handleQuestionChange = (index, value) => {
+  const handleAudioChange = (index, file) => {
     const updatedQuestions = [...questions];
-    updatedQuestions[index].question = value;
+    updatedQuestions[index].audio = file;
     setQuestions(updatedQuestions);
   };
 
@@ -46,23 +46,37 @@ const InsertGame = () => {
     setQuestions(updatedQuestions);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage("");
     setErrorMessage("");
 
-    const gameData = { number, questions };
+    const formData = new FormData();
+    formData.append("number", number);
+    formData.append("questions", JSON.stringify(questions));
 
-    axios
-      .post("http://localhost:5000/api/add_audiogame", gameData)
-      .then((response) => {
-        setSuccessMessage("Games added successfully!");
-        setNumber("");
-        setQuestions([]);
-      })
-      .catch((error) => {
-        setErrorMessage(error.response?.data?.error || "Failed to add the games.");
-      });
+    // Append each audio file to FormData
+    questions.forEach((q, index) => {
+      if (q.audio) {
+        formData.append(`audio_${index}`, q.audio);
+      }
+    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/add_audiogame",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setSuccessMessage("Games added successfully!");
+      setNumber("");
+      setQuestions([]);
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.error || "Failed to add the games."
+      );
+    }
   };
 
   return (
@@ -83,11 +97,13 @@ const InsertGame = () => {
         {questions.map((q, qIndex) => (
           <div key={qIndex} className="insertgame_question_section">
             <div className="insertgame_input_group">
-              <label>Question {qIndex + 1}:</label>
+              <label>Upload Question Audio (MP3, WAV, OGG):</label>
               <input
-                type="text"
-                value={q.question}
-                onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+                type="file"
+                accept=".mp3, .wav, .ogg"
+                onChange={(e) =>
+                  handleAudioChange(qIndex, e.target.files[0])
+                }
                 required
               />
             </div>
