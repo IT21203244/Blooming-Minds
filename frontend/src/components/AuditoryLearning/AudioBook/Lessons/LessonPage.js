@@ -7,8 +7,12 @@ const LessonPage = () => {
   const { lessonId } = useParams();
   const [lesson, setLesson] = useState(null);
   const [error, setError] = useState("");
-  const [audioSpeed, setAudioSpeed] = useState(1);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [audioIndex, setAudioIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [userTranscription, setUserTranscription] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingError, setRecordingError] = useState("");
+
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
   useEffect(() => {
@@ -34,71 +38,145 @@ const LessonPage = () => {
       .catch(() => setError("Failed to fetch lesson."));
   }, [lessonId]);
 
-  if (error) return <p className="error-message">{error}</p>;
-  if (!lesson) return <p className="loading-message">Loading...</p>;
+  const startRecording = () => {
+    setIsRecording(true);
+    setRecordingError("");
+    setUserTranscription("");
 
-  const totalSteps = Math.max(lesson.audio_files?.length || 0, lesson.questions?.length || 0);
-  const stepSize = 4; // Number of sections displayed at once
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          const formData = new FormData();
+          formData.append("file", audioBlob, "recorded_audio.wav");
+
+          axios
+            .post("http://localhost:5000/record", formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then((response) => {
+              setUserTranscription(response.data.transcription);
+              setIsRecording(false);
+            })
+            .catch(() => {
+              setRecordingError("Failed to transcribe audio.");
+              setIsRecording(false);
+            });
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => {
+          mediaRecorder.stop();
+        }, 5000);
+      })
+      .catch(() => {
+        setRecordingError("Failed to access the microphone.");
+        setIsRecording(false);
+      });
+  };
+
+  if (error) return <p className="audiolessonpage-error-message">{error}</p>;
+  if (!lesson) return <p className="audiolessonpage-loading-message">Loading...</p>;
 
   return (
-    <div className="lesson-page">
-      <h2 className="lesson-title">{lesson.title}</h2>
-      <img src={lesson.imageURL || DEFAULT_IMAGE_URL} alt={lesson.title} className="lesson-image" />
-      <p className="lesson-text">{lesson.text}</p>
+    <div className="audiolessonpage-page">
+      <h2 className="audiolessonpage-title">{lesson.title}</h2>
+      <img
+        src={lesson.imageURL || DEFAULT_IMAGE_URL}
+        alt={lesson.title}
+        className="audiolessonpage-image"
+      />
+      <p className="audiolessonpage-text">{lesson.text}</p>
 
-      {/* Step-by-Step Audio Navigation */}
-      <div className="step-navigation">
-        <h3>Lesson Audio & Questions</h3>
-        {[...Array(stepSize)].map((_, index) => {
-          const stepIndex = currentStep + index;
-          return stepIndex < totalSteps ? (
-            <div key={stepIndex} className="audio-question-section">
-              {lesson.audio_files?.[stepIndex] && (
-                <div className="audio-file">
-                  <h4>Lesson Audio {stepIndex + 1}</h4>
-                  <audio controls>
-                    <source src={lesson.audio_files[stepIndex]} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              )}
+      {/* Audio File Section */}
+      {lesson.audio_files?.length > 0 && (
+        <div className="audiolessonpage-audio-question-section">
+          <h3>Lesson Audio {audioIndex + 1}/{lesson.audio_files.length}</h3>
+          <audio key={audioIndex} controls>
+            <source src={lesson.audio_files[audioIndex]} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
 
-              {lesson.questions?.[stepIndex] && (
-                <div className="question-item">
-                  <h4>Question {stepIndex + 1}</h4>
-                  <audio controls>
-                    <source src={lesson.questions[stepIndex].audio} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                  <p><strong>Answer:</strong> {lesson.questions[stepIndex].answer}</p>
-                </div>
-              )}
-            </div>
-          ) : null;
-        })}
-
-        <div className="navigation-buttons">
-          <button onClick={() => setCurrentStep((prev) => Math.max(prev - stepSize, 0))} disabled={currentStep === 0}>
-            Previous
-          </button>
-          <button onClick={() => setCurrentStep((prev) => Math.min(prev + stepSize, totalSteps - stepSize))} disabled={currentStep >= totalSteps - stepSize}>
-            Next
-          </button>
+          {/* Next/Previous buttons for audio */}
+          <div className="audiolessonpage-navigation-buttons">
+            <button
+              onClick={() => setAudioIndex((prev) => Math.max(prev - 1, 0))}
+              disabled={audioIndex === 0}
+            >
+              Previous
+            </button>
+            <button
+              onClick={() =>
+                setAudioIndex((prev) => Math.min(prev + 1, lesson.audio_files.length - 1))
+              }
+              disabled={audioIndex === lesson.audio_files.length - 1}
+            >
+              Next
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Speed Control */}
-      <div className="speed-control">
-        <label>Audio Speed</label>
-        <input
-          type="range"
-          min="0.5"
-          max="2"
-          step="0.1"
-          value={audioSpeed}
-          onChange={(e) => setAudioSpeed(parseFloat(e.target.value))}
-        />
-      </div>
+      {/* Question Section */}
+      {lesson.questions?.length > 0 && (
+        <div className="audiolessonpage-audio-question-section">
+          <h3>Question {questionIndex + 1}/{lesson.questions.length}</h3>
+          <audio key={questionIndex} controls>
+            <source src={lesson.questions[questionIndex].audio} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+          <p><strong>Correct Answer:</strong> {lesson.questions[questionIndex].answer}</p>
+
+          {/* Tell Answer Button */}
+          <button onClick={startRecording} disabled={isRecording}>
+            {isRecording ? "Listening..." : "Tell Answer"}
+          </button>
+
+          {/* Display Transcription Result */}
+          {userTranscription && (
+            <div className="transcription-result">
+              <h3>Your Response:</h3>
+              <p>{userTranscription}</p>
+              <p>
+                <strong>Result: </strong>
+                {userTranscription.toLowerCase().trim() ===
+                lesson.questions[questionIndex].answer.toLowerCase().trim()
+                  ? "✅ Correct!"
+                  : "❌ Incorrect!"}
+              </p>
+            </div>
+          )}
+
+          {/* Show recording error if any */}
+          {recordingError && <p className="error-message">{recordingError}</p>}
+
+          {/* Next/Previous buttons for questions */}
+          <div className="audiolessonpage-navigation-buttons">
+            <button
+              onClick={() => setQuestionIndex((prev) => Math.max(prev - 1, 0))}
+              disabled={questionIndex === 0}
+            >
+              Previous
+            </button>
+            <button
+              onClick={() =>
+                setQuestionIndex((prev) => Math.min(prev + 1, lesson.questions.length - 1))
+              }
+              disabled={questionIndex === lesson.questions.length - 1}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

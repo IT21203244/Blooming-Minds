@@ -1,143 +1,63 @@
-.lesson-page {
+.audiolessonpage-page {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
-  font-family: "Comic Sans MS", cursive, sans-serif; /* Child-friendly font */
-  background-color: #e0f7fa; /* Pastel blue background */
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  background-color: #e0f7fa;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-.lesson-title {
+.audiolessonpage-title {
   font-size: 32px;
-  color: #00796b; /* Dark pastel green-blue */
-  margin-bottom: 15px;
+  color: #00796b;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Soft text shadow */
 }
 
-.lesson-image {
+.audiolessonpage-image {
   display: block;
   width: 100%;
   max-width: 100px;
   margin: 20px auto;
   border-radius: 10px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  border: 3px solid #b2ebf2; /* Soft border */
 }
 
-.lesson-text {
+.audiolessonpage-text {
   font-size: 20px;
-  color: #004d40; /* Darker teal for readability */
-  line-height: 1.6;
+  color: #004d40;
+  text-align: justify;
+}
+
+.audiolessonpage-audio-question-section {
   margin: 20px 0;
-  text-align: justify; /* Neater text alignment */
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-top: 20px;
-}
-
-.control-button {
-  background-color: #81d4fa; /* Light pastel blue */
-  color: white;
-  font-size: 18px;
-  padding: 12px 30px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-}
-
-.control-button:disabled {
-  background-color: #b2ebf2; /* Lighter disabled button */
-  cursor: not-allowed;
-}
-
-.control-button:hover {
-  background-color: #4fc3f7; /* Slightly darker blue on hover */
-}
-
-.audio-progress-container {
-  width: 100%;
-  height: 8px;
-  background-color: #b2ebf2; /* Soft pastel blue */
-  border-radius: 5px;
-  margin-top: 15px;
-  position: relative;
-}
-
-.audio-progress {
-  height: 8px;
-  background-color: #00796b; /* Darker green-blue for progress */
-  border-radius: 5px;
-}
-
-.speed-control {
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-  justify-content: center;
-}
-
-.speed-control label {
-  font-size: 16px;
-  margin-right: 15px;
-  color: #00796b;
-}
-
-.transcription-box {
-  background-color: #ffffff;
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #81d4fa; /* Border for emphasis */
-}
-
-.question-box {
-  background-color: #ffeb3b; /* Soft yellow background for questions */
   padding: 15px;
-  border-radius: 12px;
-  margin-top: 20px;
-  text-align: center;
+  border-radius: 10px;
+  background: #fff3e0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.countdown-timer {
-  font-size: 20px;
-  color: #ff7043; /* Soft red for countdown */
-  text-align: center;
-  margin-top: 15px;
+.audiolessonpage-navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
-.error-message,
-.loading-message {
-  font-size: 20px;
-  color: #f44336; /* Red for error messages */
-  text-align: center;
-  margin-top: 30px;
-}
-
-.feedback-message {
+.audiolessonpage-navigation-buttons button {
+  background-color: #81d4fa;
+  color: white;
   font-size: 18px;
-  color: #388e3c; /* Green for feedback */
-  text-align: center;
-  margin-top: 15px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.question-text {
-  font-size: 18px;
-  font-weight: bold;
-  color: #00796b;
+.audiolessonpage-navigation-buttons button:disabled {
+  background-color: #b2ebf2;
+  cursor: not-allowed;
 }
 
-.lesson-text {
-  font-size: 18px;
-  color: #004d40;
-  line-height: 1.6;
+.audiolessonpage-navigation-buttons button:hover {
+  background-color: #4fc3f7;
 }
