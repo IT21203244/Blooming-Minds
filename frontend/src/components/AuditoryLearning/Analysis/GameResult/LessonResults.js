@@ -320,6 +320,7 @@ const GameResults = () => {
                             <th>User ID</th>
                             <th>Session Number</th>
                             <th>Question Number</th>
+                          
                             <th>Response Correctness</th>
                             <th>Total Time Spent</th>
                             <th>Attempts</th>
@@ -328,36 +329,40 @@ const GameResults = () => {
                         <tbody>
                           {Object.keys(
                             combinedResults[lessonNumber].questionAttempts
-                          ).map((questionNumber) => (
-                            <tr key={questionNumber}>
-                              <td>{userId}</td>
-                              <td>{lessonNumber}</td>
-                              <td>{questionNumber}</td>
-                              <td>
-                                {combinedResults[lessonNumber].audiogameResults.find(
-                                  (result) =>
-                                    result.question_number === parseInt(questionNumber)
-                                )?.response_correctness
-                                  ? "Correct"
-                                  : "Incorrect"}
-                              </td>
-                              <td>
-                                {
-                                  combinedResults[lessonNumber].totalTimePerQuestion[
-                                    questionNumber
-                                  ]
-                                }
-                                s
-                              </td>
-                              <td>
-                                {
-                                  combinedResults[lessonNumber].questionAttempts[
-                                    questionNumber
-                                  ]
-                                }
-                              </td>
-                            </tr>
-                          ))}
+                          ).map((questionNumber) => {
+                            const result = combinedResults[lessonNumber].audiogameResults.find(
+                              (result) =>
+                                result.question_number === parseInt(questionNumber)
+                            );
+                            return (
+                              <tr key={questionNumber}>
+                                <td>{userId}</td>
+                                <td>{lessonNumber}</td>
+                                <td>{questionNumber}</td>
+                                
+                                <td>
+                                  {result?.response_correctness
+                                    ? "Correct"
+                                    : "Incorrect"}
+                                </td>
+                                <td>
+                                  {
+                                    combinedResults[lessonNumber].totalTimePerQuestion[
+                                      questionNumber
+                                    ]
+                                  }
+                                  s
+                                </td>
+                                <td>
+                                  {
+                                    combinedResults[lessonNumber].questionAttempts[
+                                      questionNumber
+                                    ]
+                                  }
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
