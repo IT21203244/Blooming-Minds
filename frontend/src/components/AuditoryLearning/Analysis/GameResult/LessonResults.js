@@ -108,6 +108,7 @@ const GameResults = () => {
       totalTime += result.response_time;
 
       const sessionNumber = result.lesson_number;
+      const questionNumber = result.question_number;
 
       if (!sessionData[sessionNumber]) {
         sessionData[sessionNumber] = {
@@ -117,8 +118,23 @@ const GameResults = () => {
           totalResponseTime: 0,
           speedOfAnswering: 0,
           memory: 0,
+          questionAttempts: {}, // Track attempts per question
+          totalTimePerQuestion: {}, // Track total time spent per question
         };
       }
+
+      // Initialize question attempts and total time if not already done
+      if (!sessionData[sessionNumber].questionAttempts[questionNumber]) {
+        sessionData[sessionNumber].questionAttempts[questionNumber] = 0;
+        sessionData[sessionNumber].totalTimePerQuestion[questionNumber] = 0;
+      }
+
+      // Increment the attempt count for the question
+      sessionData[sessionNumber].questionAttempts[questionNumber] += 1;
+
+      // Add to the total time spent on the question
+      sessionData[sessionNumber].totalTimePerQuestion[questionNumber] +=
+        result.response_time;
 
       sessionData[sessionNumber].totalQuestions += 1;
       sessionData[sessionNumber].totalResponseTime += result.response_time;
@@ -162,6 +178,8 @@ const GameResults = () => {
       combined[lessonNumber] = {
         audiogameResults: audiogameResultsForLesson,
         audiobookResults: audiobookResultsForLesson,
+        questionAttempts: userSessions[lessonNumber]?.questionAttempts || {}, // Include question attempts
+        totalTimePerQuestion: userSessions[lessonNumber]?.totalTimePerQuestion || {}, // Include total time per question
       };
     });
 
@@ -213,12 +231,6 @@ const GameResults = () => {
                   userSessions[num].totalQuestions
               ),
               borderColor: "#36a2eb",
-              tension: 0.3,
-            },
-            {
-              label: "Memory Score",
-              data: sessionNumbers.map((num) => userSessions[num].memory),
-              borderColor: "#ff6384",
               tension: 0.3,
             },
           ],
@@ -309,47 +321,41 @@ const GameResults = () => {
                             <th>Session Number</th>
                             <th>Question Number</th>
                             <th>Response Correctness</th>
-                            <th>Response Time</th>
+                            <th>Total Time Spent</th>
+                            <th>Attempts</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {combinedResults[lessonNumber].audiogameResults.map((result) => (
-                            <tr key={result._id}>
-                              <td>{result.user_id}</td>
-                              <td>{result.lesson_number}</td>
-                              <td>{result.question_number}</td>
-                              <td>{result.response_correctness ? "Correct" : "Incorrect"}</td>
-                              <td>{result.response_time}s</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-
-                <div className="audiobook-results">
-                  <h4>Audiobook Results</h4>
-                  {combinedResults[lessonNumber].audiobookResults.length === 0 ? (
-                    <p>No audiobook results found for this lesson.</p>
-                  ) : (
-                    <div className="results-table-container">
-                      <table className="results-table">
-                        <thead>
-                          <tr>
-                            <th>User ID</th>
-                            <th>Lesson ID</th>
-                            <th>Lesson Number</th>
-                            <th>Correctness</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {combinedResults[lessonNumber].audiobookResults.map((result, index) => (
-                            <tr key={index}>
-                              <td>{result.userId}</td>
-                              <td>{result.lessonId}</td>
-                              <td>{getLessonNumber(result.lessonId)}</td>
-                              <td>{result.correctness ? "Correct" : "Incorrect"}</td>
+                          {Object.keys(
+                            combinedResults[lessonNumber].questionAttempts
+                          ).map((questionNumber) => (
+                            <tr key={questionNumber}>
+                              <td>{userId}</td>
+                              <td>{lessonNumber}</td>
+                              <td>{questionNumber}</td>
+                              <td>
+                                {combinedResults[lessonNumber].audiogameResults.find(
+                                  (result) =>
+                                    result.question_number === parseInt(questionNumber)
+                                )?.response_correctness
+                                  ? "Correct"
+                                  : "Incorrect"}
+                              </td>
+                              <td>
+                                {
+                                  combinedResults[lessonNumber].totalTimePerQuestion[
+                                    questionNumber
+                                  ]
+                                }
+                                s
+                              </td>
+                              <td>
+                                {
+                                  combinedResults[lessonNumber].questionAttempts[
+                                    questionNumber
+                                  ]
+                                }
+                              </td>
                             </tr>
                           ))}
                         </tbody>
