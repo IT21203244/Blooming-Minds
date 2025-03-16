@@ -27,6 +27,8 @@ const SignIn = () => {
       // Save token to localStorage
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("userId", data.userId);
+      localStorage.setItem("userName", data.username);
+      alert('Login Successfully')
       navigate("/home"); // Redirect to the home page after login
     } else {
       setError(data.error || "Something went wrong");

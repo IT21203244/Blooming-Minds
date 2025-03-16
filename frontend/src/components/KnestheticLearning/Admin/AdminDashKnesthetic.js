@@ -54,7 +54,7 @@ function AdminDashKnesthetic() {
         }
     };
     const generateReport = () => {
-        const doc = new jsPDF("landscape");
+        const doc = new jsPDF();
 
         // Title of the report
         doc.setFontSize(18);
@@ -64,21 +64,15 @@ function AdminDashKnesthetic() {
 
         // Define the table column headers
         const headers = [
-            ['Student ID', 'Name', 'Progress', 'Task Name', 'Enterd Word', 'Spent Time', 'Age', 'Date', 'Task Allocated Time', 'Description']
+            [ 'Name', 'Progress', 'Task Name', 'Enterd Word']
         ];
 
         // Map the student data to table rows
         const data = students.map(student => [
-            student.studentID,
             student.studentName,
             `${student.actualProgress}%`,
             student.randomImageName,
-            student.taskCompletionTime,
-            `${student.timeSpent} seconds`,
-            student.age,
-            student.date,
-            student.clickedLetters || 'Not Entered',
-            student.description || 'No Description',
+            student.userEnteredWord || 'Not Entered',
         ]);
 
         // Generate the table
@@ -97,9 +91,7 @@ function AdminDashKnesthetic() {
 
     const filteredStudents = students.filter(student => {
         const name = student.studentName ? student.studentName.toLowerCase() : '';
-        const id = student.studentID ? student.studentID.toString() : '';
-        const description = student.description ? student.description.toLowerCase() : '';
-        return name.includes(searchQuery) || id.includes(searchQuery) || description.includes(searchQuery);
+        return name.includes(searchQuery);
     });
 
     return (
@@ -110,11 +102,7 @@ function AdminDashKnesthetic() {
                 <p className='kin_admin_nav' onClick={() => (window.location.href = '/KnestheticHome')}>Logout</p>
             </div>
             <div className="student-records-container">
-                <div className='nav_bar_kin_admin'>
-                    <p className='kin_admin_nav kin_admin_nav_active' onClick={() => (window.location.href = '/KnestheticAdmin')}>All Records</p>
-                    <p className='kin_admin_nav' onClick={() => (window.location.href = '/recordAnalysisKnesthetic')}>record Analysis</p>
-                    <p className='kin_admin_nav' onClick={() => (window.location.href = '/skilCompareKnesthetic')}>skill compare</p>
-                </div>
+               
                 <div >
                     <h2 className='table_name'>Student Records</h2>
                     {loading ? (
@@ -126,7 +114,7 @@ function AdminDashKnesthetic() {
                                     <div>
                                         <input
                                             type="text"
-                                            placeholder="Search by name, ID, or description..."
+                                            placeholder="Search by name ..."
                                             value={searchQuery}
                                             onChange={handleSearch}
                                             className="search_bar_kin_admin"
@@ -141,32 +129,24 @@ function AdminDashKnesthetic() {
                             <table className="student-records-table">
                                 <thead>
                                     <tr>
-                                        <th className='tble_kin_head'>Student ID</th>
+                                       
                                         <th className='tble_kin_head'>Name</th>
                                         <th className='tble_kin_head'>Progress</th>
-                                        <th className='tble_kin_head'>Spent time</th>
                                         <th className='tble_kin_head'>Task Name</th>
                                         <th className='tble_kin_head'>Student Enter answer</th>
-                                        <th className='tble_kin_head'>Age</th>
-                                        <th className='tble_kin_head'>Date</th>
-                                        <th className='tble_kin_head'>Allocated Time</th>
-                                        <th className='tble_kin_head'>Description</th>
+                                       
                                         <th className='tble_kin_head'>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredStudents.map((student) => (
                                         <tr key={student._id}>
-                                            <td className='tble_kin_bd'>{student.studentID}</td>
+                                        
                                             <td className='tble_kin_bd'>{student.studentName}</td>
                                             <td className='tble_kin_bd'>{student.actualProgress}%</td>
-                                            <td className='tble_kin_bd'>{student.timeSpent} Seconds</td>
                                             <td className='tble_kin_bd'>{student.randomImageName}</td>
-                                            <td className='tble_kin_bd'>{student.clickedLetters || 'Not Entered'}</td>
-                                            <td className='tble_kin_bd'>{student.age}</td>
-                                            <td className='tble_kin_bd'>{student.date}</td>
-                                            <td className='tble_kin_bd'>{student.taskCompletionTime}</td>
-                                            <td className='tble_kin_bd'>{student.description || 'No Description'}</td>
+                                            <td className='tble_kin_bd'>{student.userEnteredWord || 'Not Entered'}</td>
+                                           
                                             <td className='tble_kin_bd'>
                                                 <button
                                                     onClick={() => deleteStudent(student._id)}

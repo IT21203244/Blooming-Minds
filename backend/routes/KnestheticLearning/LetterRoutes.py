@@ -4,7 +4,7 @@ from utils.KnestheticLearning.LetterQuest.LetterUtils import insert_student,get_
 
 LetterRoutes = Blueprint("routes", __name__)
 
-@LetterRoutes.route("/addStudentRecord", methods=["POST"])
+@LetterRoutes.route("/addStudentLetterRecord", methods=["POST"])
 def add_student():
     try:
         data = request.json

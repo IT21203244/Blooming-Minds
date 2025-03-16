@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router";
 /*Home*/
 import Home from "./components/Home/Home";
+
 /*Auditory Learning*/
 import AuditoryHomePage from "./components/AuditoryLearning/Home/AuditoryHomePage";
 import AudioTranscription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
@@ -14,17 +15,12 @@ import LessonResults from "./components/AuditoryLearning/Analysis/GameResult/Les
 import AdminHome from "./components/AuditoryLearning/Admin_Panel/AdminHome/AdminHome"; 
 import Transcription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
 
-
 /*Knesthetic Learning*/
 import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDetection";
 import KnestheticHome from "./components/KnestheticLearning/KnestheticHome/KnestheticHome";
 import LetterQuest from "./components/KnestheticLearning/LetterQuest/LetterQuest";
 import Result from "./components/KnestheticLearning/LetterQuest/Result";
-import AddRecord from "./components/KnestheticLearning/LetterQuest/AddRecord";
 import AdminDashKnesthetic from "./components/KnestheticLearning/Admin/AdminDashKnesthetic";
-import RecordAnalysisKnesthetic from "./components/KnestheticLearning/Admin/RecordAnalysisKnesthetic";
-import SkilCompareKnesthetic from "./components/KnestheticLearning/Admin/SkilCompareKnesthetic";
-
 
 /*ReadWrite Learning*/
 import ReadWriteHomePage from "./components/ReadWriteLearning/ReadWriteHomePage"; 
@@ -32,7 +28,6 @@ import LetterWritingPage from "./components/ReadWriteLearning/LetterWritingPage"
 import UserLettersPage from "./components/ReadWriteLearning/UserLettersPage";
 import Canvas from "./components/ReadWriteLearning/canvas";
 import LetterAnalysisPage from "./components/ReadWriteLearning/LetterAnalysisPage";
-
 
 /*Visual Learning*/
 import VisualHomePage from "./components/VisualLearning/VisualHomePage";
@@ -42,7 +37,6 @@ import FetchColorMatchingData from "./components/VisualLearning/FetchColorMatchi
 import FetchColorMatchingReport from "./components/VisualLearning/FetchColorMatchingReport";
 import ProgressDashboard from "./components/VisualLearning/ProgressDashboard";
 import CompareProgressDashboard from "./components/VisualLearning/CompareProgressDashboard";
-
 
 /*Auth SignIn SignUp*/
 import SignIn from "./components/Auth/SignIn";
@@ -75,11 +69,9 @@ const App = () => {
           <Route path="/KnestheticHome" element={<KnestheticHome />} />
           <Route path="/LetterQuest" element={<LetterQuest />} />
           <Route path="/result" element={<Result />} />
-          <Route path="/saveRecordLetter" element={<AddRecord />} />
           <Route path="/KnestheticAdmin" element={<AdminDashKnesthetic />} />
-          <Route path="/recordAnalysisKnesthetic" element={<RecordAnalysisKnesthetic />} />
-          <Route path="/skilCompareKnesthetic" element={<SkilCompareKnesthetic />} />
           <Route path="/actionQuestAdmin" element={<ActionQuestAdmin />} />
+
           {/* ReadWrite Learning */}
           {/* Protected routes */}
           <Route path="/rw-home" element={<PrivateRoute element={<ReadWriteHomePage />} />} />

@@ -25,7 +25,8 @@ const SignUp = () => {
     const data = await response.json();
     
     if (response.ok) {
-      navigate("/signin"); // Redirect to Sign In page after successful registration
+      alert('Account Created Successfully')
+      navigate("/"); // Redirect to Sign In page after successful registration
     } else {
       setError(data.error || "Something went wrong");
     }
