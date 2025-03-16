@@ -85,7 +85,6 @@ def get_audiogames():
     finally:
         db.close_connection()
 
-
 @audiogame_routes.route("/get_audiogame/<game_id>", methods=["GET"])
 def get_audiogame(game_id):
     db = GameDatabase()
@@ -181,3 +180,26 @@ def predict_session_score():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@audiogame_routes.route("/get_attempt_count", methods=["GET"])
+def get_attempt_count():
+    db = GameDatabase()
+    try:
+        # Fetch all audiogame results from the database
+        results = db.get_audiogame_results()
+        if not results:
+            return jsonify({"message": "No audiogame results found"}), 404
+        
+        # Create a dictionary to store the attempt count for each lesson
+        attempt_count = {}
+        for result in results:
+            lesson_number = result['lesson_number']
+            if lesson_number in attempt_count:
+                attempt_count[lesson_number] += 1
+            else:
+                attempt_count[lesson_number] = 1
+        
+        return jsonify({"attempt_count": attempt_count}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
