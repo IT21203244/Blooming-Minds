@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import {
@@ -34,35 +34,69 @@ const GameResults = () => {
   const [filteredResults, setFilteredResults] = useState([]);
   const [userSessions, setUserSessions] = useState({});
   const [totalSpentTime, setTotalSpentTime] = useState(0);
+  const [audiobookResults, setAudiobookResults] = useState([]);
+  const [lessons, setLessons] = useState([]);
+  const [combinedResults, setCombinedResults] = useState({});
+  const [expandedLesson, setExpandedLesson] = useState(null); // State to track expanded lesson
 
   useEffect(() => {
+    // Fetch userId from local storage
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+
     const fetchGameResults = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/get_audiogame_results"
         );
         setGameResults(response.data.audiogame_results);
-        setFilteredResults(response.data.audiogame_results);
-        calculateSummaries(response.data.audiogame_results);
+        filterResultsByUserId(response.data.audiogame_results, storedUserId);
       } catch (err) {
         console.error("Error fetching game results:", err);
       }
     };
 
+    const fetchAudiobookResults = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/get_transcriptions"
+        );
+        setAudiobookResults(response.data.transcriptions);
+      } catch (err) {
+        console.error("Error fetching audiobook results:", err);
+      }
+    };
+
+    const fetchLessons = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/get_lessons");
+        setLessons(response.data.lessons);
+      } catch (err) {
+        console.error("Error fetching lessons:", err);
+      }
+    };
+
     fetchGameResults();
+    fetchAudiobookResults();
+    fetchLessons();
   }, []);
 
-  const handleUserIdChange = (e) => {
-    const id = e.target.value;
-    setUserId(id);
+  useEffect(() => {
+    if (lessons.length > 0 && gameResults.length > 0 && audiobookResults.length > 0) {
+      combineResultsByLesson();
+    }
+  }, [lessons, gameResults, audiobookResults]);
 
-    if (id) {
-      const filtered = gameResults.filter((result) => result.user_id === id);
+  const filterResultsByUserId = (results, userId) => {
+    if (userId) {
+      const filtered = results.filter((result) => result.user_id === userId);
       setFilteredResults(filtered);
       calculateSummaries(filtered);
     } else {
-      setFilteredResults(gameResults);
-      calculateSummaries(gameResults);
+      setFilteredResults(results);
+      calculateSummaries(results);
     }
   };
 
@@ -108,6 +142,30 @@ const GameResults = () => {
 
     setUserSessions(sessionData);
     setTotalSpentTime(totalTime);
+  };
+
+  const combineResultsByLesson = () => {
+    const combined = {};
+
+    lessons.forEach((lesson) => {
+      const lessonId = lesson._id;
+      const lessonNumber = lesson.lnumber;
+
+      const audiogameResultsForLesson = gameResults.filter(
+        (result) => result.lesson_number === lessonNumber && result.user_id === userId
+      );
+
+      const audiobookResultsForLesson = audiobookResults.filter(
+        (result) => result.lessonId === lessonId && result.userId === userId
+      );
+
+      combined[lessonNumber] = {
+        audiogameResults: audiogameResultsForLesson,
+        audiobookResults: audiobookResultsForLesson,
+      };
+    });
+
+    setCombinedResults(combined);
   };
 
   const generateSessionChart = (sessionNumber) => {
@@ -203,74 +261,126 @@ const GameResults = () => {
     );
   };
 
+  const calculateCorrectnessPercentage = (results) => {
+    if (results.length === 0) return 0;
+    const correctCount = results.filter((result) => result.correctness).length;
+    return ((correctCount / results.length) * 100).toFixed(2);
+  };
+
+  const getLessonNumber = (lessonId) => {
+    const lesson = lessons.find((lesson) => lesson._id === lessonId);
+    return lesson ? lesson.lnumber : "N/A";
+  };
+
+  const toggleLessonDetails = (lessonNumber) => {
+    if (expandedLesson === lessonNumber) {
+      setExpandedLesson(null); // Collapse if already expanded
+    } else {
+      setExpandedLesson(lessonNumber); // Expand the clicked lesson
+    }
+  };
+
   return (
     <div className="game-results-container">
-      <h2 className="page-title">Audiogame Results</h2>
-      <div className="search-container">
-        <input
-          type="text"
-          className="user-id-input"
-          placeholder="Enter User ID"
-          value={userId}
-          onChange={handleUserIdChange}
-        />
-      </div>
+      <h2 className="page-title">Lesson Results</h2>
 
-      {filteredResults.length === 0 ? (
-        <p>No results found for the entered user ID.</p>
+      {Object.keys(combinedResults).length === 0 ? (
+        <p>No results found for the current user.</p>
       ) : (
-        <>
-          <div className="results-table-container">
-            <table className="results-table">
-              <thead>
-                <tr>
-                  <th>User ID</th>
-                  <th>Session Number</th>
-                  <th>Question Number</th>
-                  <th>Response Correctness</th>
-                  <th>Response Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredResults.map((result) => (
-                  <tr key={result._id}>
-                    <td>{result.user_id}</td>
-                    <td>{result.lesson_number}</td>
-                    <td>{result.question_number}</td>
-                    <td>{result.response_correctness ? "Correct" : "Incorrect"}</td>
-                    <td>{result.response_time}s</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        Object.keys(combinedResults).map((lessonNumber) => (
+          <div key={lessonNumber} className="lesson-results-container">
+            <div className="lesson-header" onClick={() => toggleLessonDetails(lessonNumber)}>
+              <h3>Lesson {lessonNumber}</h3>
+              <span>{expandedLesson === lessonNumber ? "▼" : "▶"}</span>
+            </div>
 
-          <div className="results-summary-container">
-            <h3>Summary for User ID: {userId}</h3>
-            <div className="summary-container">
-              {Object.keys(userSessions).map((sessionNumber) => (
-                <div className="session-summary" key={sessionNumber}>
-                  <h4>Session {sessionNumber}</h4>
-                  <p>Total Questions: {userSessions[sessionNumber].totalQuestions}</p>
-                  <p>
-                    Average Response Time:{" "}
-                    {userSessions[sessionNumber].averageResponseTime}s
-                  </p>
-                  <p>Correct Responses: {userSessions[sessionNumber].correctResponses}</p>
-                  <p>Incorrect Responses: {userSessions[sessionNumber].incorrectResponses}</p>
+            {expandedLesson === lessonNumber && (
+              <>
+                <div className="audiogame-results">
+                  <h4>Audiogame Results</h4>
+                  {combinedResults[lessonNumber].audiogameResults.length === 0 ? (
+                    <p>No audiogame results found for this lesson.</p>
+                  ) : (
+                    <div className="results-table-container">
+                      <table className="results-table">
+                        <thead>
+                          <tr>
+                            <th>User ID</th>
+                            <th>Session Number</th>
+                            <th>Question Number</th>
+                            <th>Response Correctness</th>
+                            <th>Response Time</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {combinedResults[lessonNumber].audiogameResults.map((result) => (
+                            <tr key={result._id}>
+                              <td>{result.user_id}</td>
+                              <td>{result.lesson_number}</td>
+                              <td>{result.question_number}</td>
+                              <td>{result.response_correctness ? "Correct" : "Incorrect"}</td>
+                              <td>{result.response_time}s</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                <div className="audiobook-results">
+                  <h4>Audiobook Results</h4>
+                  {combinedResults[lessonNumber].audiobookResults.length === 0 ? (
+                    <p>No audiobook results found for this lesson.</p>
+                  ) : (
+                    <div className="results-table-container">
+                      <table className="results-table">
+                        <thead>
+                          <tr>
+                            <th>User ID</th>
+                            <th>Lesson ID</th>
+                            <th>Lesson Number</th>
+                            <th>Correctness</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {combinedResults[lessonNumber].audiobookResults.map((result, index) => (
+                            <tr key={index}>
+                              <td>{result.userId}</td>
+                              <td>{result.lessonId}</td>
+                              <td>{getLessonNumber(result.lessonId)}</td>
+                              <td>{result.correctness ? "Correct" : "Incorrect"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Display Charts for Audiogame Results */}
+                <div className="charts-container">
+                  <h4>Charts for Audiogame Results</h4>
                   <div className="chart-container">
-                    {generatePieChart(sessionNumber)}
+                    {generateSessionChart(lessonNumber)}
                   </div>
                   <div className="chart-container">
-                    {generateSessionChart(sessionNumber)}
+                    {generatePieChart(lessonNumber)}
                   </div>
                 </div>
-              ))}
-              <div className="chart-container">{generateComparisonChart()}</div>
-            </div>
+              </>
+            )}
           </div>
-        </>
+        ))
       )}
+
+      {/* Display Comparison Chart Across All Sessions */}
+      <div className="comparison-chart-container">
+        <h3>Comparison Across All Sessions</h3>
+        <div className="chart-container">
+          {generateComparisonChart()}
+        </div>
+      </div>
     </div>
   );
 };
