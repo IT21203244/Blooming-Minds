@@ -29,34 +29,10 @@ function SmileQuestAdmin() {
 
         fetchSmileData();
     }, []);
-    const deleteSmileData = async (_id) => {
-        const confirmed = window.confirm("Are you sure you want to delete this record?");
-        if (!confirmed) return;  // If the user cancels the deletion, do nothing
-    
-        try {
-            setLoading(true); // Set loading to true while deleting
-            const response = await fetch(`http://localhost:5000/api/delete_smile_data/${_id}`, {  // Pass _id in the URL
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-    
-            const result = await response.json();
-            if (response.ok) {
-                setSmileData((prevData) => prevData.filter((item) => item._id !== _id));
-                alert("Record deleted successfully!");
-            } else {
-                alert("Error: " + result.error); // Error message
-            }
-        } catch (error) {
-            setMessage('Error deleting record: ' + error.message);
-        } finally {
-            setLoading(false); // Set loading to false when done
-        }
-    };
-    
-    
+
+
+
+
     const generateReport = () => {
         const doc = new jsPDF("landscape");
 
@@ -66,7 +42,7 @@ function SmileQuestAdmin() {
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
 
         const headers = [
-            ['ID', 'Username', 'Smile Percentage', 'Date', 'Time']
+            ['Username', 'Smile Percentage', 'Date', 'Time']
         ];
 
         const data = smileData.map(record => [
@@ -98,12 +74,12 @@ function SmileQuestAdmin() {
     return (
         <div>
             <div className='nav_bar_kin_admin main_nav'>
-                <p className='kin_admin_nav ' onClick={() => (window.location.href = '/recordAnalysisKnesthetic')}>letter Quest</p>
+                <p className='kin_admin_nav ' onClick={() => (window.location.href = '/KnestheticAdmin')}>letter Quest</p>
                 <p className='kin_admin_nav kin_admin_nav_active_main' onClick={() => (window.location.href = '/actionQuestAdmin')}>Action Quest</p>
                 <p className='kin_admin_nav' onClick={() => (window.location.href = '/KnestheticHome')}>Logout</p>
             </div>
             <div className="student-records-container">
-                
+
                 <div>
                     <h2 className='table_name'>Smile Data Records</h2>
                     {loading ? (
@@ -114,7 +90,7 @@ function SmileQuestAdmin() {
                                 <div>
                                     <input
                                         type="text"
-                                        placeholder="Search by username or"
+                                        placeholder="Search by username "
                                         value={searchQuery}
                                         onChange={handleSearch}
                                         className="search_bar_kin_admin"
@@ -128,7 +104,7 @@ function SmileQuestAdmin() {
                             <table className="student-records-table">
                                 <thead>
                                     <tr>
-                                        
+
                                         <th className='tble_kin_head'>Username</th>
                                         <th className='tble_kin_head'>Smile Percentage</th>
                                         <th className='tble_kin_head'>Date</th>
@@ -138,11 +114,12 @@ function SmileQuestAdmin() {
                                 <tbody>
                                     {filteredSmileData.map((record) => (
                                         <tr key={record._id}>
-                                            
+
                                             <td className='tble_kin_bd'>{record.username}</td>
                                             <td className='tble_kin_bd'>{record.smile_percentage}%</td>
                                             <td className='tble_kin_bd'>{record.date}</td>
                                             <td className='tble_kin_bd'>{record.time}</td>
+
                                         </tr>
                                     ))}
                                 </tbody>

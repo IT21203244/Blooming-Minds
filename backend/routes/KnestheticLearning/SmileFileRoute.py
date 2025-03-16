@@ -5,6 +5,7 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
 from datetime import datetime
+from bson import ObjectId
 # MongoDB connection
 client = MongoClient("mongodb+srv://blooming_minds:BsjsdM24@bloomingminds.n7ia1.mongodb.net/")
 db = client["blooming_minds"]
@@ -75,15 +76,3 @@ def get_smile_data():
 
     return jsonify(smile_data)
 
-@SmileFileRoute.route('/api/delete_smile_data/<student_id>', methods=['DELETE'])
-def delete_smile_data(student_id):
-    try:
-        # Try to find and delete the document by student_id
-        result = smile_results_collection.delete_one({"username": student_id})
-        
-        if result.deleted_count > 0:
-            return jsonify({"message": "Student deleted successfully"}), 200
-        else:
-            return jsonify({"error": "Student not found"}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500

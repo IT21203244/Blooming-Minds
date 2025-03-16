@@ -117,10 +117,10 @@ function LetterQuest() {
         // Calculate progress and time spent
         const progress = calculateProgress();
         const timeSpent = calculateTimeSpent();
-        
+
         // Get current date and time in local time (formatted as HH:mm AM/PM)
         const localTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
+
         // Save the data to localStorage
         localStorage.setItem("actualProgress", progress);
         localStorage.setItem("timeSpent", timeSpent);
@@ -128,11 +128,11 @@ function LetterQuest() {
         localStorage.setItem("randomImageSrc", randomImage.src);    // Save the image source
         localStorage.setItem("userEnteredWord", clickedLetters);    // Save the user-entered word
         localStorage.setItem("taskCompletionTime", localTime); // Save the local task completion time
-        
+
         // Navigate to the result page
         navigate('/result');
     };
-    
+
 
 
     // Function to calculate time spent
@@ -149,20 +149,20 @@ function LetterQuest() {
                     <div className='letter_card'>
                         <p className='letter_name'>{randomImage.name}</p>
                         <div>
-    <p className='time_cpunt' style={{ color: timeLeft <= 10 ? 'red' : '#2b69b2' }}>
-        {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} Minutes Left
-    </p>
-    <div className="time_progress_bar">
-        <div
-            className="time_progress_fill"
-            style={{
-                width: `${(timeLeft / 60) * 100}%`, // Calculate width based on remaining time
-                backgroundColor: timeLeft <= 10 ? 'red' : '#2b69b2', // Change color dynamically
-                transition: 'width 0.5s ease', // Smooth transition for width changes
-            }}
-        ></div>
-    </div>
-</div>
+                            <p className='time_cpunt' style={{ color: timeLeft <= 10 ? 'red' : '#2b69b2' }}>
+                                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} Minutes Left
+                            </p>
+                            <div className="time_progress_bar">
+                                <div
+                                    className="time_progress_fill"
+                                    style={{
+                                        width: `${(timeLeft / 60) * 100}%`, // Calculate width based on remaining time
+                                        backgroundColor: timeLeft <= 10 ? 'red' : '#2b69b2', // Change color dynamically
+                                        transition: 'width 0.5s ease', // Smooth transition for width changes
+                                    }}
+                                ></div>
+                            </div>
+                        </div>
 
                         <img src={randomImage.src} alt={randomImage.name} className='letter_img' />
                     </div>

@@ -136,12 +136,12 @@ margin-bottom: 15px;
 }
 .result_container {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   padding: 25px 15%;
   gap: 30px;
   width: 100%;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .topic_pro {
@@ -220,12 +220,15 @@ margin-bottom: 15px;
 }
 .new_boc {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 25px;
+  gap: 2px;
   align-items: start;
+  border: 1px solid #2b69b2;
+  padding: 25px;
+  border-radius: 3px;
+  width: 400px;
 }
-.save_btn {
+.savebtn_kin {
   width: 100%;
   border: 1px solid #2b69b2;
   color: white;
@@ -258,7 +261,7 @@ margin-bottom: 15px;
   font-weight: 600;
   text-align: start;
   text-transform: capitalize;
-  color: #2b69b2;
+  color: black;
   margin-bottom: 25px;
 }
 .save_from_continer {
@@ -306,6 +309,10 @@ input:focus {
   justify-content: space-between;
 }
 @media (max-width: 990px) {
+  .new_boc {
+ 
+    width: 100%;
+  }
   .save_from_continer{
     display: block;
     padding: 10px;
