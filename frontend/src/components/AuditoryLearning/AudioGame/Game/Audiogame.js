@@ -13,10 +13,21 @@ const AudiogamesList = () => {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [spentTime, setSpentTime] = useState(0);
   const [responseCorrectness, setResponseCorrectness] = useState(0);
-  const [userId, setUserId] = useState(""); // User ID input state
+  const [userId, setUserId] = useState(""); // User ID state
 
   const location = useLocation();
   const lessonLNumber = location.state?.lessonLNumber;
+
+  // Fetch userId from local storage when the component mounts
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      setError("User ID not found in local storage. Please log in.");
+    }
+  }, []);
+
   useEffect(() => {
     fetch("http://localhost:5000/api/get_audiogames")
       .then((response) => response.json())
@@ -132,18 +143,6 @@ const AudiogamesList = () => {
       <h1>Lesson {lessonLNumber}</h1>
       {message && <p className="message">{message}</p>}
       {error && <p className="error">{error}</p>}
-  
-      {/* User ID Input */}
-      <div className="user-id-section">
-        <label htmlFor="user-id">User ID:</label>
-        <input
-          id="user-id"
-          type="text"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter your User ID"
-        />
-      </div>
   
       <div className="game-card">
         {audiogames.length > 0 && (
