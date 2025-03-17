@@ -8,9 +8,9 @@ import logging
 app = Flask(__name__)
 
 # Kinesthetic Imports
-from routes.KnestheticLearning.predict_routes import predict_routes 
-from routes.KnestheticLearning.LetterRoutes import LetterRoutes
-from routes.KnestheticLearning.SmileFileRoute import SmileFileRoute
+#from routes.KnestheticLearning.predict_routes import predict_routes 
+#from routes.KnestheticLearning.LetterRoutes import LetterRoutes
+#from routes.KnestheticLearning.SmileFileRoute import SmileFileRoute
 
 #ReadWrite Learning
 #from routes.ReadWriteLearning.letter_routes import letter_routes
@@ -37,12 +37,12 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Register Blueprints KnestheticLearning
-CORS(predict_routes, origins="http://localhost:3000")
-CORS(LetterRoutes, origins="http://localhost:3000")
-CORS(SmileFileRoute, origins="http://localhost:3000")
-app.register_blueprint(predict_routes) 
-app.register_blueprint(LetterRoutes) 
-app.register_blueprint(SmileFileRoute)
+#CORS(predict_routes, origins="http://localhost:3000")
+#CORS(LetterRoutes, origins="http://localhost:3000")
+#CORS(SmileFileRoute, origins="http://localhost:3000")
+#app.register_blueprint(predict_routes) 
+#app.register_blueprint(LetterRoutes) 
+#app.register_blueprint(SmileFileRoute)
 
 #app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
 

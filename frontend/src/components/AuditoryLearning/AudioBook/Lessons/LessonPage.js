@@ -162,7 +162,13 @@ const LessonPage = () => {
 
       console.log("Data inserted successfully");
 
-      setQuestionIndex((prev) => Math.min(prev + 1, lesson.questions.length - 1));
+      if (questionIndex < lesson.questions.length - 1) {
+        setQuestionIndex((prev) => prev + 1);
+      } else {
+        // If it's the last question, reset the state or handle as needed
+        setQuestionIndex(0);
+      }
+
       setUserTranscription("");
       setRecordingError("");
       setMatchPercentage(0);
@@ -283,14 +289,8 @@ const LessonPage = () => {
               Previous
             </button>
             <button
-              onClick={() => {
-                setQuestionIndex((prev) => Math.min(prev + 1, lesson.questions.length - 1));
-                setUserTranscription("");
-                setRecordingError("");
-                setMatchPercentage(0);
-                handleNextQuestion(0);
-              }}
-              disabled={questionIndex === lesson.questions.length - 1}
+              onClick={handleNextQuestion}
+              disabled={isRecording}
             >
               Next
             </button>

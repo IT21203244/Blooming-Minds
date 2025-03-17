@@ -125,12 +125,15 @@ const GameResults = () => {
 
       // Initialize question attempts and total time if not already done
       if (!sessionData[sessionNumber].questionAttempts[questionNumber]) {
-        sessionData[sessionNumber].questionAttempts[questionNumber] = 0;
+        sessionData[sessionNumber].questionAttempts[questionNumber] = [];
         sessionData[sessionNumber].totalTimePerQuestion[questionNumber] = 0;
       }
 
-      // Increment the attempt count for the question
-      sessionData[sessionNumber].questionAttempts[questionNumber] += 1;
+      // Add the attempt to the question attempts array
+      sessionData[sessionNumber].questionAttempts[questionNumber].push({
+        correctness: result.response_correctness,
+        timeSpent: result.response_time,
+      });
 
       // Add to the total time spent on the question
       sessionData[sessionNumber].totalTimePerQuestion[questionNumber] +=
@@ -273,6 +276,46 @@ const GameResults = () => {
     );
   };
 
+  const generateQuestionAttemptsChart = (questionAttempts) => {
+    const attemptsData = questionAttempts.map((attempt, index) => ({
+      attempt: `Attempt ${index + 1}`,
+      correctness: attempt.correctness ? 1 : 0,
+      timeSpent: attempt.timeSpent,
+    }));
+
+    return (
+      <Bar
+        data={{
+          labels: attemptsData.map((a) => a.attempt),
+          datasets: [
+            {
+              label: "Correctness",
+              data: attemptsData.map((a) => a.correctness),
+              backgroundColor: "#36a2eb",
+            },
+            {
+              label: "Time Spent (s)",
+              data: attemptsData.map((a) => a.timeSpent),
+              backgroundColor: "#ff6384",
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: "Question Attempts Performance" },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        }}
+      />
+    );
+  };
+
   const calculateCorrectnessPercentage = (results) => {
     if (results.length === 0) return 0;
     const correctCount = results.filter((result) => result.correctness).length;
@@ -320,48 +363,39 @@ const GameResults = () => {
                             <th>User ID</th>
                             <th>Session Number</th>
                             <th>Question Number</th>
-                          
+                            <th>Attempt</th>
                             <th>Response Correctness</th>
-                            <th>Total Time Spent</th>
-                            <th>Attempts</th>
+                            <th>Time Spent</th>
                           </tr>
                         </thead>
                         <tbody>
                           {Object.keys(
                             combinedResults[lessonNumber].questionAttempts
                           ).map((questionNumber) => {
-                            const result = combinedResults[lessonNumber].audiogameResults.find(
-                              (result) =>
-                                result.question_number === parseInt(questionNumber)
-                            );
-                            return (
-                              <tr key={questionNumber}>
+                            const attempts =
+                              combinedResults[lessonNumber].questionAttempts[
+                                questionNumber
+                              ];
+                            return attempts.map((attempt, index) => (
+                              <tr key={`${questionNumber}-${index}`}>
                                 <td>{userId}</td>
                                 <td>{lessonNumber}</td>
                                 <td>{questionNumber}</td>
-                                
                                 <td>
-                                  {result?.response_correctness
-                                    ? "Correct"
-                                    : "Incorrect"}
+                                  {index === 0
+                                    ? "1st Attempt"
+                                    : index === 1
+                                    ? "2nd Attempt"
+                                    : index === 2
+                                    ? "3rd Attempt"
+                                    : `${index + 1}th Attempt`}
                                 </td>
                                 <td>
-                                  {
-                                    combinedResults[lessonNumber].totalTimePerQuestion[
-                                      questionNumber
-                                    ]
-                                  }
-                                  s
+                                  {attempt.correctness ? "Correct" : "Incorrect"}
                                 </td>
-                                <td>
-                                  {
-                                    combinedResults[lessonNumber].questionAttempts[
-                                      questionNumber
-                                    ]
-                                  }
-                                </td>
+                                <td>{attempt.timeSpent}s</td>
                               </tr>
-                            );
+                            ));
                           })}
                         </tbody>
                       </table>
@@ -369,15 +403,23 @@ const GameResults = () => {
                   )}
                 </div>
 
-                {/* Display Charts for Audiogame Results */}
-                <div className="charts-container">
-                  <h4>Charts for Audiogame Results</h4>
-                  <div className="chart-container">
-                    {generateSessionChart(lessonNumber)}
-                  </div>
-                  <div className="chart-container">
-                    {generatePieChart(lessonNumber)}
-                  </div>
+                
+
+                {/* Question-wise Graphicals */}
+                <div className="question-wise-graphicals">
+                  <h4>Question-wise Performance</h4>
+                  {Object.keys(combinedResults[lessonNumber].questionAttempts).map(
+                    (questionNumber) => (
+                      <div key={questionNumber} className="question-chart-container">
+                        <h5>Question {questionNumber}</h5>
+                        <div className="chart-container">
+                          {generateQuestionAttemptsChart(
+                            combinedResults[lessonNumber].questionAttempts[questionNumber]
+                          )}
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
               </>
             )}
@@ -385,7 +427,7 @@ const GameResults = () => {
         ))
       )}
 
-      {/* Display Comparison Chart Across All Sessions */}
+     {/* {/* Display Comparison Chart Across All Sessions */}
       <div className="comparison-chart-container">
         <h3>Comparison Across All Sessions</h3>
         <div className="chart-container">
@@ -393,6 +435,7 @@ const GameResults = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 
