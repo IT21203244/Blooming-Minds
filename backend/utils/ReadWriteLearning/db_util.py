@@ -20,14 +20,22 @@ class Database:
             print(f"Insert error: {e}")  # Enhanced error logging
             raise Exception(f"Insert error: {e}")
 
-    def get_ideal_letter(self, letter):
+    def get_ideal_letter_url(self, letter, letter_case):
+        """
+        Fetch the ideal letter image URL, pic_image_url, and video_url
+        from the 'ideal_letters_to_compare' collection.
+        """
         try:
-            collection = self.db["ideal_letters"]
-            result = collection.find_one({"letter": letter})
+            collection = self.db["ideal_letters_to_compare"]
+            result = collection.find_one({"letter": letter, "case": letter_case})
             if result:
-                return result["image_blob"]
+                return {
+                    "image_url": result.get("image_url"),
+                    "pic_image_url": result.get("pic_image_url"),
+                    "video_url": result.get("video_url")
+                }
             else:
-                raise Exception(f"No ideal letter found for '{letter}'")
+                raise Exception(f"No ideal letter found for '{letter}' ({letter_case})")
         except Exception as e:
             raise Exception(f"Fetch error: {e}")
 
@@ -41,12 +49,30 @@ class Database:
 
     def get_user_letters(self, user_id):
         """
-        Fetch all letter records for a specific user.
+        Fetch all letter records for a specific user, categorizing by letter case.
         """
         try:
             collection = self.db["letter_images"]
             results = collection.find({"user_id": user_id})
-            return list(results)
+            letter_data = {}
+
+            for record in results:
+                letter = record["system_letter"]
+                case = record["case"]
+
+                if letter not in letter_data:
+                    letter_data[letter] = {"uppercase": [], "lowercase": []}
+                
+                letter_data[letter][case].append({
+                    "file_path": record["file_path"],
+                    "uploaded_at": record["uploaded_at"],
+                    "status": record["status"],
+                    "system_letter": record["system_letter"],
+                    "predicted_letter": record["predicted_letter"],
+                    "accuracy": record["accuracy"]
+                })
+
+            return letter_data
         except Exception as e:
             raise Exception(f"Fetch user letters error: {e}")
         
@@ -63,3 +89,28 @@ class Database:
             self.client.close()
         except Exception as e:
             raise Exception(f"Closing connection error: {e}")
+        
+    def get_user_letter_accuracy_history(self, user_id, system_letter, letter_case):
+        """
+        Fetch historical accuracy data for a specific user and letter.
+        """
+        try:
+            collection = self.db["letter_images"]
+            results = collection.find({
+                "user_id": user_id,
+                "system_letter": system_letter,
+                "case": letter_case
+            }).sort("uploaded_at", 1)  # Sort by timestamp
+
+            historical_data = []
+            for idx, record in enumerate(results):
+                historical_data.append({
+                    "attempt_number": idx + 1,
+                    "accuracy": record["accuracy"],
+                    "status": record["status"],
+                    "uploaded_at": record["uploaded_at"]
+                })
+
+            return historical_data
+        except Exception as e:
+            raise Exception(f"Fetch historical data error: {e}")
