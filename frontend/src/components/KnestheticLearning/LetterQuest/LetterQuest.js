@@ -147,6 +147,19 @@ function LetterQuest() {
         localStorage.setItem("userEnteredWord", clickedLetters);    // Save the user-entered word
         localStorage.setItem("taskCompletionTime", localTime); // Save the local task completion time
 
+        // Determine the user's level based on the number of hints shown
+        let userLevel;
+        if (hintsToShow === 1) {
+            userLevel = "Level 1"; // User completed the task with 1 hint
+        } else if (hintsToShow === 2) {
+            userLevel = "Level 2"; // User completed the task with 2 hints
+        } else if (hintsToShow === 3) {
+            userLevel = "Level 3"; // User completed the task with 3 hints
+        }
+
+        // Save the user's level to localStorage
+        localStorage.setItem("UserLevel", userLevel);
+
         // Navigate to the result page only if progress is 100%
         if (progress === 100) {
             navigate('/result');
@@ -237,7 +250,7 @@ function LetterQuest() {
                                     ))}
                                 </div>
                             </div>
-                          
+
                         </div>
                         <div className="progress_container_word">
                             <p>Progress: {Math.floor(calculateProgress())}%</p>
