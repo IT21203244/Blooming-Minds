@@ -4,35 +4,24 @@ import Logout from './img/logout.png';
 import Sad from './img/sad.png';
 import WinImage from './img/win.png';
 import './letter.css';
-import Clap from './Taskimg/clap.jpg';
-import Cry from './Taskimg/cry.jpg';
-import Smile from './Taskimg/smile.jpg';
-import Jump from './Taskimg/jump.jpg';
-import Run from './Taskimg/run.jpg';
-import Think from './Taskimg/think.jpg';
-import Dance from './Taskimg/dance.jpg';
-import Drink from './Taskimg/Drink.jpg';
-import Eat from './Taskimg/eat.jpg';
-import Sing from './Taskimg/Sing.jpg';
-import Sleep from './Taskimg/Sleep.jpg';
-import Angry from './Taskimg/Angry.jpeg';
 
 function LetterQuest() {
     const navigate = useNavigate();  // Hook for navigation
     const images = [
-        { name: 'Clap', src: Clap },
-        { name: 'Cry', src: Cry },
-        { name: 'Think', src: Think },
-        { name: 'Jump', src: Jump },
-        { name: 'Run', src: Run },
-        { name: 'Smile', src: Smile },
-        { name: 'Dance', src: Dance },
-        { name: 'Drink', src: Drink },
-        { name: 'Eat', src: Eat },
-        { name: 'Sing', src: Sing },
-        { name: 'Sleep', src: Sleep },
-        { name: 'Angry', src: Angry },
+        { name: 'CLAP', points: ["Used to show appreciation", "Done with hands", "Makes a sound"] },
+        { name: 'CRY', points: ["Happens when sad", "Tears come out", "Expresses emotions"] },
+        { name: 'THINK', points: ["Uses the brain", "Helps solve problems", "Done before making decisions"] },
+        // { name: 'JUMP', points: ["Done with legs", "Goes up and down", "Used in sports"] },
+        // { name: 'RUN', points: ["Faster than walking", "Requires stamina", "Common in races"] },
+        // { name: 'SMILE', points: ["Expresses happiness", "Done with mouth", "Seen when joyful"] },
+        // { name: 'DANCE', points: ["Done with body", "Rhythmic movement", "Enjoyed with music"] },
+        // { name: 'DRINK', points: ["Used to quench thirst", "Involves a liquid", "Done with mouth"] },
+        // { name: 'EAT', points: ["Done when hungry", "Involves food", "Uses mouth and teeth"] },
+        // { name: 'SING', points: ["Uses the voice", "Involves melody", "Done in concerts"] },
+        // { name: 'SLEEP', points: ["Rest for the body", "Done at night", "Requires a bed"] },
+        // { name: 'ANGRY', points: ["Strong emotion", "Causes frustration", "Seen on the face"] },
     ];
+
 
     const [randomImage, setRandomImage] = useState(images[0]);
     const [timeLeft, setTimeLeft] = useState(60);
@@ -74,18 +63,43 @@ function LetterQuest() {
         return letters;
     };
 
-    const getRandomImage = () => {
-        const randomIndex = Math.floor(Math.random() * images.length);
-        return images[randomIndex];
-    };
+    useEffect(() => {
+        const getRandomImage = async () => {
+            const username = localStorage.getItem("userName");
+            const completedTasks = await fetchCompletedTasks(username);
+        
+            // Filter out tasks that have already been completed
+            const availableImages = images.filter(img => !completedTasks.includes(img.name));
+        
+            if (availableImages.length === 0) return null; // If all tasks are completed, return null
+        
+            const randomIndex = Math.floor(Math.random() * availableImages.length);
+            return availableImages[randomIndex] || null; // Return null if no valid selection
+        };
+        
+        getRandomImage().then((randomImg) => {
+            if (randomImg && randomImg.name) {  
+                setRandomImage(randomImg);
+                setWordToGuess(randomImg.name);  // No need for .toUpperCase() here
+                setRandomLetters(generateRandomLetters(randomImg.name));  // No need for .toUpperCase() here
+            } else {
+                console.log("No available tasks to display.");
+                setRandomImage(null);
+                setWordToGuess("");
+            }
+        });
+    }, []);
 
     useEffect(() => {
-        const randomImage = getRandomImage();
-        setRandomImage(randomImage);
-        setWordToGuess(randomImage.name.toUpperCase());
-        setRandomLetters(generateRandomLetters(randomImage.name.toUpperCase()));
-        setStartTime(new Date().getTime());  // Set start time when the game starts
-    }, []);
+        if (randomImage && randomImage.name) {
+            setRandomImage(randomImage);
+            setWordToGuess(randomImage.name.toUpperCase()); // Only proceed if randomImage is not undefined
+            setRandomLetters(generateRandomLetters(randomImage.name.toUpperCase()));
+            setStartTime(new Date().getTime());  // Set start time when the game starts
+        }
+    }, [randomImage]);
+    
+ 
 
     useEffect(() => {
         if (timeLeft === 0) return;
@@ -133,7 +147,16 @@ function LetterQuest() {
         navigate('/result');
     };
 
-
+    const fetchCompletedTasks = async (username) => {
+        try {
+            const response = await fetch(`/getCompletedTasks/${username}`);
+            const data = await response.json();
+            return data.completed_tasks || [];
+        } catch (error) {
+            console.error("Error fetching completed tasks:", error);
+            return [];
+        }
+    };
 
     // Function to calculate time spent
     const calculateTimeSpent = () => {
@@ -163,8 +186,12 @@ function LetterQuest() {
                                 ></div>
                             </div>
                         </div>
+                        <p className='point_section'>
+                            {randomImage.points.map((point, index) => (
+                                <p className='point_txt' key={index}>▪️{point}</p>  // Display each point on a new line
+                            ))}
+                        </p>
 
-                        <img src={randomImage.src} alt={randomImage.name} className='letter_img' />
                     </div>
                     <div className='letter_table'>
                         <div>
