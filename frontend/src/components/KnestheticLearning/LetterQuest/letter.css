@@ -89,6 +89,16 @@ margin-bottom: 15px;
   background-color: #ccc;
   border-radius: 3px;
 }
+.try_again_btn{
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background-color: #2b69b2;
+  color: white;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 20px;
+}
 
 .correct_guess_modal {
   position: fixed;

@@ -6,22 +6,24 @@ import WinImage from './img/win.png';
 import './letter.css';
 
 function LetterQuest() {
+    const [attempts, setAttempts] = useState(1); // Track the number of attempts
+    const [hintsToShow, setHintsToShow] = useState(1); // Track the number of hints to display
+    const [showTryAgain, setShowTryAgain] = useState(false); // Track if "Try Again" button should be shown
     const navigate = useNavigate();  // Hook for navigation
     const images = [
         { name: 'CLAP', points: ["Used to show appreciation", "Done with hands", "Makes a sound"] },
         { name: 'CRY', points: ["Happens when sad", "Tears come out", "Expresses emotions"] },
         { name: 'THINK', points: ["Uses the brain", "Helps solve problems", "Done before making decisions"] },
-        // { name: 'JUMP', points: ["Done with legs", "Goes up and down", "Used in sports"] },
-        // { name: 'RUN', points: ["Faster than walking", "Requires stamina", "Common in races"] },
-        // { name: 'SMILE', points: ["Expresses happiness", "Done with mouth", "Seen when joyful"] },
-        // { name: 'DANCE', points: ["Done with body", "Rhythmic movement", "Enjoyed with music"] },
-        // { name: 'DRINK', points: ["Used to quench thirst", "Involves a liquid", "Done with mouth"] },
-        // { name: 'EAT', points: ["Done when hungry", "Involves food", "Uses mouth and teeth"] },
-        // { name: 'SING', points: ["Uses the voice", "Involves melody", "Done in concerts"] },
-        // { name: 'SLEEP', points: ["Rest for the body", "Done at night", "Requires a bed"] },
-        // { name: 'ANGRY', points: ["Strong emotion", "Causes frustration", "Seen on the face"] },
+        { name: 'JUMP', points: ["Done with legs", "Goes up and down", "Used in sports"] },
+        { name: 'RUN', points: ["Faster than walking", "Requires stamina", "Common in races"] },
+        { name: 'SMILE', points: ["Expresses happiness", "Done with mouth", "Seen when joyful"] },
+        { name: 'DANCE', points: ["Done with body", "Rhythmic movement", "Enjoyed with music"] },
+        { name: 'DRINK', points: ["Used to quench thirst", "Involves a liquid", "Done with mouth"] },
+        { name: 'EAT', points: ["Done when hungry", "Involves food", "Uses mouth and teeth"] },
+        { name: 'SING', points: ["Uses the voice", "Involves melody", "Done in concerts"] },
+        { name: 'SLEEP', points: ["Rest for the body", "Done at night", "Requires a bed"] },
+        { name: 'ANGRY', points: ["Strong emotion", "Causes frustration", "Seen on the face"] },
     ];
-
 
     const [randomImage, setRandomImage] = useState(images[0]);
     const [timeLeft, setTimeLeft] = useState(60);
@@ -67,18 +69,18 @@ function LetterQuest() {
         const getRandomImage = async () => {
             const username = localStorage.getItem("userName");
             const completedTasks = await fetchCompletedTasks(username);
-        
+
             // Filter out tasks that have already been completed
             const availableImages = images.filter(img => !completedTasks.includes(img.name));
-        
+
             if (availableImages.length === 0) return null; // If all tasks are completed, return null
-        
+
             const randomIndex = Math.floor(Math.random() * availableImages.length);
             return availableImages[randomIndex] || null; // Return null if no valid selection
         };
-        
+
         getRandomImage().then((randomImg) => {
-            if (randomImg && randomImg.name) {  
+            if (randomImg && randomImg.name) {
                 setRandomImage(randomImg);
                 setWordToGuess(randomImg.name);  // No need for .toUpperCase() here
                 setRandomLetters(generateRandomLetters(randomImg.name));  // No need for .toUpperCase() here
@@ -93,13 +95,14 @@ function LetterQuest() {
     useEffect(() => {
         if (randomImage && randomImage.name) {
             setRandomImage(randomImage);
-            setWordToGuess(randomImage.name.toUpperCase()); // Only proceed if randomImage is not undefined
+            setWordToGuess(randomImage.name.toUpperCase());
             setRandomLetters(generateRandomLetters(randomImage.name.toUpperCase()));
-            setStartTime(new Date().getTime());  // Set start time when the game starts
+            setStartTime(new Date().getTime());
+            setAttempts(1); // Reset attempts
+            setHintsToShow(1); // Reset hints
+            setShowTryAgain(false); // Hide "Try Again" button
         }
     }, [randomImage]);
-    
- 
 
     useEffect(() => {
         if (timeLeft === 0) return;
@@ -114,7 +117,7 @@ function LetterQuest() {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [timeLeft]);
+    }, [timeLeft]); // Add `timeLeft` as a dependency
 
     const handleLetterClick = (letter) => {
         setClickedLetters((prevClicked) => prevClicked + letter);  // Add the clicked letter to the string
@@ -127,6 +130,7 @@ function LetterQuest() {
 
     const isCorrectGuess = clickedLetters === wordToGuess;
     const isGameOver = timeLeft === 0 || isCorrectGuess;
+
     const handleGameOver = () => {
         // Calculate progress and time spent
         const progress = calculateProgress();
@@ -143,9 +147,19 @@ function LetterQuest() {
         localStorage.setItem("userEnteredWord", clickedLetters);    // Save the user-entered word
         localStorage.setItem("taskCompletionTime", localTime); // Save the local task completion time
 
-        // Navigate to the result page
-        navigate('/result');
+        // Navigate to the result page only if progress is 100%
+        if (progress === 100) {
+            navigate('/result');
+        } else {
+            setShowTryAgain(true);
+        }
     };
+
+    useEffect(() => {
+        if (isGameOver) {
+            handleGameOver();
+        }
+    }, [isGameOver]); // Add dependencies to avoid unnecessary re-renders
 
     const fetchCompletedTasks = async (username) => {
         try {
@@ -162,6 +176,13 @@ function LetterQuest() {
     const calculateTimeSpent = () => {
         if (!startTime) return 0;
         return Math.floor((new Date().getTime() - startTime) / 1000);  // Return time in seconds
+    };
+
+    const handleTryAgain = () => {
+        setAttempts(attempts + 1);
+        setHintsToShow(hintsToShow + 1);
+        setClickedLetters('');
+        setShowTryAgain(false);
     };
 
     return (
@@ -187,8 +208,8 @@ function LetterQuest() {
                             </div>
                         </div>
                         <p className='point_section'>
-                            {randomImage.points.map((point, index) => (
-                                <p className='point_txt' key={index}>▪️{point}</p>  // Display each point on a new line
+                            {randomImage.points.slice(0, hintsToShow).map((point, index) => (
+                                <p className='point_txt' key={index}>▪️{point}</p>  // Display only the first `hintsToShow` points
                             ))}
                         </p>
 
@@ -196,7 +217,7 @@ function LetterQuest() {
                     <div className='letter_table'>
                         <div>
                             <div className="clicked_letters">
-                                <p>{clickedLetters}</p>
+                                <p className='clicked_letters'>{clickedLetters}</p>
                             </div>
                             <div>
                                 <div className='leter_main_box'>
@@ -215,6 +236,7 @@ function LetterQuest() {
                                     ))}
                                 </div>
                             </div>
+                          
                         </div>
                         <div className="progress_container_word">
                             <p>Progress: {Math.floor(calculateProgress())}%</p>
@@ -225,22 +247,14 @@ function LetterQuest() {
                                     <p className="correct_guess">Congratulations! You Win!</p>
                                     <img src={WinImage} className='win_image' alt='win' />
                                     <br />
-                                    {handleGameOver()}
                                 </div>
                             </div>
                         )}
 
                         {isGameOver && !isCorrectGuess && (
-                            <div className="correct_guess_modal">
-                                <div className="correct_guess_modal_content">
-                                    <p className="correct_guess">
-                                        {timeLeft === 0 ? "Time's Up! Try Again!" : "Oh no, try again!"}
-                                    </p>
-                                    <img src={Sad} className='win_image' alt='sad' />
-                                    <br />
-                                    {handleGameOver()}
-                                </div>
-                            </div>
+                            <button className="try_again_btn" onClick={handleTryAgain}>
+                                Try Again
+                            </button>
                         )}
                     </div>
                 </div>
