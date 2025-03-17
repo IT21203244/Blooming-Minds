@@ -5,7 +5,20 @@
   align-items: center;
 }
 .letter_card {
-  text-align: center;
+  text-align: start;
+  width: 500px;
+}
+.point_section{
+  text-align: start;
+  align-items: start;
+  flex-direction: column;
+  display: flex;
+ 
+  width: 100%;
+}
+.point_txt{
+  font-size: 25px;
+  text-align: start;
 }
 .letter_table {
   text-align: center;
@@ -73,9 +86,43 @@ margin-bottom: 15px;
   font-weight: 600;
   color: #2b69b2;
   font-size: 35px;
-  margin-bottom: 25px;
+  letter-spacing: 5px;
+  border-radius: 3px;
+}
+.clicked_letterscon{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   background-color: #ccc;
   border-radius: 3px;
+  padding: 0 15px;
+
+}
+.attempts_section{
+  width: 100%;
+  text-align: end;
+}
+.attempts_section_lbl{
+  text-align: end;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 17px;
+}
+.clear_letter_btn{
+  font-size: 35px;
+  color: black;
+  cursor: pointer;
+}
+.try_again_btn{
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background-color: #2b69b2;
+  color: white;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 20px;
 }
 
 .correct_guess_modal {
@@ -239,7 +286,7 @@ margin-bottom: 15px;
   text-transform: uppercase;
   border-radius: 3px;
   padding: 8px 0;
-  margin-top: 35px;
+  margin-top: 15px;
   background-color: #2b69b2;
 }
 .next_btn {

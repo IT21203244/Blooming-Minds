@@ -134,7 +134,8 @@ function AdminDashKnesthetic() {
                                         <th className='tble_kin_head'>Progress</th>
                                         <th className='tble_kin_head'>Task Name</th>
                                         <th className='tble_kin_head'>Student Enter answer</th>
-                                       
+                                        <th className='tble_kin_head'>Attempts</th>
+                                        <th className='tble_kin_head'>Level</th>
                                         <th className='tble_kin_head'>Actions</th>
                                     </tr>
                                 </thead>
@@ -146,7 +147,8 @@ function AdminDashKnesthetic() {
                                             <td className='tble_kin_bd'>{student.actualProgress}%</td>
                                             <td className='tble_kin_bd'>{student.randomImageName}</td>
                                             <td className='tble_kin_bd'>{student.userEnteredWord || 'Not Entered'}</td>
-                                           
+                                            <td className='tble_kin_bd'>{student.studentAtempts}</td>
+                                            <td className='tble_kin_bd'>{student.studentLevel}</td>
                                             <td className='tble_kin_bd'>
                                                 <button
                                                     onClick={() => deleteStudent(student._id)}

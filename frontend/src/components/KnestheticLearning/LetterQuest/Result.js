@@ -6,22 +6,8 @@ function Result() {
     const randomImageName = localStorage.getItem("randomImageName");
     const userEnteredWord = localStorage.getItem("userEnteredWord");
     const studentName = localStorage.getItem("userName");
-
-    const [formData, setFormData] = useState({
-        actualProgress: '',
-        studentName: '',
-        randomImageName: '',
-        userEnteredWord: '',
-
-    });
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
+    const studentAtempts = localStorage.getItem("attempts");
+    const studentLevel = localStorage.getItem("UserLevel");
 
     const handleSaveRecord = async (e) => {
         e.preventDefault();
@@ -30,8 +16,10 @@ function Result() {
             studentName,
             randomImageName,
             userEnteredWord,
+            studentAtempts,
+            studentLevel
         };
-    
+
         try {
             const response = await fetch('http://localhost:5000/addStudentLetterRecord', {
                 method: 'POST',
@@ -40,9 +28,9 @@ function Result() {
                 },
                 body: JSON.stringify(studentData),
             });
-    
+
             const result = await response.json();
-    
+
             if (response.ok) {
                 alert('Student record added successfully');
                 window.location.href = '/KnestheticHome';
@@ -54,7 +42,7 @@ function Result() {
             alert('An error occurred while saving the student record');
         }
     };
-    
+
 
 
     return (
@@ -68,6 +56,8 @@ function Result() {
                             <p className="topic_train">Student Name : {studentName} </p>
                             <p className="topic_train">Task Name : {randomImageName}</p>
                             <p className="topic_train">User Entered Word : {userEnteredWord || 'Not Entered'}</p>
+                            <p className="topic_train">Attempts : {studentAtempts}</p>
+                            <p className="topic_train">Level : {studentLevel}</p>
                         </div>
                         <button className="savebtn_kin" onClick={handleSaveRecord}>Save Data</button>
                     </div>

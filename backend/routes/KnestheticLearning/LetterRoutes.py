@@ -33,3 +33,15 @@ def delete_student_record(student_id):
             return jsonify({"error": "Student not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@LetterRoutes.route("/getCompletedTasks/<username>", methods=["GET"])
+def get_completed_tasks(username):
+    try:
+        students = get_students()  # Fetch all student records
+        for student in students:
+            if student["username"] == username:
+                completed_tasks = [task["task_name"] for task in student["tasks"] if task["progress"] == 100]
+                return jsonify({"completed_tasks": completed_tasks}), 200
+        return jsonify({"completed_tasks": []}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
