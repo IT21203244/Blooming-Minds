@@ -1,9 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import "./CSS/Audiogame.css";
+import {
+  Box,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  Card,
+  Modal,
+  Snackbar,
+  Alert,
+  LinearProgress,
+} from "@mui/material";
+import { styled, keyframes } from "@mui/system";
 import correctSound from "./CSS/correct.mp3";
 import incorrectSound from "./CSS/incorrect.mp3";
 
+// Keyframes for animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const bounce = keyframes`
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+`;
+
+// Styled components for animations
+const BouncingButton = styled(Button)({
+  animation: `${bounce} 2s infinite`,
+});
 
 const AudiogamesList = () => {
   const [audiogames, setAudiogames] = useState([]);
@@ -11,7 +49,7 @@ const AudiogamesList = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [playSpeed, setPlaySpeed] = useState(1);
   const [message, setMessage] = useState("");
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(15);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [spentTime, setSpentTime] = useState(0);
   const [responseCorrectness, setResponseCorrectness] = useState(0);
@@ -79,7 +117,7 @@ const AudiogamesList = () => {
 
     audio.onended = () => {
       setShowAnswerPopup(true); // Show answer popup
-      setTimer(10); // Reset timer
+      setTimer(15); // Reset timer
       setSpentTime(0); // Reset spent time
       setIsTimerRunning(true); // Start countdown
     };
@@ -158,105 +196,219 @@ const AudiogamesList = () => {
   };
 
   return (
-    <div className="audiogame-list">
-      <h1>Lesson {lessonLNumber}</h1>
-      {message && <p className="audiogame-message">{message}</p>}
-      {error && <p className="audiogame-error">{error}</p>}
+    <Box
+      sx={{
+        backgroundColor: "#f9f9f9",
+        padding: "20px",
+        fontFamily: "'Comic Sans MS', cursive, sans-serif",
+        color: "#512a6b",
+        animation: `${fadeIn} 1s ease-in`,
+      }}
+    >
+      <Typography
+        variant="h1"
+        sx={{
+          color: "#512a6b",
+          mb: 2,
+          fontSize: "3rem",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        Lesson {lessonLNumber}
+      </Typography>
+      {message && (
+        <Snackbar open={!!message} autoHideDuration={3000} onClose={() => setMessage("")}>
+          <Alert severity={responseCorrectness ? "success" : "error"}>{message}</Alert>
+        </Snackbar>
+      )}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-      <div className="audiogame-card">
+      <Card sx={{ borderRadius: "15px", boxShadow: 3, padding: "20px" }}>
         {audiogames.length > 0 && (
           <>
-            <h3>{`Question ${currentQuestionIndex + 1}`}</h3>
-            <p>Time Taken: {spentTime} seconds</p>
+            <Typography
+              variant="h3"
+              sx={{ mb: 2, fontSize: "2rem", fontWeight: "bold", textAlign: "center" }}
+            >
+              Question {currentQuestionIndex + 1}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ mb: 2, fontSize: "1.5rem", textAlign: "center" }}
+            >
+              Time Taken: {spentTime} seconds
+            </Typography>
 
             {/* Playback speed selector */}
-            <label htmlFor="speed-select">Playback Speed:</label>
-            <select
-              id="speed-select"
-              className="audiogame-select"
+            <Select
               value={playSpeed}
               onChange={(e) => setPlaySpeed(parseFloat(e.target.value))}
+              sx={{ mb: 2, width: "100%", fontSize: "1.2rem" }}
             >
-              <option value="0.5">0.5x</option>
-              <option value="1">1x</option>
-              <option value="1.5">1.5x</option>
-              <option value="2">2x</option>
-            </select>
+              <MenuItem value={0.5}>0.5x</MenuItem>
+              <MenuItem value={1}>1x</MenuItem>
+              <MenuItem value={1.5}>1.5x</MenuItem>
+              <MenuItem value={2}>2x</MenuItem>
+            </Select>
 
             {/* Play question audio */}
-            <button
-              className="audiogame-button audiogame-play-button"
-              onClick={() => playAudio(audiogames[currentQuestionIndex].audio)}
-            >
-              Play Question Audio
-            </button>
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+              <BouncingButton
+                variant="contained"
+                sx={{
+                  backgroundColor: "#ffb3c1",
+                  color: "#512a6b",
+                  fontSize: "2rem",
+                  padding: "20px 40px",
+                  "&:hover": { backgroundColor: "#ff8fa3" },
+                }}
+                onClick={() => playAudio(audiogames[currentQuestionIndex].audio)}
+              >
+                🎵 Play Audio
+              </BouncingButton>
+            </Box>
 
-            {/* Timer */}
-            <div className="audiogame-timer">
-              <p>Time Left: {timer} seconds</p>
-            </div>
+            <Modal open={showAnswerPopup} onClose={() => setShowAnswerPopup(false)}>
+  <Box
+    sx={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "#fff",
+      padding: "30px",
+      borderRadius: "15px",
+      boxShadow: 24,
+      width: "600px", // Larger popup
+      maxWidth: "90%", // Responsive width
+    }}
+  >
+    <Typography
+      variant="h5"
+      sx={{ mb: 2, fontSize: "2rem", fontWeight: "bold", textAlign: "center" }}
+    >
+      Select the Correct Answer
+    </Typography>
 
-            {/* Answer popup */}
-            {showAnswerPopup && (
-              <div className="audiogame-answer-popup">
-                <h3>Select the Correct Answer</h3>
-                <div className="audiogame-answer-container">
-                  {audiogames[currentQuestionIndex].answers.map((answer, index) => (
-                    <div
-                      key={index}
-                      className={`audiogame-answer-card ${
-                        selectedAnswer === answer ? "audiogame-selected" : ""
-                      }`}
-                      onClick={() =>
-                        handleAnswerSelection(
-                          answer,
-                          audiogames[currentQuestionIndex].correct_answer
-                        )
-                      }
-                    >
-                      {audiogames[currentQuestionIndex].images[index] && (
-                        <img
-                          src={audiogames[currentQuestionIndex].images[index]}
-                          alt={`Answer ${index + 1}`}
-                          className="audiogame-answer-image"
-                        />
-                      )}
-                      <p>{answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+    {/* Timer Progress Bar */}
+    <Box sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ fontSize: "1.5rem", textAlign: "center" }}>
+        Time Left: {timer} seconds
+      </Typography>
+      <LinearProgress
+        variant="determinate"
+        value={(timer / 15) * 100} // 15 seconds is the initial timer
+        sx={{
+          height: "10px",
+          borderRadius: "5px",
+          backgroundColor: "#f7d3f7",
+          "& .MuiLinearProgress-bar": {
+            backgroundColor: "#ff6f61",
+          },
+        }}
+      />
+    </Box>
+
+    {/* Answers */}
+    <Box sx={{ display: "flex", gap: "20px", flexWrap: "wrap", mb: 2 }}>
+      {audiogames[currentQuestionIndex].answers.map((answer, index) => (
+        <Card
+          key={index}
+          sx={{
+            cursor: "pointer",
+            padding: "15px",
+            border: "1px solid #512a6b",
+            borderRadius: "10px",
+            textAlign: "center",
+            transition: "background-color 0.3s",
+            "&:hover": { backgroundColor: "#f7d3f7" },
+            backgroundColor:
+              selectedAnswer === answer ? "#ffb3c1" : "transparent",
+            width: "200px", // Fixed width for answer cards
+          }}
+          onClick={() =>
+            handleAnswerSelection(
+              answer,
+              audiogames[currentQuestionIndex].correct_answer
+            )
+          }
+        >
+          {audiogames[currentQuestionIndex].images[index] && (
+            <img
+              src={audiogames[currentQuestionIndex].images[index]}
+              alt={`Answer ${index + 1}`}
+              style={{
+                width: "150px", // Larger image size
+                height: "150px",
+                borderRadius: "10px",
+                objectFit: "cover",
+              }}
+            />
+          )}
+          <Typography sx={{ mt: 1, fontSize: "1.2rem" }}>{answer}</Typography>
+        </Card>
+      ))}
+    </Box>
+
+    {/* Submit Button */}
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: "#ffb3c1",
+          color: "#512a6b",
+          fontSize: "1.5rem",
+          padding: "15px 30px",
+          "&:hover": { backgroundColor: "#ff8fa3" },
+        }}
+        onClick={handleSubmit}
+      >
+        {responseCorrectness === 1 ? "OK" : "Try Again"}
+      </Button>
+    </Box>
+  </Box>
+</Modal>
 
             {/* Navigation buttons */}
-            <div className="audiogame-navigation-buttons">
-              <button
-                className="audiogame-button audiogame-prev-button"
+            <Box sx={{ display: "flex", gap: "10px", mt: 2, justifyContent: "center" }}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#f7d3f7",
+                  color: "#512a6b",
+                  fontSize: "1.5rem",
+                  padding: "10px 20px",
+                  "&:hover": { backgroundColor: "#e6b3e6" },
+                }}
                 onClick={handlePreviousQuestion}
                 disabled={currentQuestionIndex === 0}
               >
                 Previous
-              </button>
-              <button
-                className="audiogame-button audiogame-next-button"
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#f7d3f7",
+                  color: "#512a6b",
+                  fontSize: "1.5rem",
+                  padding: "10px 20px",
+                  "&:hover": { backgroundColor: "#e6b3e6" },
+                }}
                 onClick={handleNextQuestion}
                 disabled={currentQuestionIndex === audiogames.length - 1}
               >
                 Next
-              </button>
-            </div>
-
-            {/* Submit button */}
-            <button
-              className="audiogame-button audiogame-submit-button"
-              onClick={handleSubmit}
-            >
-              Submit Result
-            </button>
+              </Button>
+            </Box>
           </>
         )}
-      </div>
-    </div>
+      </Card>
+    </Box>
   );
 };
 

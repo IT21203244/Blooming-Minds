@@ -85,7 +85,7 @@ function AuditoryHomePage() {
   return (
     <div className="auditory_container">
       {/* Sidebar */}
-      <div className="auditory_sidebar">
+      <div className="auditory_sidebars">
         <div className="auditory_logo">
           <img src={Logo} alt="Blooming Logo" />
         </div>
@@ -147,7 +147,7 @@ function AuditoryHomePage() {
         {/* Continue Watching */}
         <div className="auditory_continue_section">
           <h2>
-            Recommended Lessons<span className="auditory_lessons_count">{lessons.length} lessons</span>
+          Continue Watching<span className="auditory_lessons_count">{lessons.length} lessons</span>
           </h2>
           <div className="auditory_lessons">
             {lessons.map((lesson, index) => (
