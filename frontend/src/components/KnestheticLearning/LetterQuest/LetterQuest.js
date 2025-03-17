@@ -179,10 +179,11 @@ function LetterQuest() {
     };
 
     const handleTryAgain = () => {
-        setAttempts(attempts + 1);
-        setHintsToShow(hintsToShow + 1);
-        setClickedLetters('');
-        setShowTryAgain(false);
+        setAttempts(attempts + 1); // Increment attempts
+        setHintsToShow(hintsToShow + 1); // Show more hints
+        setClickedLetters(''); // Reset clicked letters
+        setTimeLeft(60); // Reset the timer to 60 seconds
+        setShowTryAgain(false); // Hide the "Try Again" button
     };
 
     return (
