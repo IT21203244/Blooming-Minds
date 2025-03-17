@@ -4,27 +4,26 @@ import Logout from './img/logout.png';
 import Sad from './img/sad.png';
 import WinImage from './img/win.png';
 import './letter.css';
-
+import { FaDeleteLeft } from "react-icons/fa6";
 function LetterQuest() {
     const [attempts, setAttempts] = useState(1); // Track the number of attempts
     const [hintsToShow, setHintsToShow] = useState(1); // Track the number of hints to display
     const [showTryAgain, setShowTryAgain] = useState(false); // Track if "Try Again" button should be shown
     const navigate = useNavigate();  // Hook for navigation
     const images = [
-        { name: 'CLAP', points: ["Used to show appreciation", "Done with hands", "Makes a sound"] },
-        { name: 'CRY', points: ["Happens when sad", "Tears come out", "Expresses emotions"] },
-        { name: 'THINK', points: ["Uses the brain", "Helps solve problems", "Done before making decisions"] },
-        { name: 'JUMP', points: ["Done with legs", "Goes up and down", "Used in sports"] },
-        { name: 'RUN', points: ["Faster than walking", "Requires stamina", "Common in races"] },
-        { name: 'SMILE', points: ["Expresses happiness", "Done with mouth", "Seen when joyful"] },
-        { name: 'DANCE', points: ["Done with body", "Rhythmic movement", "Enjoyed with music"] },
-        { name: 'DRINK', points: ["Used to quench thirst", "Involves a liquid", "Done with mouth"] },
-        { name: 'EAT', points: ["Done when hungry", "Involves food", "Uses mouth and teeth"] },
-        { name: 'SING', points: ["Uses the voice", "Involves melody", "Done in concerts"] },
-        { name: 'SLEEP', points: ["Rest for the body", "Done at night", "Requires a bed"] },
-        { name: 'ANGRY', points: ["Strong emotion", "Causes frustration", "Seen on the face"] },
+        { name: 'CLAP', points: [`First letter is C, last letter is P, and it has 4 letters`, "Used to show appreciation", "Done with hands", "Makes a sound"] },
+        { name: 'CRY', points: [`First letter is C, last letter is Y, and it has 3 letters`, "Happens when sad", "Tears come out", "Expresses emotions"] },
+        { name: 'THINK', points: [`First letter is T, last letter is K, and it has 5 letters`, "Uses the brain", "Helps solve problems", "Done before making decisions"] },
+        { name: 'JUMP', points: [`First letter is J, last letter is P, and it has 4 letters`, "Done with legs", "Goes up and down", "Used in sports"] },
+        { name: 'RUN', points: [`First letter is R, last letter is N, and it has 3 letters`, "Faster than walking", "Requires stamina", "Common in races"] },
+        { name: 'SMILE', points: [`First letter is S, last letter is E, and it has 5 letters`, "Expresses happiness", "Done with mouth", "Seen when joyful"] },
+        { name: 'DANCE', points: [`First letter is D, last letter is E, and it has 5 letters`, "Done with body", "Rhythmic movement", "Enjoyed with music"] },
+        { name: 'DRINK', points: [`First letter is D, last letter is K, and it has 5 letters`, "Used to quench thirst", "Involves a liquid", "Done with mouth"] },
+        { name: 'EAT', points: [`First letter is E, last letter is T, and it has 3 letters`, "Done when hungry", "Involves food", "Uses mouth and teeth"] },
+        { name: 'SING', points: [`First letter is S, last letter is G, and it has 4 letters`, "Uses the voice", "Involves melody", "Done in concerts"] },
+        { name: 'SLEEP', points: [`First letter is S, last letter is P, and it has 5 letters`, "Rest for the body", "Done at night", "Requires a bed"] },
+        { name: 'ANGRY', points: [`First letter is A, last letter is Y, and it has 5 letters`, "Strong emotion", "Causes frustration", "Seen on the face"] },
     ];
-
     const [randomImage, setRandomImage] = useState(images[0]);
     const [timeLeft, setTimeLeft] = useState(60);
     const [randomLetters, setRandomLetters] = useState([]);
@@ -99,7 +98,7 @@ function LetterQuest() {
             setRandomLetters(generateRandomLetters(randomImage.name.toUpperCase()));
             setStartTime(new Date().getTime());
             setAttempts(1); // Reset attempts
-            setHintsToShow(1); // Reset hints
+            setHintsToShow(2); // Show first 2 hints at the start
             setShowTryAgain(false); // Hide "Try Again" button
         }
     }, [randomImage]);
@@ -146,7 +145,7 @@ function LetterQuest() {
         localStorage.setItem("randomImageSrc", randomImage.src);    // Save the image source
         localStorage.setItem("userEnteredWord", clickedLetters);    // Save the user-entered word
         localStorage.setItem("taskCompletionTime", localTime); // Save the local task completion time
-
+        localStorage.setItem("attempts", attempts);
         // Determine the user's level based on the number of hints shown
         let userLevel;
         if (hintsToShow === 1) {
@@ -193,12 +192,23 @@ function LetterQuest() {
 
     const handleTryAgain = () => {
         setAttempts(attempts + 1); // Increment attempts
-        setHintsToShow(hintsToShow + 1); // Show more hints
+
+        // Update hintsToShow based on the number of attempts
+        if (attempts === 1) {
+            setHintsToShow(3); // Show first 3 hints on the second attempt
+        } else if (attempts >= 2) {
+            setHintsToShow(randomImage.points.length); // Show all hints on subsequent attempts
+        }
+
         setClickedLetters(''); // Reset clicked letters
         setTimeLeft(60); // Reset the timer to 60 seconds
         setShowTryAgain(false); // Hide the "Try Again" button
     };
-
+    const handleClearLetter = () => {
+        if (clickedLetters.length > 0) {
+            setClickedLetters((prevClicked) => prevClicked.slice(0, -1)); // Remove the last letter
+        }
+    };
     return (
         <div className='main_continer'>
             <div>
@@ -229,9 +239,16 @@ function LetterQuest() {
 
                     </div>
                     <div className='letter_table'>
+                        <div className="attempts_section">
+                            <p className="attempts_section_lbl">Attempts: {attempts}</p>
+                        </div>
                         <div>
-                            <div className="clicked_letters">
+                            <div className="clicked_letterscon">
                                 <p className='clicked_letters'>{clickedLetters}</p>
+                                {clickedLetters.length > 0 && (
+                                    <FaDeleteLeft onClick={handleClearLetter} className="clear_letter_btn" />
+
+                                )}
                             </div>
                             <div>
                                 <div className='leter_main_box'>
@@ -241,7 +258,8 @@ function LetterQuest() {
                                                 <div
                                                     key={colIndex}
                                                     className='letter_cell'
-                                                    onClick={() => handleLetterClick(letter)}
+                                                    onClick={!showTryAgain ? () => handleLetterClick(letter) : undefined} // Disable click if showTryAgain is true
+                                                    style={{ cursor: showTryAgain ? 'not-allowed' : 'pointer' }} // Change cursor style
                                                 >
                                                     {letter}
                                                 </div>
