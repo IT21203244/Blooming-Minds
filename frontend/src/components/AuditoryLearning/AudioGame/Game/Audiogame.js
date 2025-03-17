@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./CSS/Audiogame.css";
-import axios from "axios";
+import correctSound from "./CSS/correct.mp3";
+import incorrectSound from "./CSS/incorrect.mp3";
+
 
 const AudiogamesList = () => {
   const [audiogames, setAudiogames] = useState([]);
@@ -13,21 +15,24 @@ const AudiogamesList = () => {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [spentTime, setSpentTime] = useState(0);
   const [responseCorrectness, setResponseCorrectness] = useState(0);
-  const [userId, setUserId] = useState(""); // User ID state
+  const [userId, setUserId] = useState("");
+  const [showAnswerPopup, setShowAnswerPopup] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   const location = useLocation();
   const lessonLNumber = location.state?.lessonLNumber;
 
-  // Fetch userId from local storage when the component mounts
+  // Fetch userId from local storage
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
       setUserId(storedUserId);
     } else {
-      setError("User ID not found in local storage. Please log in.");
+      setError("User ID not found. Please log in.");
     }
   }, []);
 
+  // Fetch audiogames data
   useEffect(() => {
     fetch("http://localhost:5000/api/get_audiogames")
       .then((response) => response.json())
@@ -36,10 +41,9 @@ const AudiogamesList = () => {
           const filteredAudiogames = data.audiogames.filter(
             (game) => game.number === lessonLNumber
           );
-          // Ensure the audio paths are correctly formatted
-          const updatedAudiogames = filteredAudiogames.map(game => ({
+          const updatedAudiogames = filteredAudiogames.map((game) => ({
             ...game,
-            audio: `http://localhost:5000/api/${game.audio}`
+            audio: `http://localhost:5000/api/${game.audio}`,
           }));
           setAudiogames(updatedAudiogames);
         } else {
@@ -51,6 +55,7 @@ const AudiogamesList = () => {
       });
   }, [lessonLNumber]);
 
+  // Timer logic
   useEffect(() => {
     let countdown;
     if (isTimerRunning && timer > 0) {
@@ -61,54 +66,68 @@ const AudiogamesList = () => {
     } else if (timer === 0) {
       setIsTimerRunning(false);
       setMessage("Time's up! Try again.");
+      new Audio().play();
     }
     return () => clearInterval(countdown);
   }, [isTimerRunning, timer]);
 
+  // Play audio and show answer popup
   const playAudio = (audioUrl) => {
     const audio = new Audio(audioUrl);
+    audio.playbackRate = playSpeed;
     audio.play();
-  
+
     audio.onended = () => {
-      setMessage(""); // Clear previous messages
-      setTimer(60); // Reset the timer
+      setShowAnswerPopup(true); // Show answer popup
+      setTimer(10); // Reset timer
       setSpentTime(0); // Reset spent time
-      setIsTimerRunning(true); // Start the countdown
+      setIsTimerRunning(true); // Start countdown
     };
   };
 
+  // Handle answer selection
   const handleAnswerSelection = (selectedAnswer, correctAnswer) => {
     setIsTimerRunning(false);
-    const correctness = selectedAnswer === correctAnswer ? 1 : 0;
-    setResponseCorrectness(correctness);
+    setSelectedAnswer(selectedAnswer);
 
-    if (correctness === 1) {
-      alert(`Correct! Time spent: ${spentTime} seconds`);
+    if (selectedAnswer === correctAnswer) {
+      new Audio(correctSound).play();
+      setResponseCorrectness(1);
+      setMessage("Correct! Great job!");
     } else {
-      alert("Incorrect. Try again.");
+      new Audio(incorrectSound).play();
+      setResponseCorrectness(0);
+      setMessage("Incorrect. Try again.");
     }
   };
 
+  // Handle next question
   const handleNextQuestion = () => {
     if (currentQuestionIndex < audiogames.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setMessage("");
       setTimer(60);
-      setResponseCorrectness(0); // Reset correctness
+      setResponseCorrectness(0);
+      setSelectedAnswer(null);
+      setShowAnswerPopup(false);
     } else {
       alert("You've reached the last question!");
     }
   };
 
+  // Handle previous question
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       setMessage("");
       setTimer(60);
-      setResponseCorrectness(0); // Reset correctness
+      setResponseCorrectness(0);
+      setSelectedAnswer(null);
+      setShowAnswerPopup(false);
     }
   };
 
+  // Handle result submission
   const handleSubmit = () => {
     const resultData = {
       user_id: userId,
@@ -141,132 +160,96 @@ const AudiogamesList = () => {
   return (
     <div className="audiogame-list">
       <h1>Lesson {lessonLNumber}</h1>
-      {message && <p className="message">{message}</p>}
-      {error && <p className="error">{error}</p>}
-  
-      <div className="game-card">
+      {message && <p className="audiogame-message">{message}</p>}
+      {error && <p className="audiogame-error">{error}</p>}
+
+      <div className="audiogame-card">
         {audiogames.length > 0 && (
           <>
             <h3>{`Question ${currentQuestionIndex + 1}`}</h3>
-            <p>Game Number: {audiogames[currentQuestionIndex].number}</p>
-            <p>Question Index: {currentQuestionIndex + 1}</p>
-            <p style={{ color: "white" }}>
-              Response Correctness: {responseCorrectness}
-            </p>
-            <p style={{ color: "white" }}>
-              Time Taken to Answer: {spentTime} seconds
-            </p>
-  
-            {/* Play speed selector */}
+            <p>Time Taken: {spentTime} seconds</p>
+
+            {/* Playback speed selector */}
             <label htmlFor="speed-select">Playback Speed:</label>
             <select
               id="speed-select"
+              className="audiogame-select"
               value={playSpeed}
               onChange={(e) => setPlaySpeed(parseFloat(e.target.value))}
-              style={{
-                backgroundColor: "#f7d3f7",
-                color: "#512a6b",
-                borderRadius: "10px",
-                padding: "5px",
-              }}
             >
               <option value="0.5">0.5x</option>
               <option value="1">1x</option>
               <option value="1.5">1.5x</option>
               <option value="2">2x</option>
             </select>
-  
+
             {/* Play question audio */}
             <button
-              className="play-audio"
+              className="audiogame-button audiogame-play-button"
               onClick={() => playAudio(audiogames[currentQuestionIndex].audio)}
-              style={{
-                backgroundColor: "#ffb3c1",
-                color: "#512a6b",
-                borderRadius: "20px",
-                padding: "10px 20px",
-                fontWeight: "bold",
-              }}
             >
               Play Question Audio
             </button>
-  
-            <div
-              className="timer"
-              style={{ fontSize: "20px", color: "#ff6f61" }}
-            >
+
+            {/* Timer */}
+            <div className="audiogame-timer">
               <p>Time Left: {timer} seconds</p>
             </div>
-  
-            <div className="answer_container" style={{ marginTop: "20px" }}>
-              {audiogames[currentQuestionIndex].answers.map((answer, index) => (
-                <div key={index} className="">
-                  <div
-                    onClick={() =>
-                      handleAnswerSelection(
-                        answer,
-                        audiogames[currentQuestionIndex].correct_answer
-                      )
-                    }
-                    className="answer_card"
-                  >
-                    {audiogames[currentQuestionIndex].images[index] && (
-                      <img
-                        src={audiogames[currentQuestionIndex].images[index]}
-                        alt={`Answer ${index + 1}`}
-                        className="answer_image"
-                      />
-                    )}
-                    <br />
-                    <p>{answer}</p>
-                  </div>
+
+            {/* Answer popup */}
+            {showAnswerPopup && (
+              <div className="audiogame-answer-popup">
+                <h3>Select the Correct Answer</h3>
+                <div className="audiogame-answer-container">
+                  {audiogames[currentQuestionIndex].answers.map((answer, index) => (
+                    <div
+                      key={index}
+                      className={`audiogame-answer-card ${
+                        selectedAnswer === answer ? "audiogame-selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleAnswerSelection(
+                          answer,
+                          audiogames[currentQuestionIndex].correct_answer
+                        )
+                      }
+                    >
+                      {audiogames[currentQuestionIndex].images[index] && (
+                        <img
+                          src={audiogames[currentQuestionIndex].images[index]}
+                          alt={`Answer ${index + 1}`}
+                          className="audiogame-answer-image"
+                        />
+                      )}
+                      <p>{answer}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-  
-            <div className="navigation-buttons" style={{ marginTop: "20px" }}>
+              </div>
+            )}
+
+            {/* Navigation buttons */}
+            <div className="audiogame-navigation-buttons">
               <button
-                className="prev-button"
+                className="audiogame-button audiogame-prev-button"
                 onClick={handlePreviousQuestion}
                 disabled={currentQuestionIndex === 0}
-                style={{
-                  backgroundColor: "#f7d3f7",
-                  color: "#512a6b",
-                  padding: "10px 20px",
-                  borderRadius: "20px",
-                  fontWeight: "bold",
-                  marginRight: "10px",
-                }}
               >
                 Previous
               </button>
               <button
-                className="next-button"
+                className="audiogame-button audiogame-next-button"
                 onClick={handleNextQuestion}
                 disabled={currentQuestionIndex === audiogames.length - 1}
-                style={{
-                  backgroundColor: "#f7d3f7",
-                  color: "#512a6b",
-                  padding: "10px 20px",
-                  borderRadius: "20px",
-                  fontWeight: "bold",
-                }}
               >
                 Next
               </button>
             </div>
-  
+
+            {/* Submit button */}
             <button
-              className="submit-button"
+              className="audiogame-button audiogame-submit-button"
               onClick={handleSubmit}
-              style={{
-                backgroundColor: "#ffb3c1",
-                color: "#512a6b",
-                borderRadius: "20px",
-                padding: "15px 30px",
-                fontWeight: "bold",
-                marginTop: "20px",
-              }}
             >
               Submit Result
             </button>
