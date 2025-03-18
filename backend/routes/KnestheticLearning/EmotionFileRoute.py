@@ -18,6 +18,9 @@ EmotionFileRoute = Blueprint('EmotionFileRoute', __name__)
 upload_folder = "backend/routes/KnestheticLearning/uploads/"
 os.makedirs(upload_folder, exist_ok=True)
 
+#Model Path
+model_path = r'C:\Users\Dilshan\Desktop\Blooming-Minds\backend\routes\KnestheticLearning\Emotion_detection_model.h5'
+
 @EmotionFileRoute.route('/api/emotion_check', methods=['POST'])
 def emotion_check():
     if 'file' not in request.files:
