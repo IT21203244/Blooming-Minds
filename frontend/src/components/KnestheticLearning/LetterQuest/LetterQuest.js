@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate hook for routing
 import Logout from './img/logout.png';
-import Sad from './img/sad.png';
-import WinImage from './img/win.png';
+
 import './letter.css';
 import { FaDeleteLeft } from "react-icons/fa6";
 function LetterQuest() {

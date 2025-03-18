@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-
+import React from "react";
+import Logout from './img/logout.png';
 function Result() {
     // Retrieve data from localStorage
     const actualProgress = parseInt(localStorage.getItem("actualProgress")) || 0;
@@ -63,6 +63,9 @@ function Result() {
                     </div>
 
                 </div>
+            </div>
+            <div className='admin_btn' onClick={() => (window.location.href = '/KnestheticHome')}>
+                <img src={Logout} alt='admin icon' className='admin_acion' />
             </div>
         </div>
     );

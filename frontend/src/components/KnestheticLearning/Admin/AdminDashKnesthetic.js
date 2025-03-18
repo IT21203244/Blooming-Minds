@@ -131,7 +131,6 @@ function AdminDashKnesthetic() {
                                     <tr>
                                        
                                         <th className='tble_kin_head'>Name</th>
-                                        <th className='tble_kin_head'>Progress</th>
                                         <th className='tble_kin_head'>Task Name</th>
                                         <th className='tble_kin_head'>Student Enter answer</th>
                                         <th className='tble_kin_head'>Attempts</th>
@@ -144,7 +143,6 @@ function AdminDashKnesthetic() {
                                         <tr key={student._id}>
                                         
                                             <td className='tble_kin_bd'>{student.studentName}</td>
-                                            <td className='tble_kin_bd'>{student.actualProgress}%</td>
                                             <td className='tble_kin_bd'>{student.randomImageName}</td>
                                             <td className='tble_kin_bd'>{student.userEnteredWord || 'Not Entered'}</td>
                                             <td className='tble_kin_bd'>{student.studentAtempts}</td>

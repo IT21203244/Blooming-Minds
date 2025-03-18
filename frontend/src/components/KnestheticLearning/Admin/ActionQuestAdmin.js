@@ -41,7 +41,7 @@ function SmileQuestAdmin() {
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
 
         const headers = [
-            ['Username', 'Smile Percentage', 'Date', 'Time']
+            ['Username', 'Percentage', 'Date', 'Time']
         ];
 
         const data = smileData.map(record => [
@@ -80,7 +80,7 @@ function SmileQuestAdmin() {
             <div className="student-records-container">
 
                 <div>
-                    <h2 className='table_name'>Smile Data Records</h2>
+                    <h2 className='table_name'>Data Records</h2>
                     {loading ? (
                         <div className="loading-message">Loading...</div>
                     ) : (
