@@ -3,6 +3,12 @@ import { Route, Routes } from "react-router";
 /*Home*/
 import Home from "./components/Home/Home";
 
+/*Common Pages*/
+import MainProgressDashboard from "./components/Home/MainProgressBoard";
+import RWStatHome from "./components/Home/RWStatHome";
+import VStatHome from "./components/Home/VStatHome";
+import VStatColorHome from "./components/Home/VStatColorHome";
+
 /*Auditory Learning*/
 import AuditoryHomePage from "./components/AuditoryLearning/Home/AuditoryHomePage";
 import AudioTranscription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
@@ -52,6 +58,13 @@ const App = () => {
         <Routes>
           {/*Home*/}
           <Route path="/home" element={<Home />} />
+
+          {/* Common Pages */}
+          <Route path="/main-progress" element={<MainProgressDashboard />} />
+          <Route path="/rwstat-home" element={<RWStatHome />} />
+          <Route path="/vstat-home" element={<VStatHome />} />
+          <Route path="/vstat-color-home" element={<VStatColorHome />} />
+        
           {/* Auditory Learning*/}
           <Route path="/AuditoryHomePage" element={<AuditoryHomePage />} />
           <Route path="/AdminHome" element={<AdminHome />} />
