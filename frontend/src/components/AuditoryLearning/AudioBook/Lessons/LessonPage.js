@@ -5,7 +5,7 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import {
   Container,
-  Typography,
+  Typography, 
   Card,
   CardMedia,
   CardContent,
@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { Mic, NavigateBefore, NavigateNext, CheckCircle, Stop } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"; // Import Recharts components
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const theme = createTheme({
   palette: {
@@ -66,6 +66,7 @@ const LessonPage = () => {
   const [showMicPopup, setShowMicPopup] = useState(false);
   const [recordingTime, setRecordingTime] = useState(12);
   const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [averageCorrectness, setAverageCorrectness] = useState(0); // New state for average correctness
 
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/600x400?text=No+Image";
 
@@ -243,6 +244,16 @@ const LessonPage = () => {
       );
 
       setTranscriptionResults(userResults);
+
+      // Calculate average correctness
+      if (userResults.length > 0) {
+        const totalCorrectness = userResults.reduce((sum, result) => sum + result.correctness, 0);
+        const average = totalCorrectness / userResults.length;
+        setAverageCorrectness(Math.round(average));
+      } else {
+        setAverageCorrectness(0);
+      }
+
       setShowResults(true);
     } catch (error) {
       console.error("Error fetching transcription results:", error);
@@ -355,33 +366,33 @@ const LessonPage = () => {
                 </Typography>
               )}
 
-<Grid container justifyContent="space-between" sx={{ mt: 2 }}>
-  <Button
-    startIcon={<NavigateBefore />}
-    onClick={() => {
-      setQuestionIndex((prev) => Math.max(prev - 1, 0));
-      setUserTranscription("");
-      setRecordingError("");
-      setMatchPercentage(0);
-    }}
-    disabled={questionIndex === 0}
-  >
-    Previous
-  </Button>
-  <Button
-    endIcon={<NavigateNext />}
-    onClick={handleNextQuestion}
-    disabled={isRecording}
-    sx={{
-      backgroundColor: matchPercentage >= 80 ? "primary.main" : "error.main",
-      "&:hover": {
-        backgroundColor: matchPercentage >= 80 ? "primary.dark" : "error.dark",
-      },
-    }}
-  >
-    {matchPercentage >= 80 ? "Next" : "Try Again..."}
-  </Button>
-</Grid>
+              <Grid container justifyContent="space-between" sx={{ mt: 2 }}>
+                <Button
+                  startIcon={<NavigateBefore />}
+                  onClick={() => {
+                    setQuestionIndex((prev) => Math.max(prev - 1, 0));
+                    setUserTranscription("");
+                    setRecordingError("");
+                    setMatchPercentage(0);
+                  }}
+                  disabled={questionIndex === 0}
+                >
+                  Previous
+                </Button>
+                <Button
+                  endIcon={<NavigateNext />}
+                  onClick={handleNextQuestion}
+                  disabled={isRecording}
+                  sx={{
+                    backgroundColor: matchPercentage >= 80 ? "primary.main" : "error.main",
+                    "&:hover": {
+                      backgroundColor: matchPercentage >= 80 ? "primary.dark" : "error.dark",
+                    },
+                  }}
+                >
+                  {matchPercentage >= 80 ? "Next" : "Try Again..."}
+                </Button>
+              </Grid>
             </Box>
           )}
 
@@ -399,16 +410,21 @@ const LessonPage = () => {
               <Paper sx={{ mt: 3, p: 3 }}>
                 <Typography variant="h6">Today's Transcription Results</Typography>
                 {transcriptionResults.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis domain={[0, 100]} />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="correctness" fill="#8884d8" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <>
+                    <Typography variant="body1" sx={{ mt: 2 }}>
+                      Average Correctness: {averageCorrectness}%
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis domain={[0, 100]} />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="correctness" fill="#8884d8" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </>
                 ) : (
                   <Typography>No results found for today.</Typography>
                 )}

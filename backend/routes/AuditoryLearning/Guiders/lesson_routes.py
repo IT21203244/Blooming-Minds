@@ -26,6 +26,7 @@ def add_lesson():
             "title": request.form.get("title"),
             "text": request.form.get("text"),
             "imageURL": request.form.get("imageURL"),
+            "audiobook_type": request.form.get("audiobook_type"),  # New field
         }
 
         audio_files = request.files.getlist("audio_files")
@@ -58,8 +59,7 @@ def add_lesson():
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
-
-
+        
 @lesson_routes.route("/get_lessons", methods=["GET"])
 def get_lessons():
     db = Database()
@@ -82,6 +82,19 @@ def get_lesson(lesson_id):
             return jsonify({"message": "Lesson not found"}), 404
         
         return jsonify({"lesson": lesson}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
+
+@lesson_routes.route("/recommended_lessons", methods=["GET"])
+def recommended_lessons():
+    db = Database()
+    try:
+        lessons = db.get_data("audio_lessons")
+        if not lessons:
+            return jsonify({"message": "No lessons found"}), 404
+        return jsonify({"lessons": lessons}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
