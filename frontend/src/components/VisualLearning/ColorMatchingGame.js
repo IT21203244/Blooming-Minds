@@ -20,6 +20,13 @@ const levelConfig = {
   },
 };
 
+// Mapping of reward types to their corresponding image paths
+const rewardImages = {
+  sticker: "http://localhost:5000/static/images/pandawb.png", 
+  star: "http://localhost:5000/static/images/smilerbow.png",       
+  trophy: "http://localhost:5000/static/images/trophy.png",   
+};
+
 const ColorMatchingGame = () => {
   const { level } = useParams();
   const [sequence, setSequence] = useState([]);
@@ -32,6 +39,10 @@ const ColorMatchingGame = () => {
   const [feedback, setFeedback] = useState(null);
   const [availableCircles, setAvailableCircles] = useState(10);
   const [recommendedLevel, setRecommendedLevel] = useState(null);
+  const [responseTimes, setResponseTimes] = useState([]);
+  const [mistakePatterns, setMistakePatterns] = useState({});
+  const [streak, setStreak] = useState(0);
+  const [rewards, setRewards] = useState([]);
 
   useEffect(() => {
     const { sequenceLength, timeLimit } = levelConfig[level] || levelConfig.easy;
@@ -66,13 +77,25 @@ const ColorMatchingGame = () => {
       setStartDragTime(Date.now());
     }
 
+    // Track response time
+    const responseTime = Date.now() - startDragTime;
+    setResponseTimes((prev) => [...prev, responseTime]);
+
+    // Track mistake patterns
+    if (color !== sequence[index]) {
+      setMistakePatterns((prev) => ({
+        ...prev,
+        [color]: (prev[color] || 0) + 1,
+      }));
+    }
+
     setInputSequence(updatedSequence);
   };
 
   const handleDone = async () => {
     if (!startDragTime) {
-      alert("No actions were performed!");
-      return;
+        alert("No actions were performed!");
+        return;
     }
 
     const endTime = Date.now();
@@ -80,7 +103,7 @@ const ColorMatchingGame = () => {
     setTimeTaken(totalTimeTaken);
 
     const correctCount = inputSequence.filter(
-      (color, idx) => color === sequence[idx]
+        (color, idx) => color === sequence[idx]
     ).length;
 
     const emptyCircles = inputSequence.filter((color) => color === "").length;
@@ -88,85 +111,104 @@ const ColorMatchingGame = () => {
 
     const totalScore = Math.floor((correctCount / sequence.length) * 100);
 
+    // Calculate streak
+    const newStreak = totalScore >= 90 ? streak + 1 : 0;
+    setStreak(newStreak);
+
     const resultData = {
-      level,
-      wrong_takes: wrongCount + emptyCircles,
-      correct_takes: correctCount,
-      total_score: totalScore,
-      time_taken: totalTimeTaken,
-      provided_sequence: sequence,
-      child_sequence: inputSequence,
-      circle_count: circleCount,
-      date: new Date().toISOString(),
+        level,
+        wrong_takes: wrongCount + emptyCircles,
+        correct_takes: correctCount,
+        total_score: totalScore,
+        time_taken: totalTimeTaken,
+        provided_sequence: sequence,
+        child_sequence: inputSequence,
+        circle_count: circleCount,
+        date: new Date().toISOString(),
+        response_times: responseTimes,
+        mistake_patterns: mistakePatterns,
+        streak: newStreak,  // Include streak in the result data
     };
 
     try {
-      const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("authToken");
 
-      if (!token) {
-        alert("User is not authenticated. Please log in.");
-        return;
-      }
-
-      const response = await axios.post(
-        "http://localhost:5000/visual_learning/color_matching_game",
-        resultData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        if (!token) {
+            alert("User is not authenticated. Please log in.");
+            return;
         }
-      );
 
-      if (response.data && response.data.result_id) {
-        alert(
-          `Selected Level: ${level}\nWrong Takes: ${
-            wrongCount + emptyCircles
-          }\nCorrect Takes: ${correctCount}\nTotal Score: ${totalScore} / 100\nTime Taken: ${totalTimeTaken} seconds\nResult ID: ${response.data.result_id}`
+        const response = await axios.post(
+            "http://localhost:5000/visual_learning/color_matching_game",
+            resultData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         );
 
-        setResultData(response.data);
-        setFeedback(response.data.feedback);
-        setRecommendedLevel(response.data.recommended_level); // Handle the recommended level
-      } else {
-        alert("Failed to save result, please try again.");
-      }
+        if (response.data && response.data.result_id) {
+            alert(
+                `Selected Level: ${level}\nWrong Takes: ${
+                    wrongCount + emptyCircles
+                }\nCorrect Takes: ${correctCount}\nTotal Score: ${totalScore} / 100\nTime Taken: ${totalTimeTaken} seconds\nResult ID: ${response.data.result_id}`
+            );
+
+            setResultData(response.data);
+            setFeedback(response.data.feedback);
+            setRecommendedLevel(response.data.recommended_level);
+
+            // Fetch rewards
+            const rewardsResponse = await axios.get(
+                "http://localhost:5000/visual_learning/color_matching_game/rewards",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (rewardsResponse.data && rewardsResponse.data.rewards) {
+                setRewards(rewardsResponse.data.rewards);
+            }
+        } else {
+            alert("Failed to save result, please try again.");
+        }
     } catch (error) {
-      if (error.response?.status === 401) {
-        alert("Authentication failed. Please log in again.");
-      } else {
-        alert(
-          `Error saving result: ${
-            error.response?.data?.error || error.message
-          }`
-        );
-      }
+        if (error.response?.status === 401) {
+            alert("Authentication failed. Please log in again.");
+        } else {
+            alert(
+                `Error saving result: ${
+                    error.response?.data?.error || error.message
+                }`
+            );
+        }
     }
-  };
+};
 
   return (
-    <div className="color-matching-game">
-      <div className="sidebar"></div>
-
-      <div className="game-container">
+    <div className="scmg-color-matching-game">
+      <div className="scmg-game-container">
         <h1>Level: {level.toUpperCase()}</h1>
 
-        <div className="color-sequence">
+        <div className="scmg-color-sequence">
           {sequence.map((color, index) => (
             <div
               key={index}
-              className={`circle ${isHidden ? "hidden" : ""}`}
+              className={`scmg-circle ${isHidden ? "scmg-hidden" : ""}`}
               style={{ backgroundColor: color }}
             ></div>
           ))}
-          {isHidden && <div className="overlay"></div>}
+          {isHidden && <div className="scmg-overlay"></div>}
         </div>
 
-        <div className="drop-zone">
+        <div className="scmg-drop-zone">
           {Array.from({ length: sequence.length }).map((_, index) => (
             <div
               key={index}
-              className="empty-circle"
+              className="scmg-empty-circle"
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 const data = e.dataTransfer.getData("type");
@@ -179,7 +221,7 @@ const ColorMatchingGame = () => {
             >
               {inputSequence[index] && (
                 <div
-                  className="filled-circle"
+                  className="scmg-filled-circle"
                   style={{
                     backgroundColor:
                       inputSequence[index] === "empty"
@@ -192,11 +234,11 @@ const ColorMatchingGame = () => {
           ))}
         </div>
 
-        <div className="color-options">
+        <div className="scmg-color-options">
           {colors.map((color) => (
             <div
               key={color}
-              className="color-option"
+              className="scmg-color-option"
               draggable
               onDragStart={(e) => e.dataTransfer.setData("type", color)}
               style={{ backgroundColor: color }}
@@ -204,34 +246,38 @@ const ColorMatchingGame = () => {
           ))}
         </div>
 
-        <div className="empty-circle-pool">
-          {Array.from({ length: availableCircles }).map((_, index) => (
-            <div
-              key={index}
-              className="empty-circle"
-              draggable
-              onDragStart={(e) => e.dataTransfer.setData("type", "empty-circle")}
-            ></div>
-          ))}
+        <div className="scmg-empty-circle-pool-container">
+          <div className="scmg-basket">
+            {Array.from({ length: availableCircles }).map((_, index) => (
+              <div
+                key={index}
+                className="scmg-empty-circle"
+                draggable
+                onDragStart={(e) =>
+                  e.dataTransfer.setData("type", "empty-circle")
+                }
+              ></div>
+            ))}
+          </div>
         </div>
 
-        <button className="done-button" onClick={handleDone}>
+        <button className="scmg-done-button" onClick={handleDone}>
           Done
         </button>
 
-        <div className="circle-count">
+        <div className="scmg-circle-count">
           <h3>Circles Filled: {circleCount}</h3>
         </div>
 
         {feedback && (
-          <div className="feedback">
+          <div className="scmg-feedback">
             <h3>Feedback</h3>
             <p>{feedback}</p>
           </div>
         )}
 
         {resultData && (
-          <div className="result-summary">
+          <div className="scmg-result-summary">
             <h3>Result Summary</h3>
             <p><strong>Level:</strong> {level}</p>
             <p><strong>Wrong Takes:</strong> {resultData.wrong_takes}</p>
@@ -242,6 +288,30 @@ const ColorMatchingGame = () => {
             {recommendedLevel && (
               <p><strong>Recommended Level:</strong> {recommendedLevel}</p>
             )}
+          </div>
+        )}
+
+        {streak > 0 && (
+          <div className="scmg-streak">
+            <h3>Streak: {streak} in a row!</h3>
+          </div>
+        )}
+
+        {rewards.length > 0 && (
+          <div className="scmg-rewards">
+            <h3>Your Rewards</h3>
+            <ul>
+              {rewards.map((reward, index) => (
+                <li key={index}>
+                  <img
+                    src={rewardImages[reward.reward_type]}
+                    alt={reward.reward_type}
+                    style={{ width: "50px", height: "50px" }}
+                  />
+                  <span>{reward.quantity}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

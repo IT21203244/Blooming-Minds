@@ -4,12 +4,12 @@ from flask import Blueprint, request, jsonify, g
 from utils.VisualLearning.db_util import (
     insert_color_matching_result,
     get_color_matching_results,
-    get_first_result_per_level
+    get_first_result_per_level, get_rewards, insert_reward
 )
 from utils.auth.token_auth import token_required
 from utils.VisualLearning.rl_agent import RLAgent
 from utils.VisualLearning.state_action_manager import state_from_performance, action_to_level
-from utils.VisualLearning.reward_system import calculate_reward
+from utils.VisualLearning.reward_system import calculate_reward, determine_reward_type
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ def color_matching_game():
         # Extract required fields
         required_fields = [
             "level", "wrong_takes", "correct_takes", "total_score",
-            "time_taken", "circle_count", "date"
+            "time_taken", "circle_count", "date", "response_times", "mistake_patterns", "streak"
         ]
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
@@ -66,6 +66,9 @@ def color_matching_game():
         child_sequence = data.get("child_sequence", [])
         circle_count = data.get("circle_count", 0)
         date = data.get("date")
+        response_times = data.get("response_times", [])
+        mistake_patterns = data.get("mistake_patterns", {})
+        streak = data.get("streak", 0)  # Get streak from the request data
 
         user_id = g.user_id
         expected_circle_count = LEVEL_CIRCLE_COUNTS.get(level)
@@ -79,7 +82,10 @@ def color_matching_game():
             "level": level,
             "wrong_takes": wrong_takes,
             "correct_takes": correct_takes,
-            "time_taken": time_taken
+            "time_taken": time_taken,
+            "response_times": response_times,
+            "mistake_patterns": mistake_patterns,
+            "streak": streak  # Include streak in performance metrics
         }
         state = state_from_performance(performance)
         accuracy_percentage = (correct_takes / (correct_takes + wrong_takes)) * 100 if (correct_takes + wrong_takes) > 0 else 0
@@ -112,7 +118,9 @@ def color_matching_game():
             date=date,
             accuracy=accuracy_percentage,
             time_efficiency=time_efficiency,
-            reward=reward
+            reward=reward,
+            response_times=response_times,
+            mistake_patterns=mistake_patterns
         )
 
         # Update RL agent with new experience
@@ -130,14 +138,36 @@ def color_matching_game():
         success_rate = (success_count / total_episodes) * 100 if total_episodes > 0 else 0
         logger.info(f"Success Rate: {success_rate:.2f}%")
 
+        # Insert reward if the user performed well
+        if accuracy_percentage >= 90:
+            # Fetch total rewards accumulated by the user
+            rewards = get_rewards(user_id)
+            total_rewards_accumulated = sum(reward["quantity"] for reward in rewards)
+
+            # Determine reward type based on streaks and total rewards
+            reward_type = determine_reward_type(streak, total_rewards_accumulated)
+            insert_reward(user_id, reward_type, 1, date)
+
         return jsonify({
             "message": "Result saved successfully.",
             "result_id": result_id,
-            "recommended_level": recommended_level
+            "recommended_level": recommended_level,
+            "reward": reward_type if accuracy_percentage >= 90 else None
         }), 201
 
     except Exception as e:
         logger.error(f"Error processing game data: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@color_matching_routes.route('/color_matching_game/rewards', methods=['GET'])
+@token_required
+def fetch_rewards():
+    try:
+        user_id = g.user_id
+        rewards = get_rewards(user_id)
+        return jsonify({"rewards": rewards}), 200
+    except Exception as e:
+        logger.error(f"Error fetching rewards: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @color_matching_routes.route('/color_matching_game', methods=['GET'])

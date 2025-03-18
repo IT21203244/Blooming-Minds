@@ -13,11 +13,14 @@ from routes.KnestheticLearning.EmotionFileRoute import EmotionFileRoute
 
 
 #ReadWrite Learning
-#from routes.ReadWriteLearning.letter_routes import letter_routes
+from routes.ReadWriteLearning.letter_routes import letter_routes
 
 #Visual Learning
-#from routes.VisualLearning.color_matching_routes import color_matching_routes
-
+from routes.VisualLearning.color_matching_routes import color_matching_routes
+from routes.VisualLearning.progress_visualization_routes import progress_visualization_routes
+from routes.VisualLearning.hand_detection_routes import hand_detection_routes
+from routes.VisualLearning.math_learning_routes import math_learning_routes
+from routes.VisualLearning.fprogress_tracking_routes import fprogress_tracking_routes
 
 # Apply CORS properly AFTER initializing app
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
@@ -42,10 +45,15 @@ CORS(EmotionFileRoute, origins="http://localhost:3000")
 app.register_blueprint(LetterRoutes) 
 app.register_blueprint(EmotionFileRoute)
 
-#app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
+# Register Blueprints for Read Write Learning
+app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
 
-#app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
-
+# Register Blueprints for Visual Learning
+app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
+app.register_blueprint(progress_visualization_routes, url_prefix='/visual_learning')
+app.register_blueprint(hand_detection_routes, url_prefix='/visual_learning/hand_detection')
+app.register_blueprint(math_learning_routes, url_prefix='/visual_learning/math_learning')
+app.register_blueprint(fprogress_tracking_routes, url_prefix='/visual_learning')
 
 # Import routes AFTER initializing Flask app
 from routes.AuditoryLearning.AudioBook.record_routes import record_routes

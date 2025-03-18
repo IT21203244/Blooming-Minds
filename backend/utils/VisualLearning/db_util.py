@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import datetime
+from bson import ObjectId
 import os
 import logging
 
@@ -13,7 +14,7 @@ db = client[DATABASE_NAME]
 def insert_color_matching_result(
     user_id, level, wrong_takes, correct_takes, total_score, time_taken,
     provided_sequence, child_sequence, circle_count, wrong_circle_count,
-    date, accuracy, time_efficiency, reward
+    date, accuracy, time_efficiency, reward, response_times, mistake_patterns
 ):
     """
     Inserts a new color matching game result into the database.
@@ -35,13 +36,49 @@ def insert_color_matching_result(
         "accuracy": accuracy,  # Accuracy of the game
         "time_efficiency": time_efficiency,  # Efficiency based on time
         "reward": reward,  # Reward points
-        "date": date
+        "date": date,
+        "response_times": response_times,  # Response times for each color selection
+        "mistake_patterns": mistake_patterns  # Mistake patterns
     }
 
     # Insert into collection
     result = collection.insert_one(result_document)
 
     return str(result.inserted_id)  # Return the ID of the inserted document
+
+def insert_reward(user_id, reward_type, quantity, date):
+    """
+    Inserts a new reward into the database.
+    """
+    collection = db.rewards
+
+    reward_document = {
+        "user_id": user_id,
+        "reward_type": reward_type,
+        "quantity": quantity,
+        "date": date
+    }
+
+    result = collection.insert_one(reward_document)
+    return str(result.inserted_id)
+
+def get_rewards(user_id):
+    """
+    Retrieves rewards for a specific user.
+    """
+    collection = db.rewards
+
+    query = {"user_id": user_id}
+    rewards = collection.find(query)
+
+    return [
+        {
+            "reward_type": reward.get("reward_type"),
+            "quantity": reward.get("quantity"),
+            "date": reward.get("date")
+        }
+        for reward in rewards
+    ]
 
 def get_color_matching_results(user_id=None):
     """
@@ -111,7 +148,7 @@ def get_first_result_per_level(user_id):
 
 
 # Finger Counting Game 
-def insert_finger_counting_session(user_id, number_data, total_attempt_count, date, level):
+def insert_finger_counting_session(user_id, number_data, total_attempt_count, date, level, badges):
     """
     Inserts a new finger counting session result into the database.
     """
@@ -122,8 +159,85 @@ def insert_finger_counting_session(user_id, number_data, total_attempt_count, da
         "number_data": number_data,
         "total_attempt_count": total_attempt_count,
         "date": date,
-        "level": level
+        "level": level,
+        "badges": badges
     }
 
     result = collection.insert_one(result_document)
     return str(result.inserted_id)
+
+def get_finger_counting_session(result_id):
+    """
+    Fetches a finger counting session result from the database by result_id.
+    """
+    collection = db.finger_counting_results
+    result = collection.find_one({"_id": ObjectId(result_id)})
+    
+    if result:
+        # Convert ObjectId to string for JSON serialization
+        result["_id"] = str(result["_id"])
+    return result
+
+def insert_math_game_session(user_id, concept, problem, user_answer, is_correct, level, first_number, second_number, time_taken_first, time_taken_second, combined_result=None, is_combined_correct=None):
+    """Stores a math session result in the database."""
+    collection = db.math_learning_results
+
+    session_data = {
+        "user_id": user_id,
+        "concept": concept,
+        "problem": problem,
+        "user_answer": user_answer,
+        "is_correct": is_correct,
+        "level": level,
+        "first_number": first_number,
+        "second_number": second_number,
+        "time_taken_first": time_taken_first,
+        "time_taken_second": time_taken_second,
+        "combined_result": combined_result,
+        "is_combined_correct": is_combined_correct,
+        "timestamp": datetime.datetime.now()
+    }
+
+    result = collection.insert_one(session_data)
+    return str(result.inserted_id)
+
+def get_user_level(user_id, concept):
+    """Get the current difficulty level for a user per concept."""
+    collection = db.user_levels
+    user_level = collection.find_one({"user_id": user_id, "concept": concept})
+
+    return user_level["level"] if user_level else "easy"
+
+def update_user_level(user_id, concept, new_level):
+    """Update the difficulty level for a user per concept."""
+    collection = db.user_levels
+    collection.update_one(
+        {"user_id": user_id, "concept": concept},
+        {"$set": {"level": new_level}},
+        upsert=True
+    )
+
+def get_user_finger_counting_sessions(user_id):
+    """
+    Fetches all finger counting sessions for a user
+    """
+    collection = db.finger_counting_results
+    results = collection.find({"user_id": user_id}).sort("date", -1)
+    
+    sessions = []
+    for result in results:
+        result["_id"] = str(result["_id"])
+        sessions.append(result)
+    
+    return sessions
+
+def calculate_session_accuracy(session):
+    """Calculate accuracy for a single session"""
+    correct = sum(1 for result in session['number_data'] if result['status'][-1] == 'Correct')
+    total = len(session['number_data'])
+    return round((correct / total) * 100, 2)
+
+def calculate_average_time(session):
+    """Calculate average time for a single session"""
+    total_time = sum(sum(result['time_taken']) / len(result['time_taken']) for result in session['number_data'])
+    return round(total_time / len(session['number_data']), 2)
