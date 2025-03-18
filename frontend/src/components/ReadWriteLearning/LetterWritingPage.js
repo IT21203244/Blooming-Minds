@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import html2canvas from "html2canvas";
 import "./LetterWritingPage.css";
+import LetterSelection from "./LetterSelection"; // Import the new component
 
-import sun from './img/sun3.png';
-import bfly from './img/bfly1.png';
-import mroom from './img/mroom1.png';
-import rbow from './img/rbow1.png';
-import star from './img/star1.png';
-import cloud from './img/c1.png';
+import sun from "./img/sun3.png";
+import bfly from "./img/bfly1.png";
+import mroom from "./img/mroom1.png";
+import rbow from "./img/rbow1.png";
+import star from "./img/star1.png";
+import cloud from "./img/c1.png";
 
 function LetterWritingPage() {
   const canvasRef = useRef(null);
@@ -19,16 +20,47 @@ function LetterWritingPage() {
   const [idealImage, setIdealImage] = useState(null);
   const [status, setStatus] = useState(null);
   const [error, setError] = useState(null);
-  const [match, setMatch] = useState(false);
-  const [mismatch, setMismatch] = useState(false);
+  const [penSize, setPenSize] = useState(9);
+  const [showPopup, setShowPopup] = useState(false);
+  const [referenceData, setReferenceData] = useState({
+    picImageUrl: null,
+    videoUrl: null,
+  });
 
-  useEffect(() => {
-    const generateRandomLetter = () => {
-      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-      return letters.charAt(Math.floor(Math.random() * letters.length));
-    };
-    setSystemLetter(generateRandomLetter());
-  }, []);
+  // Fetch reference data when a letter is selected
+  const fetchReferenceData = async (letter, letterCase) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get(
+        "http://127.0.0.1:5000/read_write_learning/get_ideal_letter_data",
+        {
+          params: {
+            system_letter: letter,
+            case: letterCase,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setReferenceData({
+          picImageUrl: response.data.pic_image_url,
+          videoUrl: response.data.video_url,
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching reference data:", err);
+      setError("Failed to load reference materials.");
+    }
+  };
+
+  // Handle letter selection
+  const handleLetterSelect = (letter) => {
+    setSystemLetter(letter);
+    const letterCase = letter === letter.toUpperCase() ? "uppercase" : "lowercase";
+    fetchReferenceData(letter, letterCase);
+  };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
@@ -41,7 +73,6 @@ function LetterWritingPage() {
     setLoading(true);
     setError(null);
 
-    // Capture the canvas as a screenshot
     const canvas = canvasRef.current;
     try {
       const canvasScreenshot = await html2canvas(canvas);
@@ -50,6 +81,9 @@ function LetterWritingPage() {
       const formData = new FormData();
       formData.append("image", dataURL);
       formData.append("system_letter", systemLetter);
+      const letterCase =
+        systemLetter === systemLetter.toUpperCase() ? "uppercase" : "lowercase";
+      formData.append("case", letterCase);
 
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
@@ -66,16 +100,11 @@ function LetterWritingPage() {
         const data = response.data;
         setPredictedLetter(data.predicted_letter);
         setAccuracy(data.accuracy);
-        setIdealImage(data.ideal_image);
-        setStatus(data.status);
-
-        if (data.status === "correct") {
-          setMatch(true);
-          setMismatch(false);
-        } else {
-          setMatch(false);
-          setMismatch(true);
+        if (data.ideal_image_url) {
+          setIdealImage(data.ideal_image_url);
         }
+        setStatus(data.status);
+        setShowPopup(true);
       }
     } catch (err) {
       setError("Error connecting to the backend or invalid token.");
@@ -94,57 +123,107 @@ function LetterWritingPage() {
     if (e.buttons === 1) {
       ctx.fillStyle = "black";
       ctx.beginPath();
-      ctx.arc(x, y, 5, 0, 2 * Math.PI);
+      ctx.arc(x, y, penSize, 0, 2 * Math.PI);
       ctx.fill();
     }
   };
 
+  const handlePenSizeChange = (event) => {
+    setPenSize(parseInt(event.target.value));
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
-    <div className="letter-writing-page">
-      <img src={sun} alt="Sun" className="floating-image" />
-      <img src={bfly} alt="bfly" className="floating-image1" />
-      <img src={mroom} alt="mroom" className="floating-image2" />
-      <img src={rbow} alt="rbow" className="floating-image3" />
-      <img src={star} alt="star" className="floating-image4" />
-      <img src={cloud} alt="cloud" className="floating-image5" />
+    <div className="jlw-letter-writing-page">
+      <img src={sun} alt="Sun" className="jlw-floating-image" />
+      <img src={bfly} alt="bfly" className="jlw-floating-image1" />
+      <img src={mroom} alt="mroom" className="jlw-floating-image2" />
+      <img src={rbow} alt="rbow" className="jlw-floating-image3" />
+      <img src={star} alt="star" className="jlw-floating-image4" />
+      <img src={cloud} alt="cloud" className="jlw-floating-image5" />
 
-      <div className="letter-write">
+      <div className="jlw-letter-write">
         <h1>Letter Writing Recognition</h1>
-        <h3>System Generated Letter: {systemLetter}</h3>
 
-        <canvas
-          ref={canvasRef}
-          width={400}
-          height={400}
-          onMouseMove={drawOnCanvas}
-          style={{ border: "1px solid black", marginBottom: "10px" }}
-        ></canvas>
-        <div>
-          <button onClick={clearCanvas}>Clear Canvas</button>
+        {/* Letter Selection Component */}
+        <LetterSelection onLetterSelect={handleLetterSelect} />
+
+        {/* Display Selected Letter */}
+        {systemLetter && <h3>Selected Letter: {systemLetter}</h3>}
+
+        {/* Reference Section - Two Columns */}
+        <div className="jlw-reference-section">
+          {referenceData.picImageUrl && (
+            <div className="jlw-reference-column">
+              <h4>Reference Image</h4>
+              <img src={referenceData.picImageUrl} alt="Letter example" />
+            </div>
+          )}
+          {referenceData.videoUrl && (
+            <div className="jlw-reference-column">
+              <h4>Reference Video</h4>
+              <video src={referenceData.videoUrl} controls muted />
+            </div>
+          )}
         </div>
 
+        {/* Canvas Section */}
+        <div className="jlw-wooden-border">
+          <canvas
+            ref={canvasRef}
+            width={400}
+            height={400}
+            onMouseMove={drawOnCanvas}
+            className="jlw-canvas-style"
+          ></canvas>
+        </div>
+
+        {/* Pen Size Controls */}
+        <div className="jlw-pen-size-container">
+          <label>Pen Size: </label>
+          <input
+            type="range"
+            min="1"
+            max="20"
+            value={penSize}
+            onChange={handlePenSizeChange}
+          />
+          <span>{penSize}px</span>
+        </div>
+
+        {/* Buttons */}
+        <button onClick={clearCanvas}>Clear Canvas</button>
         <form onSubmit={handleSubmit}>
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading || !systemLetter}>
             {loading ? "Processing..." : "Submit"}
           </button>
         </form>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {predictedLetter && (
-          <div>
-            <p>Predicted Letter: {predictedLetter}</p>
-            <p>Accuracy: {accuracy?.toFixed(2)}%</p>
-            <img
-              src={`data:image/png;base64,${idealImage}`}
-              alt="Ideal Letter"
-              style={{ border: "1px solid black", padding: "5px" }}
-            />
-            <p>Status: {status}</p>
-          </div>
-        )}
-        {match && <div>🎉 The letter matches perfectly!</div>}
-        {mismatch && <div>😞 The letters do not match. Try again!</div>}
+        {/* Error Message */}
+        {error && <p className="jlw-error">{error}</p>}
       </div>
+
+      {/* Popup for Results */}
+      {showPopup && (
+        <div className="jlw-popup">
+          <div className="jlw-popup-content">
+            <h2>Result</h2>
+            <p>Predicted Letter: {predictedLetter}</p>
+            <p>Accuracy: {accuracy}%</p>
+            {idealImage && (
+              <div>
+                <h3>Ideal Letter Image</h3>
+                <img src={idealImage} alt="Ideal Letter" />
+              </div>
+            )}
+            <p>Status: {status}</p>
+            <button onClick={closePopup}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

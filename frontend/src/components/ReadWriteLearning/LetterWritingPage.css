@@ -1,12 +1,27 @@
-/* LetterWritingPage.css */
+/* General Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Comic Sans MS', sans-serif;
+  background-color: #f0f8ff; /* Light blue background */
+  overflow-x: hidden;
+}
 
-.letter-write {
+.jlw-letter-writing-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.jlw-letter-write {
   text-align: center;
   margin: 20px auto;
   padding: 20px;
   max-width: 800px;
   background-color: #ffffff;
   border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Header Styling */
@@ -17,6 +32,7 @@ h1 {
   text-align: center;
   font-family: 'Comic Sans MS', sans-serif;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
 }
 
 h3 {
@@ -26,43 +42,53 @@ h3 {
   text-align: center;
   font-family: 'Comic Sans MS', sans-serif;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
 }
 
-/* Form Styling */
-form {
-  margin: 20px 0;
+/* Canvas and Wooden Border */
+.jlw-wooden-border {
+  background: #8B4513; /* Wood-like color */
+  border-radius: 20px;
   padding: 15px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin: 20px auto;
+  display: inline-block;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
 }
 
-input[type="file"] {
-  display: block;
-  margin: 15px auto 10px;
-  padding: 12px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  background-color: #f0f8ff; /* Alice Blue */
-  border: 1px solid #c8d6e5;
-  border-radius: 5px;
-  color: #5a6473;
-  transition: 0.3s ease-in-out;
+.jlw-canvas-style {
+  border-radius: 15px;
+  background-color: white;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
 }
 
-input[type="file"]:focus {
-  outline: none;
-  border-color: #b0c4de; /* Light Steel Blue */
-  box-shadow: 0 0 8px rgba(176, 196, 222, 0.6);
+/* Pen Size Container */
+.jlw-pen-size-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  font-family: 'Comic Sans MS', sans-serif;
 }
-/* 
+
+.jlw-pen-size-container input[type="range"] {
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.jlw-pen-size-container span {
+  font-weight: bold;
+  color: #3d91b3;
+}
+
+/* Buttons */
 button {
   display: block;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   margin: 20px auto;
-  background-color: #a4cedb; 
+  background-color: #a4cedb;
   color: white;
   padding: 12px 25px;
   border: none;
@@ -72,15 +98,15 @@ button {
   font-family: 'Comic Sans MS', sans-serif;
   transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-} */
+}
 
 button:hover {
-  background-color: #66bb6a; /* Slightly darker green */
+  background-color: #66bb6a;
   transform: scale(1.05);
 }
 
 button:disabled {
-  background-color: #dfe6e9; /* Light Grey */
+  background-color: #dfe6e9;
   color: #b2bec3;
   cursor: not-allowed;
   box-shadow: none;
@@ -90,61 +116,86 @@ button:disabled:hover {
   transform: none;
 }
 
-
-/* Flying Images */
-/* Floating Image Styling */
-.floating-image {
-  position: absolute;
-  top: 30px; /* Adjust to your desired position */
-  left: 120px; /* Adjust to your desired position */
-  width: 150px; /* Adjust size */
-  height: auto;
-  z-index: 1; /* Ensure it appears above the background but below buttons */
+/* Reference Section */
+.jlw-reference-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
-.floating-image1 {
-  position: absolute;
-  bottom: 40px; 
-  left: 130px; /* Adjust to your desired position */
-  width: 130px; /* Adjust size */
-  height: auto;
-  z-index: 1; /* Ensure it appears above the background but below buttons */
+.jlw-reference-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.floating-image2 {
-  position: absolute;
-  bottom: 330px; 
-  left: 140px; /* Adjust to your desired position */
-  width: 120px; /* Adjust size */
-  height: auto;
-  z-index: 1; /* Ensure it appears above the background but below buttons */
+.jlw-reference-column h4 {
+  font-size: 20px;
+  color: #3d91b3;
+  margin-bottom: 10px;
 }
 
-.floating-image3 {
-  position: absolute;
-  top: 50px; /* Adjust to your desired position */
-  right: 90px; /* Adjust to your desired position */
-  width: 150px; /* Adjust size */
+.jlw-reference-column img {
+  max-width: 100%;
   height: auto;
-  z-index: 1; /* Ensure it appears above the background but below buttons */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.floating-image4 {
-  position: absolute;
-  bottom: 320px; /* Adjust to your desired position */
-  right: 90px; /* Adjust to your desired position */
-  width: 150px; /* Adjust size */
+.jlw-reference-column video {
+  max-width: 100%;
   height: auto;
-  z-index: 1; /* Ensure it appears above the background but below buttons */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.floating-image5 {
+/* Floating Images */
+.jlw-floating-image,
+.jlw-floating-image1,
+.jlw-floating-image2,
+.jlw-floating-image3,
+.jlw-floating-image4,
+.jlw-floating-image5 {
   position: absolute;
-  bottom: 50px; /* Adjust to your desired position */
-  right: 90px; /* Adjust to your desired position */
-  width: 160px; /* Adjust size */
+  width: 100px; /* Default size */
   height: auto;
-  z-index: 1; /* Ensure it appears above the background but below buttons */
+  z-index: 1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.jlw-floating-image {
+  top: 30px;
+  left: 20px;
+}
+
+.jlw-floating-image1 {
+  bottom: 40px;
+  left: 20px;
+}
+
+.jlw-floating-image2 {
+  bottom: 330px;
+  left: 20px;
+}
+
+.jlw-floating-image3 {
+  top: 50px;
+  right: 20px;
+}
+
+.jlw-floating-image4 {
+  bottom: 320px;
+  right: 20px;
+}
+
+.jlw-floating-image5 {
+  bottom: 50px;
+  right: 20px;
 }
 
 @keyframes float {
@@ -156,23 +207,14 @@ button:disabled:hover {
   }
 }
 
-/* Sidebar (if needed) */
-.sidebar {
-  width: 10px;
-  height: 100%;
-  background-color: #4CAF50;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
 /* Popup Styling */
-.popup {
+.jlw-popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 300px;
+  width: 90%;
+  max-width: 400px;
   background: white;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -181,56 +223,164 @@ button:disabled:hover {
   z-index: 1000;
 }
 
-.popup-content img {
-  max-width: 100px;
-  margin-bottom: 10px;
-}
-
-.popup-content p {
-  font-size: 16px;
-  color: #333333;
+.jlw-popup-content h2 {
+  font-size: 24px;
+  color: #5c6bc0;
   margin-bottom: 20px;
 }
 
-.popup-content button {
+.jlw-popup-content p {
+  font-size: 16px;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.jlw-popup-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.jlw-popup-content button {
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease-in-out;
 }
 
-.popup-content button:hover {
+.jlw-popup-content button:hover {
   background-color: #45a049;
 }
 
-.popup.mismatch .popup-content {
-  border: 2px solid red;
-}
-
-.popup.match .popup-content {
-  border: 2px solid green;
-}
-
-/* Status and Results Styling */
-p {
-  color: #333333;
-  margin: 5px 0;
-}
-
-h4 {
-  margin-top: 20px;
-  color: #4CAF50;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
-
-.error {
+/* Error Message */
+.jlw-error {
   color: red;
   margin-top: 10px;
+  text-align: center;
+}
+
+.jlw-letter-selection {
+  margin-bottom: 20px;
+}
+
+.jlw-letter-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Updated Letter Buttons with Pastel Colors */
+.jlw-letter-button {
+  padding: 10px;
+  font-size: 25px;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.jlw-letter-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Apply alternating pastel colors to 52 buttons */
+.jlw-letter-button:nth-child(8n + 1) { background-color: #FFB6C1; } /* Light Pink */
+.jlw-letter-button:nth-child(8n + 2) { background-color: #FFD700; } /* Light Yellow */
+.jlw-letter-button:nth-child(8n + 3) { background-color: #87CEEB; } /* Sky Blue */
+.jlw-letter-button:nth-child(8n + 4) { background-color: #98FB98; } /* Pale Green */
+.jlw-letter-button:nth-child(8n + 5) { background-color: #DDA0DD; } /* Plum */
+.jlw-letter-button:nth-child(8n + 6) { background-color: #FFA07A; } /* Light Salmon */
+.jlw-letter-button:nth-child(8n + 7) { background-color: #00CED1; } /* Dark Turquoise */
+.jlw-letter-button:nth-child(8n + 8) { background-color: #FF69B4; } /* Hot Pink */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  .jlw-floating-image,
+  .jlw-floating-image1,
+  .jlw-floating-image2,
+  .jlw-floating-image3,
+  .jlw-floating-image4,
+  .jlw-floating-image5 {
+    width: 80px; /* Smaller size for tablets */
+  }
+
+  .jlw-wooden-border {
+    padding: 10px;
+  }
+
+  .jlw-canvas-style {
+    max-width: 300px;
+  }
+
+  .jlw-reference-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
+
+  .jlw-floating-image,
+  .jlw-floating-image1,
+  .jlw-floating-image2,
+  .jlw-floating-image3,
+  .jlw-floating-image4,
+  .jlw-floating-image5 {
+    width: 60px; /* Smaller size for mobile */
+  }
+
+  .jlw-wooden-border {
+    padding: 5px;
+  }
+
+  .jlw-canvas-style {
+    max-width: 250px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  .jlw-pen-size-container span {
+    font-size: 14px;
+  }
+
+  .jlw-reference-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .jlw-reference-column img,
+  .jlw-reference-column video {
+    max-width: 90%;
+  }
+
+  .jlw-popup {
+    max-width: 300px;
+  }
 }
