@@ -21,6 +21,7 @@ const EmotionDetection = () => {
   const canvasRef = useRef(null);
 
   const emotions = ['happy', 'surprise', 'neutral','angry', 'disgust', 'fear'];
+  
   const emotionImages = {
     happy: Happy,
     surprise: Surprise,
@@ -121,9 +122,9 @@ const EmotionDetection = () => {
         },
         body: JSON.stringify({
           username: storedUsername,
-          taskname: targetEmotion,  // Target emotion (e.g., "cry")
-          result: dominantEmotion,  // Detected emotion (e.g., "happy")
-          status: status,  // Pass or fail
+          taskname: targetEmotion, 
+          result: dominantEmotion,  
+          status: status,  
         }),
       });
 
