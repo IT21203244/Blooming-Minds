@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import Auditory from './img/audio.jpg';
 import Kinesthetic from './img/kinesthetic.png';
 import ReadAndWrite from './img/writing.jpg';
@@ -44,8 +45,10 @@ function Home() {
                         {isSidebarOpen && <span className="nav-item-text">History</span>}
                     </div>
                     <div className="nav-item">
-                        <i className="fa fa-line-chart"></i>
-                        {isSidebarOpen && <span className="nav-item-text">Statistics</span>}
+                        <Link to="/main-progress" className="nav-link" style={{ textDecoration: "none", color: "inherit" }}>
+                            <i className="fa fa-line-chart"></i>
+                            {isSidebarOpen && <span className="nav-item-text">Statistics</span>}
+                        </Link>
                     </div>
                     <hr className="nav-divider" />
                     <div className="nav-item">
