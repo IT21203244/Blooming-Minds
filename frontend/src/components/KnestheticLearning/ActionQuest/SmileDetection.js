@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Action.css';
 import Smile from './img/smile.jpeg';
@@ -11,11 +11,23 @@ const EmotionDetection = () => {
   const [showUsernameInput, setShowUsernameInput] = useState(false);
   const [targetEmotion, setTargetEmotion] = useState('');
   const [cameraActive, setCameraActive] = useState(false);
+  const [showCheckResultButton, setShowCheckResultButton] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
 
-  const emotions = ['happy', 'sad', 'angry', 'surprise', 'neutral'];
+  const emotions = ['happy', 'sad', 'angry', 'surprise', 'smile'];
+
+  // Generate a random emotion when the component mounts or refreshes
+  useEffect(() => {
+    generateRandomEmotion();
+  }, []);
+
+  const generateRandomEmotion = () => {
+    const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+    setTargetEmotion(randomEmotion);
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -41,7 +53,7 @@ const EmotionDetection = () => {
       const data = await response.json();
       if (response.ok) {
         setDominantEmotion(data.dominant_emotion);
-        setShowUsernameInput(true);
+        setShowCheckResultButton(true); // Show the "Check Result" button
       } else {
         setError(data.error || 'An error occurred while checking the emotion.');
       }
@@ -49,7 +61,6 @@ const EmotionDetection = () => {
       setError('Failed to connect to the backend.');
     }
   };
-
   const handleSaveData = async () => {
     if (!username.trim()) {
       setError('Please enter your name.');
@@ -83,7 +94,6 @@ const EmotionDetection = () => {
   };
 
   const startCamera = async () => {
-    setTargetEmotion(emotions[Math.floor(Math.random() * emotions.length)]);
     setCameraActive(true);
 
     try {
@@ -108,7 +118,17 @@ const EmotionDetection = () => {
     setUploadedImage(file);
     setCameraActive(false);
     videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-    handleUploadCheck();
+
+    // Call handleUploadCheck to analyze the captured image
+    await handleUploadCheck();
+  };
+
+  const checkResult = () => {
+    if (dominantEmotion === targetEmotion) {
+      alert('You win! Your emotion matches the target emotion.');
+    } else {
+      alert(`You lose! The target emotion was ${targetEmotion}.`);
+    }
   };
 
   return (
@@ -117,7 +137,7 @@ const EmotionDetection = () => {
         <p className='main_topic'>Action Quest</p>
         <div className='action_card_set'>
           <div className='details_set'>
-            <p className='word_name'>EMOTION</p><br />
+            <p className='word_name'>{targetEmotion.toUpperCase()}</p><br />
             <img src={Smile} alt='Smile' className='smile_kni' />
           </div>
           <div className='data_set_kin'>
@@ -137,6 +157,10 @@ const EmotionDetection = () => {
                       <p>Detected Emotion:</p>
                       <p>{dominantEmotion}</p>
                     </div>
+                    {showCheckResultButton && (
+                      <button className="upload_btn_kini" onClick={checkResult}>Check Result</button>
+                    )}
+                    {resultMessage && <p className="result_message">{resultMessage}</p>}
                     {showUsernameInput && (
                       <div className="save_input_container">
                         <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} />
