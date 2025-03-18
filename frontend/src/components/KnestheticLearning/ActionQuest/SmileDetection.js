@@ -1,34 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Action.css';
 import Smile from './img/smile.jpeg';
 
-const SmileDetection = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const navigate = useNavigate();
+const EmotionDetection = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [smilePercentage, setSmilePercentage] = useState(null);
+  const [dominantEmotion, setDominantEmotion] = useState(null);
   const [error, setError] = useState('');
-  const [activeSection, setActiveSection] = useState('image');
-  const [username, setUsername] = useState(''); // New state for username
-  const [showUsernameInput, setShowUsernameInput] = useState(false); // Toggle input visibility
+  const [username, setUsername] = useState('');
+  const [showUsernameInput, setShowUsernameInput] = useState(false);
+  const [targetEmotion, setTargetEmotion] = useState('');
+  const [cameraActive, setCameraActive] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (timeLeft === 0) return;
-
-    if (timeLeft === 0) {
-      setIsLoaded(false);
-      window.location.href = '/';
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft, navigate]);
+  const emotions = ['happy', 'sad', 'angry', 'surprise', 'neutral'];
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -46,17 +33,17 @@ const SmileDetection = () => {
     formData.append('file', uploadedImage);
 
     try {
-      const response = await fetch('http://localhost:5000/api/smile_check', {
+      const response = await fetch('http://localhost:5000/api/emotion_check', {
         method: 'POST',
         body: formData,
       });
 
       const data = await response.json();
       if (response.ok) {
-        setSmilePercentage(data.smile_percentage.toFixed(2));
-        setShowUsernameInput(true); // Show username input after smile detection
+        setDominantEmotion(data.dominant_emotion);
+        setShowUsernameInput(true);
       } else {
-        setError(data.error || 'An error occurred while checking the smile.');
+        setError(data.error || 'An error occurred while checking the emotion.');
       }
     } catch (err) {
       setError('Failed to connect to the backend.');
@@ -70,14 +57,14 @@ const SmileDetection = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/save_smile_data', {
+      const response = await fetch('http://localhost:5000/api/save_emotion_data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           username: username,
-          smile_percentage: smilePercentage,
+          dominant_emotion: dominantEmotion,
         }),
       });
 
@@ -95,10 +82,33 @@ const SmileDetection = () => {
     }
   };
 
-  const getColor = (percentage) => {
-    if (percentage >= 80) return "#4a90e2";
-    if (percentage >= 50) return "green";
-    return "red";
+  const startCamera = async () => {
+    setTargetEmotion(emotions[Math.floor(Math.random() * emotions.length)]);
+    setCameraActive(true);
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+    } catch (err) {
+      setError('Failed to access the camera.');
+    }
+  };
+
+  const captureImage = async () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const image = canvas.toDataURL('image/png');
+    const blob = await (await fetch(image)).blob();
+    const file = new File([blob], 'captured.png', { type: 'image/png' });
+
+    setUploadedImage(file);
+    setCameraActive(false);
+    videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+    handleUploadCheck();
   };
 
   return (
@@ -107,57 +117,49 @@ const SmileDetection = () => {
         <p className='main_topic'>Action Quest</p>
         <div className='action_card_set'>
           <div className='details_set'>
-            <p className='word_name'>SMILE</p><br />
+            <p className='word_name'>EMOTION</p><br />
             <img src={Smile} alt='Smile' className='smile_kni' />
           </div>
           <div className='data_set_kin'>
             <div className='by_Image_Section active'>
               <div className="border_card_smile">
-                <p className='main_topic_new_sub_add'>Smile Detection By Image</p>
-                <input className="file_path" type="file" onChange={handleFileChange} />
-
-                {smilePercentage !== null && (
-                  <div className="percentage_container_full_kin">
-                    <div className="percentage_column_data">
-                      <p>Smile Percentage:</p>
-                      <p> {smilePercentage}%</p>
-                    </div>
-                    <div className="progress-column">
-                      <div className="progress_bar_kin" style={{ width: `${smilePercentage}%`, backgroundColor: getColor(smilePercentage) }}></div>
-                    </div>
-                    {showUsernameInput && (
-                        <div className="save_input_container">
-                          <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} />
-                          <button className="upload_btn_kini" onClick={handleSaveData}>Save</button>
-                        </div>
-                      )}
+                <p className='main_topic_new_sub_add'>Emotion Detection</p>
+                <button className="upload_btn_kini" onClick={startCamera}>Do Task</button>
+                {cameraActive && (
+                  <div className="camera_container">
+                    <video ref={videoRef} autoPlay></video>
+                    <button className="upload_btn_kini" onClick={captureImage}>Capture</button>
                   </div>
                 )}
-
+                {dominantEmotion && (
+                  <div className="percentage_container_full_kin">
+                    <div className="percentage_column_data">
+                      <p>Detected Emotion:</p>
+                      <p>{dominantEmotion}</p>
+                    </div>
+                    {showUsernameInput && (
+                      <div className="save_input_container">
+                        <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <button className="upload_btn_kini" onClick={handleSaveData}>Save</button>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {uploadedImage && (
                   <div className='image_kin_set'>
                     <p className='up_img_topic'>Uploaded Image:</p>
                     <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className="uploaded_image" />
                   </div>
                 )}
-
-                <div className='btn_continer_simele'>
-                  <button className="upload_btn_kini" onClick={handleUploadCheck}>Check</button>
-                  {smilePercentage !== null && (
-                    <>
-                    
-                    
-                    </>
-                  )}
-                </div>
                 {error && <p className="error_message">{error}</p>}
               </div>
             </div>
           </div>
         </div>
       </div>
+      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
     </div>
   );
 };
 
-export default SmileDetection;
+export default EmotionDetection;
