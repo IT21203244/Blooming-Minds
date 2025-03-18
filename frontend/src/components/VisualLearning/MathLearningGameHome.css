@@ -1,0 +1,223 @@
+/* Container for the whole page */
+.sv-home-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+    background-color: rgb(253, 253, 253);
+    position: relative; /* Ensure the container is a positioned element */
+  }
+  
+  
+  /* Floating Image Styling */
+  .floating-image {
+    position: absolute;
+    top: 40px; /* Adjust to your desired position */
+    left: 90px; /* Adjust to your desired position */
+    width: 150px; /* Adjust size */
+    height: auto;
+    z-index: 1; /* Ensure it appears above the background but below buttons */
+  }
+
+  .floating-image1 {
+    position: absolute;
+    bottom: 40px; 
+    left: 100px; /* Adjust to your desired position */
+    width: 130px; /* Adjust size */
+    height: auto;
+    z-index: 1; /* Ensure it appears above the background but below buttons */
+  }
+
+  .floating-image2 {
+    position: absolute;
+    bottom: 230px; 
+    left: 100px; /* Adjust to your desired position */
+    width: 120px; /* Adjust size */
+    height: auto;
+    z-index: 1; /* Ensure it appears above the background but below buttons */
+  }
+
+  .floating-image3 {
+    position: absolute;
+    top: 50px; /* Adjust to your desired position */
+    right: 90px; /* Adjust to your desired position */
+    width: 150px; /* Adjust size */
+    height: auto;
+    z-index: 1; /* Ensure it appears above the background but below buttons */
+  }
+
+  .floating-image4 {
+    position: absolute;
+    bottom: 240px; /* Adjust to your desired position */
+    right: 90px; /* Adjust to your desired position */
+    width: 150px; /* Adjust size */
+    height: auto;
+    z-index: 1; /* Ensure it appears above the background but below buttons */
+  }
+
+  .floating-image5 {
+    position: absolute;
+    bottom: 30px; /* Adjust to your desired position */
+    right: 90px; /* Adjust to your desired position */
+    width: 160px; /* Adjust size */
+    height: auto;
+    z-index: 1; /* Ensure it appears above the background but below buttons */
+  }
+  
+  /* Main Content Area */
+  .sv-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* Ensure it appears above the floating image */
+  }
+  
+  /* Button Group Styling */
+  .sv-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+  
+  /* Individual Button Item */
+  .sv-button-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Custom Button Styling */
+.sv-custom-button {
+    display: inline-block;
+    padding: 30px 180px; 
+    width: 400px; 
+    font-size: 45px;
+    font-weight: bold;
+    color: #5c6bc0;
+    text-align: center;
+    font-family: 'Comic Sans MS', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    background-color: lightblue;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .sv-custom-button:hover {
+    background-color: #87ceeb;
+    transform: scale(1.05);
+  }
+  
+  .sv-custom-button:active {
+    transform: scale(0.95);
+  }
+  
+  
+  /* Media Queries for Responsiveness */
+  /* Tablet View */
+@media (max-width: 1024px) {
+  .sv-custom-button {
+    font-size: 30px;
+    padding: 20px 50px; /* Adjust padding for smaller screens */
+    width: 300px; /* Reduce button width */
+  }
+
+  .sv-button-group {
+    gap: 50px; /* Adjust spacing between buttons */
+  }
+
+  .floating-image {
+    width: 120px; /* Adjust image size */
+    top: 20px;
+    left: 80px; /* Adjust positioning */
+  }
+
+  .floating-image1 {
+    width: 100px;
+    bottom: 30px;
+    left: 90px;
+  }
+
+  .floating-image2 {
+    width: 90px;
+    bottom: 300px;
+    left: 100px;
+  }
+
+  .floating-image3 {
+    width: 120px;
+    top: 30px;
+    right: 80px;
+  }
+
+  .floating-image4 {
+    width: 120px;
+    bottom: 280px;
+    right: 80px;
+  }
+
+  .floating-image5 {
+    width: 130px;
+    bottom: 40px;
+    right: 80px;
+  }
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+  .sv-custom-button {
+    font-size: 18px; /* Reduce font size slightly for clarity */
+    padding: 10px 20px; /* Compact padding to fit smaller screens */
+    width: 200px; /* Adjust button width to avoid overflowing */
+  }
+
+  .sv-button-group {
+    gap: 20px; /* Reduce spacing between buttons for a tighter layout */
+    align-items: center; /* Center buttons within the container */
+  }
+
+  .sv-content {
+    flex-direction: column; /* Ensure buttons stack vertically */
+    padding: 20px; /* Add padding to prevent buttons from touching the edges */
+  }
+
+  .floating-image {
+    width: 70px; /* Further reduce image size */
+    top: 20px;
+    left: 20px;
+  }
+
+  .floating-image1 {
+    width: 60px;
+    bottom: 10px;
+    left: 30px;
+  }
+
+  .floating-image2 {
+    width: 50px;
+    bottom: 200px;
+    left: 40px;
+  }
+
+  .floating-image3 {
+    width: 70px;
+    top: 30px;
+    right: 20px;
+  }
+
+  .floating-image4 {
+    width: 70px;
+    bottom: 150px;
+    right: 20px;
+  }
+
+  .floating-image5 {
+    width: 80px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+}
