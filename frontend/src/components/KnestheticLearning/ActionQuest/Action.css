@@ -18,7 +18,7 @@
   font-weight: 600;
 }
 .smile_kni {
-  width: 300px;
+  width: 450px;
   margin: 0 auto;
 }
 .details_set {
@@ -115,7 +115,7 @@
 .by_Camara_Section.active {
   display: block;
 }
-.capture_btn{
+.capture_btn {
   border: 1px solid #2b69b2;
   display: flex;
   font-weight: 600;
@@ -143,10 +143,8 @@
   background-color: #2b69b2;
 }
 .uploaded_image {
-  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  display: flex;
-  height: 250px;
   background-position: center;
   border-radius: 8px;
 }
@@ -161,7 +159,7 @@
   flex-direction: column;
   gap: 10px;
 }
-.input_roww_smile{
+.input_roww_smile {
   width: 100%;
   border: 1px solid #2b69b2;
   border-radius: 2px;
@@ -192,9 +190,21 @@
   gap: 50px;
   justify-content: center;
 }
-.save_input_container{
+.save_input_container {
   display: flex;
   align-items: center;
   gap: 5px;
   justify-content: center;
+}
+.result_message {
+  position: fixed;
+  top: 45px;
+  z-index: 100000;
+  font-size: 30px;
+  background-color: #2b69b2;
+  color: white;
+  border-radius: 3px;
+  padding: 5px 15px;
+  margin: 0 auto;
+  text-align: start;
 }

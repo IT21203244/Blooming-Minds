@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Action.css';
-import Happy from './img/smile.jpeg';
+import Happy from './img/happy.jpg';
 import Neutral from './img/Neutral.jpg';
 import Surprise from './img/Surprise.jpg';
 import Logout from './img/logout.png';
-
+import Angry from './img/Angry.jpg';
+import Disgust from './img/Disgust.png';
+import Fear from './img/Fear.jpg';
 const EmotionDetection = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [dominantEmotion, setDominantEmotion] = useState(null);
@@ -18,8 +20,15 @@ const EmotionDetection = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const emotions = ['happy', 'surprise', 'neutral'];
-
+  const emotions = ['happy', 'surprise', 'neutral','angry', 'disgust', 'fear'];
+  const emotionImages = {
+    happy: Happy,
+    surprise: Surprise,
+    neutral: Neutral,
+    angry: Angry,
+    disgust: Disgust,
+    fear: Fear,
+  };
   useEffect(() => {
     generateRandomEmotion();
   }, []);
@@ -121,8 +130,7 @@ const EmotionDetection = () => {
       const data = await response.json();
       if (response.ok) {
         alert('Data saved successfully!');
-        setShowUsernameInput(false);
-        setUsername('');
+
         window.location.reload();
       } else {
         setError(data.error || 'Failed to save data.');
@@ -138,48 +146,42 @@ const EmotionDetection = () => {
         <div className='action_card_set'>
           <div className='details_set'>
             <p className='word_name'>{targetEmotion.toUpperCase()}</p><br />
-            <img src={
-              targetEmotion === 'Happy' ? Happy :
-                targetEmotion === 'Surprise' ? Surprise :
-                  targetEmotion === 'Neutral' ? Neutral :
-                    Happy // Default image if no match
-            } alt='Smile' className='smile_kni' />
+            <img src={emotionImages[targetEmotion.toLowerCase()] || Happy} alt='Smile' className='smile_kni' />
           </div>
           <div className='data_set_kin'>
             <div className='by_Image_Section active'>
               <div className="border_card_smile">
-                <p className='main_topic_new_sub_add'>Emotion Detection</p>
-                <button className="upload_btn_kini" onClick={startCamera}>Do Task</button>
+
+                {uploadedImage && (
+                  <div className='image_kin_set'>
+                    <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className="uploaded_image" />
+                  </div>
+                )}
                 {cameraActive && (
                   <div className="camera_container">
                     <video ref={videoRef} autoPlay></video>
                     <button className="upload_btn_kini" onClick={captureImage}>Capture</button>
                   </div>
                 )}
+                {!cameraActive && !uploadedImage && (
+                  <button className="upload_btn_kini" onClick={startCamera}>Do Task</button>
+                )}
                 {dominantEmotion && (
                   <div className="percentage_container_full_kin">
-                    <div className="percentage_column_data">
-                      <p>Detected Emotion:</p>
-                      <p>{dominantEmotion}</p>
-                    </div>
-                    {showCheckResultButton && (
+
+                    {showCheckResultButton && !resultMessage &&(
                       <button className="upload_btn_kini" onClick={checkResult}>Check Result</button>
                     )}
+                   
                     {resultMessage && <p className="result_message">{resultMessage}</p>}
                     {showUsernameInput && (
                       <div className="save_input_container">
-                        {/* <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} /> */}
                         <button className="upload_btn_kini" onClick={handleSaveData}>Save</button>
                       </div>
                     )}
                   </div>
                 )}
-                {uploadedImage && (
-                  <div className='image_kin_set'>
-                    <p className='up_img_topic'>Uploaded Image:</p>
-                    <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className="uploaded_image" />
-                  </div>
-                )}
+
                 {error && <p className="error_message">{error}</p>}
               </div>
             </div>
