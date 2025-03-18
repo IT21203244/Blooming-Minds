@@ -16,7 +16,7 @@ import AdminHome from "./components/AuditoryLearning/Admin_Panel/AdminHome/Admin
 import Transcription from "./components/AuditoryLearning/AudioBook/Speech_Recognise/AudioTranscription";
 
 /*Knesthetic Learning*/
-import SmileDetection from "./components/KnestheticLearning/ActionQuest/SmileDetection";
+import SmileDetection from "./components/KnestheticLearning/ActionQuest/EmotionDetection";
 import KnestheticHome from "./components/KnestheticLearning/KnestheticHome/KnestheticHome";
 import LetterQuest from "./components/KnestheticLearning/LetterQuest/LetterQuest";
 import Result from "./components/KnestheticLearning/LetterQuest/Result";
