@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './Action.css';
 import Smile from './img/smile.jpeg';
 
@@ -15,7 +14,6 @@ const EmotionDetection = () => {
   const [resultMessage, setResultMessage] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const navigate = useNavigate();
 
   const emotions = ['happy', 'sad', 'angry', 'surprise', 'smile'];
 
@@ -95,11 +93,14 @@ const EmotionDetection = () => {
   };
 
   const handleSaveData = async () => {
-    if (!username.trim()) {
+    const storedUsername = localStorage.getItem('userName');
+    if (!storedUsername) {
       setError('Please enter your name.');
       return;
     }
-
+  
+    const status = dominantEmotion === targetEmotion ? 'pass' : 'fail';
+  
     try {
       const response = await fetch('http://localhost:5000/api/save_emotion_data', {
         method: 'POST',
@@ -107,11 +108,13 @@ const EmotionDetection = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: username,
-          dominant_emotion: dominantEmotion,
+          username: storedUsername,
+          taskname: targetEmotion,  // Target emotion (e.g., "cry")
+          result: dominantEmotion,  // Detected emotion (e.g., "happy")
+          status: status,  // Pass or fail
         }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         alert('Data saved successfully!');
@@ -125,7 +128,6 @@ const EmotionDetection = () => {
       setError('Failed to connect to the backend.');
     }
   };
-
   return (
     <div className='main_continer'>
       <div>
@@ -158,7 +160,7 @@ const EmotionDetection = () => {
                     {resultMessage && <p className="result_message">{resultMessage}</p>}
                     {showUsernameInput && (
                       <div className="save_input_container">
-                        <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} />
+                        {/* <input type="text" placeholder="Enter Student name" className='input_roww_smile' value={username} onChange={(e) => setUsername(e.target.value)} /> */}
                         <button className="upload_btn_kini" onClick={handleSaveData}>Save</button>
                       </div>
                     )}

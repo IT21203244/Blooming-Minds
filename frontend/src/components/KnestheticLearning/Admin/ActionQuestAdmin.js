@@ -6,7 +6,6 @@ import 'jspdf-autotable';
 function SmileQuestAdmin() {
     const [smileData, setSmileData] = useState([]);
     const [loading, setLoading] = useState(true);  // Add a loading state
-    const [message, setMessage] = useState(''); // Message for success/error
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
@@ -104,9 +103,10 @@ function SmileQuestAdmin() {
                             <table className="student-records-table">
                                 <thead>
                                     <tr>
-
                                         <th className='tble_kin_head'>Username</th>
-                                        <th className='tble_kin_head'>Smile Percentage</th>
+                                        <th className='tble_kin_head'>Task Name</th>
+                                        <th className='tble_kin_head'>Result</th>
+                                        <th className='tble_kin_head'>Status</th>
                                         <th className='tble_kin_head'>Date</th>
                                         <th className='tble_kin_head'>Time</th>
                                     </tr>
@@ -114,12 +114,12 @@ function SmileQuestAdmin() {
                                 <tbody>
                                     {filteredSmileData.map((record) => (
                                         <tr key={record._id}>
-
                                             <td className='tble_kin_bd'>{record.username}</td>
-                                            <td className='tble_kin_bd'>{record.smile_percentage}%</td>
+                                            <td className='tble_kin_bd'>{record.taskname}</td>
+                                            <td className='tble_kin_bd'>{record.result}</td>
+                                            <td className='tble_kin_bd'>{record.status}</td>
                                             <td className='tble_kin_bd'>{record.date}</td>
                                             <td className='tble_kin_bd'>{record.time}</td>
-
                                         </tr>
                                     ))}
                                 </tbody>
