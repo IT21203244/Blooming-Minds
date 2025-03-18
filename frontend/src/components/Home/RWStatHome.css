@@ -1,0 +1,111 @@
+/* Container for the whole page */
+.rwhome-container {
+    display: flex;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Sidebar Styling (Left side) */
+   .rwhome-container .sidebar {
+    width: 180px;
+    background-color: #5c6bc0;
+    border-radius: 15px;
+    margin-top: 10px;
+    margin-left: 15px;
+    height: calc(100vh - 20px);
+  }
+  
+  /* Main Content Area */
+  .rwhome-container .content {
+    flex: 1;
+    text-align: center;
+  }
+  
+  /* Tile Container for Images */
+  .rwhome-container .content .tiles-container {
+    display: flex;
+    justify-content: center;
+    gap: 80px; /* Gap between groups */
+    flex-wrap: wrap; /* Allows wrapping for smaller screens */
+    margin-top: 0;
+  }
+  
+  /* Tile Group Styling */
+  .tile-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Gap between image and text */
+  }
+  
+  /* Individual Tile */
+  .tile {
+    width: 400px;
+    height: 400px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 47, 104, 0.4);
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .tile:hover {
+    transform: translateY(-10px);
+  }
+  
+  /* Image Styling */
+  .tile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0px;
+  }
+  
+  /* Tile Name */
+  .tile-name {
+    font-size: 50px;
+    font-weight: bold;
+    color: #5c6bc0;
+    text-align: center;
+    font-family: 'Comic Sans MS', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Media Queries for Responsiveness */
+  /* Tablet View */
+  @media (max-width: 1024px) {
+    .tiles-container {
+      gap: 30px;
+    }
+  
+    .tile {
+      width: 250px;
+      height: 250px;
+    }
+  
+    .tile-name {
+      font-size: 18px;
+    }
+  }
+  
+  /* Mobile View */
+  @media (max-width: 768px) {
+    .tiles-container {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .tile {
+      width: 90%;
+      height: 220px;
+    }
+  
+    .tile-name {
+      font-size: 16px;
+    }
+  }
+  

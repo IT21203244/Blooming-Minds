@@ -9,17 +9,22 @@ body, html {
   .auditory_container {
     display: flex;
     height: 100vh;
+    padding-left: 30px;
+   
   }
-  
-  /* Sidebar */
-  .auditory_sidebar {
-    width: 80px;
-    background-color: #2d5ef7;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
+  .auditory_main{
+    padding-left: 400px;
   }
+/* Sidebar */
+.auditory_sidebars {
+  width: 200px; /* Increased from 80px to 200px */
+  background-color: #2d5ef7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  padding-top: 20px;
+}
   
   .auditory_logo {
     margin: 20px 0;

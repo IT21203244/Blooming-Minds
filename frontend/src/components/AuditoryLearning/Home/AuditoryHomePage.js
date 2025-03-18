@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import './AuditoryHomePage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,19 +10,63 @@ import {
   faCogs,
   faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import Man from "./images/man.png"
-import Logo from "./images/Logo.png"
-import School from "./images/school.png"
-import Sea from "./images/sea.png"
-import En from "./images/Envirnment.png"
-
-
+import Man from "./images/man.png";
+import Logo from "./images/Logo.png";
+import School from "./images/school.png";
+import Sea from "./images/sea.png";
+import En from "./images/Envirnment.png";
 
 function AuditoryHomePage() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [lessons, setLessons] = useState([]);
+  const [audiogames, setAudiogames] = useState([]);
+  const [attemptCount, setAttemptCount] = useState({});
+
+  useEffect(() => {
+    // Fetch lessons, audiogames, and attempt count from the backend
+    const fetchData = async () => {
+      try {
+        // Fetch lessons
+        const lessonsResponse = await fetch('http://localhost:5000/api/get_lessons');
+        if (!lessonsResponse.ok) {
+          throw new Error('Network response for lessons was not ok');
+        }
+        const lessonsData = await lessonsResponse.json();
+        setLessons(lessonsData.lessons);
+
+        // Fetch audiogames
+        const audiogamesResponse = await fetch('http://localhost:5000/api/get_audiogames');
+        if (!audiogamesResponse.ok) {
+          throw new Error('Network response for audiogames was not ok');
+        }
+        const audiogamesData = await audiogamesResponse.json();
+        setAudiogames(audiogamesData.audiogames);
+
+        // Fetch attempt count
+        const attemptCountResponse = await fetch('http://localhost:5000/api/get_attempt_count');
+        if (!attemptCountResponse.ok) {
+          throw new Error('Network response for attempt count was not ok');
+        }
+        const attemptCountData = await attemptCountResponse.json();
+        setAttemptCount(attemptCountData.attempt_count);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleStartNowClick = () => {
     navigate('/AllLessons');
+  };
+
+  const handleStartAudioGame = (lessonLNumber) => {
+    navigate(`/audiogames`, { state: { lessonLNumber: lessonLNumber } });
+  };
+  
+  const handleStartAudioBook = (lessonId) => {
+    navigate(`/lesson/${lessonId}`);
   };
 
   const handleAdminNowClick = () => {
@@ -33,10 +77,15 @@ function AuditoryHomePage() {
     navigate('/LessonResults');
   };
 
+  // Function to count audiogame questions for a specific lesson
+  const countAudiogameQuestions = (lessonNumber) => {
+    return audiogames.filter(game => game.number === lessonNumber).length;
+  };
+
   return (
     <div className="auditory_container">
       {/* Sidebar */}
-      <div className="auditory_sidebar">
+      <div className="auditory_sidebars">
         <div className="auditory_logo">
           <img src={Logo} alt="Blooming Logo" />
         </div>
@@ -78,87 +127,61 @@ function AuditoryHomePage() {
           <div className="auditory_welcome_text">
             <h1>Hi, Soundy!</h1><br></br>
             <div className="auditory_start_button_container">
-    <button 
-    onClick={handleStartNowClick}
-    className="auditory_start_button">Start Now</button>&nbsp;&nbsp;
-        <button 
-    onClick={handleAdminNowClick}
-    className="auditory_start_button">Admin Panel</button>&nbsp;&nbsp;
-        <button 
-    onClick={handleAnalysisNowClick}
-    className="auditory_start_button">Analysis Part</button>
-  </div>
-  
+              <button 
+                onClick={handleStartNowClick}
+                className="auditory_start_button">Start Now</button>&nbsp;&nbsp;
+              <button 
+                onClick={handleAdminNowClick}
+                className="auditory_start_button">Admin Panel</button>&nbsp;&nbsp;
+              <button 
+                onClick={handleAnalysisNowClick}
+                className="auditory_start_button">Analysis Part</button>
+            </div>
           </div>
 
           <div className="auditory_welcome_image">
             <img src={Man} alt="Welcome Illustration" />
           </div>
-         
         </div>
 
         {/* Continue Watching */}
         <div className="auditory_continue_section">
           <h2>
-           Recomended Lessons<span className="auditory_lessons_count">15 lessons</span>
+          Continue Watching<span className="auditory_lessons_count">{lessons.length} lessons</span>
           </h2>
           <div className="auditory_lessons">
-            <div className="auditory_lesson_card">
-              <img src={En} alt="Environment" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 01</h3>
-                <p>Environment</p>
+            {lessons.map((lesson, index) => (
+              <div key={index} className="auditory_lesson_card">
+                <img src={lesson.imageURL} alt={lesson.title} />
+                <div className="auditory_lesson_info">
+                  <h3>{lesson.lnumber} - {lesson.title}</h3>
+                  {/* Display the number of audio book questions */}
+                  <p><strong>Audio Book Questions:</strong> {lesson.questions ? lesson.questions.length : 0}</p>
+                  {/* Display the number of audiogame questions */}
+                  <p><strong>Audio Game Questions:</strong> {countAudiogameQuestions(lesson.lnumber)}</p>
+                  {/* Display the attempt count for the lesson */}
+                  <p><strong>Attempt Count:</strong> 
+  { 
+    (attemptCount[lesson.lnumber] || 0) % 2 === 0 
+      ? (attemptCount[lesson.lnumber] || 0) / 2 
+      : ((attemptCount[lesson.lnumber] || 0) / 2) + 0.5 
+  }
+</p>
+                </div>
+                <button
+                  className="audio_lessonlist_button"
+                  onClick={() => handleStartAudioBook(lesson._id)}
+                >
+                  Start AudioBook
+                </button>
+                <button
+                  className="audio_lessonlist_button"
+                  onClick={() => handleStartAudioGame(lesson.lnumber)}
+                >
+                  Start AudioGame
+                </button>
               </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={Sea} alt="Sea" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 02</h3>
-                <p>Sea</p>
-              </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={School} alt="School" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 03</h3>
-                <p>School</p>
-              </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={En} alt="Environment" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 01</h3>
-                <p>Environment</p>
-              </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={Sea} alt="Sea" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 02</h3>
-                <p>Sea</p>
-              </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={School} alt="School" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 03</h3>
-                <p>School</p>
-              </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={Sea} alt="Sea" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 02</h3>
-                <p>Sea</p>
-              </div>
-            </div>
-            <div className="auditory_lesson_card">
-              <img src={School} alt="School" />
-              <div className="auditory_lesson_info">
-                <h3>Lesson 03</h3>
-                <p>School</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
