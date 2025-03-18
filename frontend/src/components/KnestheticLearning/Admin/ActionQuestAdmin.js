@@ -13,7 +13,7 @@ function SmileQuestAdmin() {
         const fetchSmileData = async () => {
             try {
                 setLoading(true); // Set loading to true when starting the fetch
-                const response = await fetch('http://localhost:5000/api/get_smile_data');
+                const response = await fetch('http://localhost:5000/api/get_emotion_data');
                 const result = await response.json();
                 if (response.ok) {
                     setSmileData(result); // Assuming the result is an array of smile records
