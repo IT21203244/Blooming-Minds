@@ -18,7 +18,7 @@ const EmotionDetection = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const emotions = ['Happy', 'Surprise', 'Neutral'];
+  const emotions = ['happy', 'surprise', 'neutral'];
 
   useEffect(() => {
     generateRandomEmotion();
@@ -148,15 +148,14 @@ const EmotionDetection = () => {
           <div className='data_set_kin'>
             <div className='by_Image_Section active'>
               <div className="border_card_smile">
-
-
+                <p className='main_topic_new_sub_add'>Emotion Detection</p>
+                <button className="upload_btn_kini" onClick={startCamera}>Do Task</button>
                 {cameraActive && (
                   <div className="camera_container">
-                    <video className='camara_con' ref={videoRef} autoPlay></video>
-                    <button className="capture_btn" onClick={captureImage}>Capture</button>
+                    <video ref={videoRef} autoPlay></video>
+                    <button className="upload_btn_kini" onClick={captureImage}>Capture</button>
                   </div>
                 )}
-                <button className="upload_btn_kini" onClick={startCamera}>Start</button>
                 {dominantEmotion && (
                   <div className="percentage_container_full_kin">
                     <div className="percentage_column_data">
@@ -177,7 +176,7 @@ const EmotionDetection = () => {
                 )}
                 {uploadedImage && (
                   <div className='image_kin_set'>
-                    <p className='up_img_topic'>Captured Image:</p>
+                    <p className='up_img_topic'>Uploaded Image:</p>
                     <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" className="uploaded_image" />
                   </div>
                 )}
