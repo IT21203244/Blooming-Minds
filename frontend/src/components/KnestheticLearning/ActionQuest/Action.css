@@ -18,7 +18,7 @@
   font-weight: 600;
 }
 .smile_kni {
-  width: 300px;
+  width: 450px;
   margin: 0 auto;
 }
 .details_set {
@@ -82,6 +82,8 @@
   flex-direction: column;
   display: flex;
   padding: 15px;
+  align-items: center;
+  justify-content: center;
 }
 .up_img_topic {
   margin-bottom: 8px;
@@ -113,9 +115,27 @@
 .by_Camara_Section.active {
   display: block;
 }
+.capture_btn {
+  border: 1px solid #2b69b2;
+  display: flex;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 5px 15px;
+  border-radius: 3px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 25px;
+  color: white;
+  background-color: #2b69b2;
+  width: 100%;
+}
 .upload_btn_kini {
   border: 1px solid #2b69b2;
   display: flex;
+  font-weight: 600;
+  font-size: 20px;
   padding: 5px 15px;
   border-radius: 3px;
   cursor: pointer;
@@ -123,10 +143,8 @@
   background-color: #2b69b2;
 }
 .uploaded_image {
-  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  display: flex;
-  height: 250px;
   background-position: center;
   border-radius: 8px;
 }
@@ -141,7 +159,7 @@
   flex-direction: column;
   gap: 10px;
 }
-.input_roww_smile{
+.input_roww_smile {
   width: 100%;
   border: 1px solid #2b69b2;
   border-radius: 2px;
@@ -172,9 +190,21 @@
   gap: 50px;
   justify-content: center;
 }
-.save_input_container{
+.save_input_container {
   display: flex;
   align-items: center;
   gap: 5px;
   justify-content: center;
+}
+.result_message {
+  position: fixed;
+  top: 45px;
+  z-index: 100000;
+  font-size: 30px;
+  background-color: #2b69b2;
+  color: white;
+  border-radius: 3px;
+  padding: 5px 15px;
+  margin: 0 auto;
+  text-align: start;
 }

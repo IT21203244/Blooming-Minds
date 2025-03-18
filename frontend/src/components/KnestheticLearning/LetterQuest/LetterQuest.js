@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate hook for routing
 import Logout from './img/logout.png';
-import Sad from './img/sad.png';
-import WinImage from './img/win.png';
+
 import './letter.css';
 import { FaDeleteLeft } from "react-icons/fa6";
 function LetterQuest() {
@@ -148,11 +147,11 @@ function LetterQuest() {
         localStorage.setItem("attempts", attempts);
         // Determine the user's level based on the number of hints shown
         let userLevel;
-        if (hintsToShow === 1) {
+        if (hintsToShow === 2) {
             userLevel = "Level 1"; // User completed the task with 1 hint
-        } else if (hintsToShow === 2) {
-            userLevel = "Level 2"; // User completed the task with 2 hints
         } else if (hintsToShow === 3) {
+            userLevel = "Level 2"; // User completed the task with 2 hints
+        } else if (hintsToShow === 4) {
             userLevel = "Level 3"; // User completed the task with 3 hints
         }
 
@@ -276,9 +275,7 @@ function LetterQuest() {
                         {isCorrectGuess && (
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
-                                    <p className="correct_guess">Congratulations! You Win!</p>
-                                    <img src={WinImage} className='win_image' alt='win' />
-                                    <br />
+                                    
                                 </div>
                             </div>
                         )}

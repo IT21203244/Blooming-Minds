@@ -68,12 +68,12 @@
   width: 100%;
 }
 .admin_btn {
-  position: absolute;
+  position: fixed;
   background-color: #2b69b2;
   border-radius: 100%;
   height: 70px;
   width: 70px;
-  right: 80px;
+  right: 30px;
   padding: 10px;
   cursor: pointer;
   bottom: 20px;

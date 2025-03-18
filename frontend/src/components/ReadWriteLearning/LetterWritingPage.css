@@ -74,10 +74,10 @@ button {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 } */
 
-button:hover {
-  background-color: #66bb6a; /* Slightly darker green */
+/* button:hover {
+  background-color: #66bb6a;
   transform: scale(1.05);
-}
+} */
 
 button:disabled {
   background-color: #dfe6e9; /* Light Grey */
