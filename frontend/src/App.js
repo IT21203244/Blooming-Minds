@@ -37,6 +37,7 @@ import FetchColorMatchingData from "./components/VisualLearning/FetchColorMatchi
 import FetchColorMatchingReport from "./components/VisualLearning/FetchColorMatchingReport";
 import ProgressDashboard from "./components/VisualLearning/ProgressDashboard";
 import CompareProgressDashboard from "./components/VisualLearning/CompareProgressDashboard";
+import VLProgressDashboard from "./components/VisualLearning/VLProgressDashboard";
 
 /*Auth SignIn SignUp*/
 import SignIn from "./components/Auth/SignIn";
@@ -89,6 +90,7 @@ const App = () => {
           <Route path="/color-matching-report" element={<FetchColorMatchingReport />} />
           <Route path="/progress-dashboard" element={<ProgressDashboard />} />
           <Route path="/vl-compare-progress" element={<CompareProgressDashboard />} />
+          <Route path="/vl-progress-dashboard" element={<VLProgressDashboard />} />
 
           {/* Auth */}
           <Route path="/" element={<SignIn />} />
