@@ -10,6 +10,7 @@ const InsertLesson = () => {
   const [text, setText] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [lnumber, setLnumber] = useState("");
+  const [audiobookType, setAudiobookType] = useState("one word answer question");  // New state
   const [questions, setQuestions] = useState([{ audioFile: null, answer: "" }]);
   const [audioFiles, setAudioFiles] = useState([""]);
   const [successMessage, setSuccessMessage] = useState("");
@@ -51,6 +52,7 @@ const InsertLesson = () => {
     formData.append("text", text);
     formData.append("imageURL", imageURL);
     formData.append("lnumber", lnumber);
+    formData.append("audiobook_type", audiobookType);  // New field
 
     questions.forEach((q, index) => {
       if (q.audioFile) {
@@ -75,6 +77,7 @@ const InsertLesson = () => {
         setText("");
         setImageURL("");
         setLnumber("");
+        setAudiobookType("one word answer question");  // Reset to default
         setQuestions([{ audioFile: null, answer: "" }]);
         setAudioFiles([""]);
       })
@@ -105,6 +108,13 @@ const InsertLesson = () => {
           <div className="insertlesson_input_group">
             <label>Lesson Number:</label>
             <input type="text" value={lnumber} onChange={(e) => setLnumber(e.target.value)} required />
+          </div>
+          <div className="insertlesson_input_group">
+            <label>Audiobook Type:</label>
+            <select value={audiobookType} onChange={(e) => setAudiobookType(e.target.value)} required>
+              <option value="one word answer question">One Word Answer Question</option>
+              <option value="two word answer question">Two Word Answer Question</option>
+            </select>
           </div>
           <div className="insertlesson_input_group">
             <label>Audio Files (MP3):</label>
