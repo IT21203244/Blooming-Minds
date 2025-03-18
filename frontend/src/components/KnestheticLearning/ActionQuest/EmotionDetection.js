@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Action.css';
-import Smile from './img/smile.jpeg';
+import Happy from './img/smile.jpeg';
+import Neutral from './img/Neutral.jpg';
+import Surprise from './img/Surprise.jpg';
+
 
 const EmotionDetection = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -15,7 +18,7 @@ const EmotionDetection = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const emotions = ['happy', 'sad', 'angry', 'surprise', 'smile'];
+  const emotions = ['Happy', 'Surprise', 'Neutral'];
 
   useEffect(() => {
     generateRandomEmotion();
@@ -98,9 +101,9 @@ const EmotionDetection = () => {
       setError('Please enter your name.');
       return;
     }
-  
+
     const status = dominantEmotion === targetEmotion ? 'pass' : 'fail';
-  
+
     try {
       const response = await fetch('http://localhost:5000/api/save_emotion_data', {
         method: 'POST',
@@ -114,7 +117,7 @@ const EmotionDetection = () => {
           status: status,  // Pass or fail
         }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         alert('Data saved successfully!');
@@ -135,7 +138,12 @@ const EmotionDetection = () => {
         <div className='action_card_set'>
           <div className='details_set'>
             <p className='word_name'>{targetEmotion.toUpperCase()}</p><br />
-            <img src={Smile} alt='Smile' className='smile_kni' />
+            <img src={
+              targetEmotion === 'Happy' ? Happy :
+                targetEmotion === 'Surprise' ? Surprise :
+                  targetEmotion === 'Neutral' ? Neutral :
+                    Happy // Default image if no match
+            } alt='Smile' className='smile_kni' />
           </div>
           <div className='data_set_kin'>
             <div className='by_Image_Section active'>

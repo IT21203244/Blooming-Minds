@@ -276,9 +276,7 @@ function LetterQuest() {
                         {isCorrectGuess && (
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
-                                    <p className="correct_guess">Congratulations! You Win!</p>
-                                    <img src={WinImage} className='win_image' alt='win' />
-                                    <br />
+                                    
                                 </div>
                             </div>
                         )}

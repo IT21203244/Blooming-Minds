@@ -31,7 +31,6 @@ def emotion_check():
     file.save(file_path)
 
     try:
-        # Analyze emotion using DeepFace
         result = DeepFace.analyze(img_path=file_path, actions=['emotion'])
         dominant_emotion = result[0]['dominant_emotion']
         os.remove(file_path)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React ,{useState}from 'react'
 import { Link } from "react-router-dom";
 import Auditory from './img/audio.jpg';
 import Kinesthetic from './img/kinesthetic.png';
