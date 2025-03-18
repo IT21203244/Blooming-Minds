@@ -11,7 +11,6 @@ client = MongoClient("mongodb+srv://blooming_minds:BsjsdM24@bloomingminds.n7ia1.
 db = client["blooming_minds"]
 emotion_results_collection = db["emotion_results"]
 
-# Define the blueprint
 EmotionFileRoute = Blueprint('EmotionFileRoute', __name__)
 
 # Directory to save uploaded images temporarily
@@ -42,25 +41,24 @@ def emotion_check():
 def save_emotion_data():
     data = request.json
     username = data.get("username")
-    taskname = data.get("taskname")  # Target emotion (e.g., "cry")
-    result = data.get("result")  # Detected emotion (e.g., "happy")
-    status = data.get("status")  # Pass or fail
-
+    taskname = data.get("taskname")  
+    result = data.get("result")  
+    status = data.get("status")  
     # Validate required fields
     if not username or not taskname or not result or not status:
         return jsonify({"error": "Username, Taskname, Result, and Status are required"}), 400
 
     # Get the current date and time
     current_datetime = datetime.now()
-    current_date = current_datetime.date().strftime("%Y-%m-%d")  # Date in YYYY-MM-DD format
-    current_time = current_datetime.time().strftime("%H:%M:%S")  # Time in HH:MM:SS format
+    current_date = current_datetime.date().strftime("%Y-%m-%d")  
+    current_time = current_datetime.time().strftime("%H:%M:%S")  
 
     # Save data to MongoDB
     emotion_results_collection.insert_one({
         "username": username,
-        "taskname": taskname,  # Save the target emotion (task name)
-        "result": result,  # Save the detected emotion (result)
-        "status": status,  # Save the status (pass or fail)
+        "taskname": taskname, 
+        "result": result, 
+        "status": status, 
         "date": current_date,
         "time": current_time
     })

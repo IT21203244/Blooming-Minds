@@ -170,16 +170,17 @@ function LetterQuest() {
         if (isGameOver) {
             handleGameOver();
         }
-    }, [isGameOver]); // Add dependencies to avoid unnecessary re-renders
+    }, [isGameOver]);
 
+    //------------------Own Code
     const fetchCompletedTasks = async (username) => {
         try {
-            const response = await fetch(`/getCompletedTasks/${username}`);
-            const data = await response.json();
-            return data.completed_tasks || [];
+            const response = await fetch(`/getCompletedTasks/${username}`); // call backend api filtering bu user name 
+            const data = await response.json();  // add response data as JSON
+            return data.completed_tasks || [];  // Return completed tasks  is not have disply empty 
         } catch (error) {
             console.error("Error fetching completed tasks:", error);
-            return [];
+            return []; // Return an empty array as a fallback in case of an error
         }
     };
 
@@ -223,16 +224,16 @@ function LetterQuest() {
                                 <div
                                     className="time_progress_fill"
                                     style={{
-                                        width: `${(timeLeft / 60) * 100}%`, // Calculate width based on remaining time
-                                        backgroundColor: timeLeft <= 10 ? 'red' : '#2b69b2', // Change color dynamically
-                                        transition: 'width 0.5s ease', // Smooth transition for width changes
+                                        width: `${(timeLeft / 60) * 100}%`,
+                                        backgroundColor: timeLeft <= 10 ? 'red' : '#2b69b2',
+                                        transition: 'width 0.5s ease',
                                     }}
                                 ></div>
                             </div>
                         </div>
                         <p className='point_section'>
                             {randomImage.points.slice(0, hintsToShow).map((point, index) => (
-                                <p className='point_txt' key={index}>▪️{point}</p>  // Display only the first `hintsToShow` points
+                                <p className='point_txt' key={index}>▪️{point}</p>
                             ))}
                         </p>
 
@@ -275,7 +276,7 @@ function LetterQuest() {
                         {isCorrectGuess && (
                             <div className="correct_guess_modal">
                                 <div className="correct_guess_modal_content">
-                                    
+
                                 </div>
                             </div>
                         )}

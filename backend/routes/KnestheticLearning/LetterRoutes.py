@@ -1,4 +1,3 @@
-# routes.py
 from flask import Blueprint, request, jsonify
 from utils.KnestheticLearning.LetterQuest.LetterUtils import insert_student,get_students,delete_student
 
@@ -34,14 +33,16 @@ def delete_student_record(student_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@LetterRoutes.route("/getCompletedTasks/<username>", methods=["GET"])
-def get_completed_tasks(username):
+
+#Own code my 
+@LetterRoutes.route("/getCompletedTasks/<username>", methods=["GET"]) 
+def get_completed_tasks(username): 
     try:
         students = get_students()  # Fetch all student records
-        for student in students:
-            if student["username"] == username:
+        for student in students:  # fech record with username
+            if student["username"] == username: # Filter the tasks relavant namee and %
                 completed_tasks = [task["task_name"] for task in student["tasks"] if task["progress"] == 100]
-                return jsonify({"completed_tasks": completed_tasks}), 200
-        return jsonify({"completed_tasks": []}), 200
+                return jsonify({"completed_tasks": completed_tasks}), 200 # return complet task
+        return jsonify({"completed_tasks": []}), 200 # not found part 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
