@@ -19,7 +19,6 @@ const EmotionDetection = () => {
 
   const emotions = ['happy', 'sad', 'angry', 'surprise', 'smile'];
 
-  // Generate a random emotion when the component mounts or refreshes
   useEffect(() => {
     generateRandomEmotion();
   }, []);
@@ -29,20 +28,44 @@ const EmotionDetection = () => {
     setTargetEmotion(randomEmotion);
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setUploadedImage(file);
+  const startCamera = async () => {
+    setCameraActive(true);
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+    } catch (err) {
+      setError('Failed to access the camera.');
+    }
   };
 
-  const handleUploadCheck = async () => {
-    if (!uploadedImage) {
-      setError('Please upload an image first.');
+  const captureImage = async () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const image = canvas.toDataURL('image/png');
+    const blob = await (await fetch(image)).blob();
+    const file = new File([blob], 'captured.png', { type: 'image/png' });
+
+    setUploadedImage(file);
+    setCameraActive(false);
+    videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+
+    await handleUploadCheck(file);
+  };
+
+  const handleUploadCheck = async (file) => {
+    if (!file) {
+      setError('Please capture an image first.');
       return;
     }
     setError('');
 
     const formData = new FormData();
-    formData.append('file', uploadedImage);
+    formData.append('file', file);
 
     try {
       const response = await fetch('http://localhost:5000/api/emotion_check', {
@@ -53,7 +76,7 @@ const EmotionDetection = () => {
       const data = await response.json();
       if (response.ok) {
         setDominantEmotion(data.dominant_emotion);
-        setShowCheckResultButton(true); // Show the "Check Result" button
+        setShowCheckResultButton(true);
       } else {
         setError(data.error || 'An error occurred while checking the emotion.');
       }
@@ -61,6 +84,16 @@ const EmotionDetection = () => {
       setError('Failed to connect to the backend.');
     }
   };
+
+  const checkResult = () => {
+    if (dominantEmotion === targetEmotion) {
+      setResultMessage('You win! Your emotion matches the target emotion.');
+    } else {
+      setResultMessage(`You lose! The target emotion was ${targetEmotion}.`);
+    }
+    setShowUsernameInput(true);
+  };
+
   const handleSaveData = async () => {
     if (!username.trim()) {
       setError('Please enter your name.');
@@ -90,44 +123,6 @@ const EmotionDetection = () => {
       }
     } catch (err) {
       setError('Failed to connect to the backend.');
-    }
-  };
-
-  const startCamera = async () => {
-    setCameraActive(true);
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-    } catch (err) {
-      setError('Failed to access the camera.');
-    }
-  };
-
-  const captureImage = async () => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const image = canvas.toDataURL('image/png');
-    const blob = await (await fetch(image)).blob();
-    const file = new File([blob], 'captured.png', { type: 'image/png' });
-
-    setUploadedImage(file);
-    setCameraActive(false);
-    videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-
-    // Call handleUploadCheck to analyze the captured image
-    await handleUploadCheck();
-  };
-
-  const checkResult = () => {
-    if (dominantEmotion === targetEmotion) {
-      alert('You win! Your emotion matches the target emotion.');
-    } else {
-      alert(`You lose! The target emotion was ${targetEmotion}.`);
     }
   };
 
