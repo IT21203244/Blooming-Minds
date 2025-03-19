@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from utils.AuditoryLearning.AudioBook.db_utils import Database
 import os
+import requests  # Added missing import
 
 lesson_routes = Blueprint("lesson_routes", __name__)
 
@@ -12,10 +13,20 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 @lesson_routes.route('/uploads/audio/<filename>')
 def uploaded_audio(filename):
+    if not allowed_file(filename):
+        return jsonify({"error": "File type not allowed"}), 400
     return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def get_user_id_from_local_storage():
+    # Implement this function to retrieve the user ID from local storage
+    pass
+
+def calculate_average_correctness(correctness_data):
+    # Implement this function to calculate the average correctness
+    pass
 
 @lesson_routes.route("/add_lesson", methods=["POST"])
 def add_lesson():
@@ -56,6 +67,7 @@ def add_lesson():
         inserted_id = db.insert_data("audio_lessons", lesson_data)
         return jsonify({"message": "Lesson added successfully", "id": str(inserted_id)}), 201
     except Exception as e:
+        current_app.logger.error(f"Error in add_lesson: {str(e)}")
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
@@ -69,6 +81,7 @@ def get_lessons():
             return jsonify({"message": "No lessons found"}), 404
         return jsonify({"lessons": lessons}), 200
     except Exception as e:
+        current_app.logger.error(f"Error in get_lessons: {str(e)}")
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
@@ -83,6 +96,7 @@ def get_lesson(lesson_id):
         
         return jsonify({"lesson": lesson}), 200
     except Exception as e:
+        current_app.logger.error(f"Error in get_lesson: {str(e)}")
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
@@ -96,6 +110,39 @@ def recommended_lessons():
             return jsonify({"message": "No lessons found"}), 404
         return jsonify({"lessons": lessons}), 200
     except Exception as e:
+        current_app.logger.error(f"Error in recommended_lessons: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close_connection()
+
+@lesson_routes.route("/recommending_lessons", methods=["POST"])
+def recommending_lessons():
+    db = Database()
+    try:
+        user_id = get_user_id_from_local_storage()
+        correctness_url = f"http://localhost:5000/api/get_transcriptions?user_id={user_id}"
+        response = requests.get(correctness_url)
+        
+        if response.status_code != 200:
+            current_app.logger.error(f"Failed to fetch user correctness: {response.status_code}, {response.text}")
+            return jsonify({"error": "Failed to fetch user correctness"}), 500
+        
+        correctness_data = response.json()
+        average_correctness = calculate_average_correctness(correctness_data)
+        
+        lessons = db.get_data("audio_lessons")
+        if not lessons:
+            return jsonify({"message": "No lessons found"}), 404
+        
+        if average_correctness < 80:
+            recommended_lessons = [lesson for lesson in lessons if lesson["audiobook_type"] == "one word answer question"]
+        else:
+            recommended_lessons = [lesson for lesson in lessons if lesson["audiobook_type"] == "two word answer question"]
+        
+        return jsonify({"lessons": recommended_lessons}), 200
+    
+    except Exception as e:
+        current_app.logger.error(f"Error in recommending_lessons: {str(e)}")
         return jsonify({"error": str(e)}), 500
     finally:
         db.close_connection()
