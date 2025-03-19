@@ -194,32 +194,32 @@ const LessonPage = () => {
 
     setMatchPercentage(Math.round(percentage));
   };
-
   const handleNextQuestion = async () => {
     const userId = localStorage.getItem("userId");
-
+  
     if (!userId) {
       alert("User not logged in!");
       return;
     }
-
+  
     const transcriptionData = {
       userId: userId,
       lessonId: lessonId,
       correctness: matchPercentage,
     };
-
+  
     try {
       await axios.post("http://localhost:5000/api/insert_transcription", transcriptionData, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       if (questionIndex < lesson.questions.length - 1) {
         setQuestionIndex((prev) => prev + 1);
       } else {
-        setQuestionIndex(0);
+        setQuestionIndex(0); // Reset to the first question if it's the last question
       }
-
+  
+      // Reset state for the next question
       setUserTranscription("");
       setRecordingError("");
       setMatchPercentage(0);
@@ -227,7 +227,13 @@ const LessonPage = () => {
       console.error("Error inserting transcription data:", error);
     }
   };
-
+  
+  const handleTryAgain = () => {
+    // Reset state for the current question
+    setUserTranscription("");
+    setRecordingError("");
+    setMatchPercentage(0);
+  };
   const fetchTranscriptionResults = async () => {
     try {
       const userId = localStorage.getItem("userId");
@@ -345,6 +351,8 @@ const LessonPage = () => {
                   </Typography>
                   <Box sx={{ textAlign: "center" }}>
                     <Typography variant="h6">Accuracy</Typography>
+                    <div style={{ width: "100px", height: "100px", margin: "0 auto" }}>
+
                     <CircularProgressbar
                       value={matchPercentage}
                       text={`${matchPercentage}%`}
@@ -354,8 +362,9 @@ const LessonPage = () => {
                         trailColor: "#eee",
                         textSize: "16px",
                       })}
-                      style={{ width: "100px", height: "100px" }}
+                     
                     />
+                    </div>
                   </Box>
                 </Box>
               )}
@@ -366,33 +375,33 @@ const LessonPage = () => {
                 </Typography>
               )}
 
-              <Grid container justifyContent="space-between" sx={{ mt: 2 }}>
-                <Button
-                  startIcon={<NavigateBefore />}
-                  onClick={() => {
-                    setQuestionIndex((prev) => Math.max(prev - 1, 0));
-                    setUserTranscription("");
-                    setRecordingError("");
-                    setMatchPercentage(0);
-                  }}
-                  disabled={questionIndex === 0}
-                >
-                  Previous
-                </Button>
-                <Button
-                  endIcon={<NavigateNext />}
-                  onClick={handleNextQuestion}
-                  disabled={isRecording}
-                  sx={{
-                    backgroundColor: matchPercentage >= 80 ? "primary.main" : "error.main",
-                    "&:hover": {
-                      backgroundColor: matchPercentage >= 80 ? "primary.dark" : "error.dark",
-                    },
-                  }}
-                >
-                  {matchPercentage >= 80 ? "Next" : "Try Again..."}
-                </Button>
-              </Grid>
+<Grid container justifyContent="space-between" sx={{ mt: 2 }}>
+  <Button
+    startIcon={<NavigateBefore />}
+    onClick={() => {
+      setQuestionIndex((prev) => Math.max(prev - 1, 0));
+      setUserTranscription("");
+      setRecordingError("");
+      setMatchPercentage(0);
+    }}
+    disabled={questionIndex === 0}
+  >
+    Previous
+  </Button>
+  <Button
+    endIcon={<NavigateNext />}
+    onClick={matchPercentage >= 80 ? handleNextQuestion : handleTryAgain}
+    disabled={isRecording}
+    sx={{
+      backgroundColor: matchPercentage >= 80 ? "primary.main" : "error.main",
+      "&:hover": {
+        backgroundColor: matchPercentage >= 80 ? "primary.dark" : "error.dark",
+      },
+    }}
+  >
+    {matchPercentage >= 80 ? "Next" : "Try Again..."}
+  </Button>
+</Grid>
             </Box>
           )}
 
