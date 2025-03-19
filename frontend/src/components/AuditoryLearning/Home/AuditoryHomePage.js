@@ -205,7 +205,7 @@ function AuditoryHomePage() {
                   <h3>{lesson.lnumber} - {lesson.title} - {lesson.audiobook_type}</h3>
                   <p><strong>Audio Book Questions:</strong> {lesson.questions ? lesson.questions.length : 0}</p>
                   <p><strong>Audio Game Questions:</strong> {countAudiogameQuestions(lesson.lnumber)}</p>
-                  <p><strong>Attempt Count:</strong> {attemptCount[lesson.lnumber] || 0}</p>
+                  {/* <p><strong>Attempt Count:</strong> {attemptCount[lesson.lnumber] || 0}</p> */}
                 </div>
                 <button
                   className="audio_lessonlist_button"
