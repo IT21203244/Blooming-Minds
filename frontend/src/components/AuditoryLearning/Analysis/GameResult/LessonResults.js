@@ -360,7 +360,7 @@ const GameResults = () => {
                       <table className="results-table">
                         <thead>
                           <tr>
-                            <th>User ID</th>
+                            {/* <th>User ID</th> */}
                             <th>Session Number</th>
                             <th>Question Number</th>
                             <th>Attempt</th>
@@ -378,7 +378,7 @@ const GameResults = () => {
                               ];
                             return attempts.map((attempt, index) => (
                               <tr key={`${questionNumber}-${index}`}>
-                                <td>{userId}</td>
+                                {/*<td>{userId}</td>*/}
                                 <td>{lessonNumber}</td>
                                 <td>{questionNumber}</td>
                                 <td>
