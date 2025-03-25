@@ -9,8 +9,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLRO
 import matplotlib.pyplot as plt
 
 # Paths to the folders containing your images
-smiling_folder = '../../datasets/Kinesthetic/Smile/smile'
-not_smiling_folder = '../../datasets/Kinesthetic/Smile/not_smiling'
+emotions_folder = '../../datasets/Kinesthetic/Smile/smile'
+not_emotions_folder = '../../datasets/Kinesthetic/Smile/not_emotions'
 
 # Function to load images
 def load_images_from_folder(folder, label, image_size=(128, 128)):
@@ -26,12 +26,12 @@ def load_images_from_folder(folder, label, image_size=(128, 128)):
     return images, labels
 
 # Load images from both folders
-smiling_images, smiling_labels = load_images_from_folder(smiling_folder, label=1)
-not_smiling_images, not_smiling_labels = load_images_from_folder(not_smiling_folder, label=0)
+emotions_images, emotions_labels = load_images_from_folder(emotions_folder, label=1)
+not_emotions_images, not_emotions_labels = load_images_from_folder(not_emotions_folder, label=0)
 
 # Combine the data
-images = np.array(smiling_images + not_smiling_images)
-labels = np.array(smiling_labels + not_smiling_labels)
+images = np.array(emotions_images + not_emotions_images)
+labels = np.array(emotions_labels + not_emotions_labels)
 
 # Normalize the pixel values to range [0, 1]
 images = images / 255.0
