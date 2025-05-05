@@ -24,7 +24,7 @@ function LetterQuest() {
         { name: 'ANGRY', points: [`First letter is A, last letter is Y, and it has 5 letters`, "Strong emotion", "Causes frustration", "Seen on the face"] },
     ];
     const [randomImage, setRandomImage] = useState(images[0]);
-    const [timeLeft, setTimeLeft] = useState(10);// time change counter
+    const [timeLeft, setTimeLeft] = useState(20);// time change counter
     const [randomLetters, setRandomLetters] = useState([]);
     const [clickedLetters, setClickedLetters] = useState('');
     const [wordToGuess, setWordToGuess] = useState('');
@@ -201,7 +201,7 @@ function LetterQuest() {
         }
 
         setClickedLetters(''); // Reset clicked letters
-        setTimeLeft(10); // Reset the timer to 60 seconds
+        setTimeLeft(20); // Reset the timer to 60 seconds
         setShowTryAgain(false); // Hide the "Try Again" button
     };
     const handleClearLetter = () => {
