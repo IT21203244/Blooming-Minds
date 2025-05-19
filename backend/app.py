@@ -13,10 +13,10 @@ from routes.KnestheticLearning.EmotionFileRoute import EmotionFileRoute
 
 
 #ReadWrite Learning
-#from routes.ReadWriteLearning.letter_routes import letter_routes
+# from routes.ReadWriteLearning.letter_routes import letter_routes
 
 #Visual Learning
-#from routes.VisualLearning.color_matching_routes import color_matching_routes
+from routes.VisualLearning.color_matching_routes import color_matching_routes
 
 
 # Apply CORS properly AFTER initializing app
@@ -42,9 +42,9 @@ CORS(EmotionFileRoute, origins="http://localhost:3000")
 app.register_blueprint(LetterRoutes) 
 app.register_blueprint(EmotionFileRoute)
 
-#app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
+# app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
 
-#app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
+app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
 
 
 # Import routes AFTER initializing Flask app

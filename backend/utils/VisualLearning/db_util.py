@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import datetime
+from bson import ObjectId
 import os
 import logging
 
@@ -13,14 +14,11 @@ db = client[DATABASE_NAME]
 def insert_color_matching_result(
     user_id, level, wrong_takes, correct_takes, total_score, time_taken,
     provided_sequence, child_sequence, circle_count, wrong_circle_count,
-    date, accuracy, time_efficiency, reward
+    date, accuracy, time_efficiency, reward, response_times, mistake_patterns
 ):
-    """
-    Inserts a new color matching game result into the database.
-    """
+    """Inserts a new color matching game result into the database."""
     collection = db.color_matching_results
 
-    # Document structure
     result_document = {
         "user_id": user_id,
         "level": level,
@@ -30,18 +28,90 @@ def insert_color_matching_result(
         "time_taken": time_taken,
         "provided_sequence": provided_sequence,
         "child_sequence": child_sequence,
-        "circle_count": circle_count,  # Store the user's circle count input
-        "wrong_circle_count": wrong_circle_count,  # Store the difference between expected and actual circle count
-        "accuracy": accuracy,  # Accuracy of the game
-        "time_efficiency": time_efficiency,  # Efficiency based on time
-        "reward": reward,  # Reward points
+        "circle_count": circle_count,
+        "wrong_circle_count": wrong_circle_count,
+        "accuracy": accuracy,
+        "time_efficiency": time_efficiency,
+        "reward": reward,
+        "date": date,
+        "response_times": response_times,
+        "mistake_patterns": mistake_patterns
+    }
+
+    result = collection.insert_one(result_document)
+    return str(result.inserted_id)
+
+def update_user_color_profile(user_id, mistake_patterns, provided_sequence, child_sequence):
+    """Update or create user's color profile with new mistake patterns"""
+    collection = db.user_color_profiles
+    
+    # Get existing profile or create new one
+    profile = collection.find_one({"user_id": user_id}) or {"user_id": user_id, "mistake_patterns": {}}
+    
+    # Update mistake counts
+    current_mistakes = profile.get("mistake_patterns", {})
+    for color, count in mistake_patterns.items():
+        current_mistakes[color] = current_mistakes.get(color, 0) + count
+    
+    # Update historical sequences
+    update_data = {
+        "$set": {"mistake_patterns": current_mistakes},
+        "$push": {
+            "historical_sequences": {
+                "provided": provided_sequence,
+                "attempted": child_sequence,
+                "date": datetime.datetime.now()
+            }
+        }
+    }
+    
+    collection.update_one(
+        {"user_id": user_id},
+        update_data,
+        upsert=True
+    )
+
+def get_user_color_patterns(user_id):
+    """Get user's color mistake patterns"""
+    collection = db.user_color_profiles
+    profile = collection.find_one({"user_id": user_id})
+    if not profile:
+        return {}
+    return profile.get("mistake_patterns", {})
+
+def insert_reward(user_id, reward_type, quantity, date):
+    """
+    Inserts a new reward into the database.
+    """
+    collection = db.rewards
+
+    reward_document = {
+        "user_id": user_id,
+        "reward_type": reward_type,
+        "quantity": quantity,
         "date": date
     }
 
-    # Insert into collection
-    result = collection.insert_one(result_document)
+    result = collection.insert_one(reward_document)
+    return str(result.inserted_id)
 
-    return str(result.inserted_id)  # Return the ID of the inserted document
+def get_rewards(user_id):
+    """
+    Retrieves rewards for a specific user.
+    """
+    collection = db.rewards
+
+    query = {"user_id": user_id}
+    rewards = collection.find(query)
+
+    return [
+        {
+            "reward_type": reward.get("reward_type"),
+            "quantity": reward.get("quantity"),
+            "date": reward.get("date")
+        }
+        for reward in rewards
+    ]
 
 def get_color_matching_results(user_id=None):
     """
@@ -108,7 +178,6 @@ def get_first_result_per_level(user_id):
 
     results = collection.aggregate(pipeline)
     return {result["_id"]: result for result in results}
-
 
 # Finger Counting Game 
 def insert_finger_counting_session(user_id, number_data, total_attempt_count, date, level):

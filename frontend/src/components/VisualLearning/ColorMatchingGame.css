@@ -1,16 +1,16 @@
 /* General styles for the game */
-.color-matching-game {
+.scmg-color-matching-game {
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #f7f7f7;
+  background: linear-gradient(135deg, #fdfd96, #b3e5fc);
   min-height: 100vh;
 }
 
 /* Sidebar styling */
-.color-matching-game .sidebar {
+.scmg-color-matching-game .scmg-csidebar {
   width: 80px;
   background-color: #5c6bc0;
   border-radius: 15px;
@@ -20,10 +20,10 @@
 }
 
 /* Game container */
-.color-matching-game .game-container {
+.scmg-color-matching-game .scmg-game-container {
   max-width: 800px;
   width: 100%;
-  background: #ffffff;
+  background: #beff9b;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   padding: 20px;
@@ -31,7 +31,7 @@
 }
 
 /* Level heading */
-.color-matching-game h1 {
+.scmg-color-matching-game h1 {
   font-size: 1.5rem;
   color: #333;
   margin-bottom: 20px;
@@ -39,7 +39,7 @@
 }
 
 /* Color sequence */
-.color-matching-game .circle {
+.scmg-color-matching-game .scmg-circle {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -47,11 +47,11 @@
   transition: opacity 0.3s ease;
 }
 
-.color-matching-game .circle.hidden {
+.scmg-color-matching-game .scmg-circle.scmg-hidden {
   opacity: 0;
 }
 
-.color-matching-game .color-sequence {
+.scmg-color-matching-game .scmg-color-sequence {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
@@ -59,7 +59,7 @@
 }
 
 /* Overlay - only covers the color sequence */
-.color-matching-game .overlay {
+.scmg-color-matching-game .scmg-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -70,7 +70,7 @@
 }
 
 /* Drop zone */
-.drop-zone {
+.scmg-drop-zone {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
@@ -82,7 +82,7 @@
 }
 
 /* Optional: Style for empty circles if needed */
-.empty-circle {
+.scmg-empty-circle {
   width: 50px; /* Adjust size as needed */
   height: 50px; /* Adjust size as needed */
   border-radius: 50%;
@@ -93,7 +93,7 @@
   justify-content: center;
 }
 
-.empty-circle-dz {
+.scmg-empty-circle-dz {
   width: 50px; /* Adjust size as needed */
   height: 50px; /* Adjust size as needed */
   border-radius: 50%;
@@ -105,21 +105,20 @@
 }
 
 /* Filled circle hidden but the drop zone remains active */
-.filled-circle {
+.scmg-filled-circle {
   width: 100%;
   height: 100%;
   border-radius: 50%; /* To keep it round if visible */
 }
 
-
 /* Color options */
-.color-matching-game .color-options {
+.scmg-color-matching-game .scmg-color-options {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
 }
 
-.color-matching-game .color-option {
+.scmg-color-matching-game .scmg-color-option {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -127,18 +126,31 @@
   cursor: grab;
 }
 
-/* Empty circle pool */
-.color-matching-game .empty-circle-pool-container {
+/* Empty circle pool container */
+.scmg-color-matching-game .scmg-empty-circle-pool-container {
   margin-bottom: 20px;
   text-align: center;
 }
 
-.color-matching-game .empty-circle-pool {
+/* Basket styling */
+.scmg-color-matching-game .scmg-basket {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: #d2b48c; /* Basket color */
+  border: 2px solid #8b4513; /* Basket border color */
+  border-radius: 10px;
+  padding: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.scmg-color-matching-game .scmg-empty-circle-pool {
   display: flex;
   justify-content: center;
 }
 
-.color-matching-game .done-button {
+.scmg-color-matching-game .scmg-done-button {
   background-color: #007bff;
   color: white;
   padding: 10px 20px;
@@ -148,18 +160,18 @@
   transition: background-color 0.3s ease;
 }
 
-.color-matching-game .done-button:hover {
+.scmg-color-matching-game .scmg-done-button:hover {
   background-color: #0056b3;
 }
 
 /* Circle count */
-.color-matching-game .circle-count {
+.scmg-color-matching-game .scmg-circle-count {
   margin-bottom: 20px;
   text-align: center;
 }
 
 /* Feedback */
-.color-matching-game .feedback {
+.scmg-color-matching-game .scmg-feedback {
   background-color: #e7f9e7;
   border: 1px solid #c8e6c9;
   padding: 10px;
@@ -169,45 +181,152 @@
 }
 
 /* Result summary */
-.color-matching-game .result-summary {
-  background-color: #fffbe7;
-  border: 1px solid #ffe082;
-  padding: 10px;
-  border-radius: 5px;
+.scmg-color-matching-game .scmg-result-summary {
+  background-color: #f0f8ff; /* Light pastel blue */
+  border: 2px solid #add8e6; /* Pastel blue border */
+  padding: 20px;
+  border-radius: 15px;
   margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-.result-summary p {
-  margin: 5px 0;
+.scmg-result-summary h3 {
+  font-size: 1.5rem;
+  color: #5c6bc0; /* Pastel purple */
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.scmg-result-summary p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+  color: #333;
+  padding: 8px;
+  background-color: #fff; /* White background for each item */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scmg-result-summary p:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scmg-result-summary p strong {
+  color: #ff8e88; /* Pastel red */
+  font-weight: bold;
+}
+
+/* Highlight for recommended level */
+.scmg-result-summary p:last-child {
+  background-color: #e6f9e6; /* Light pastel green */
+  border: 1px solid #77dd77; /* Pastel green border */
+  color: #333;
+  font-weight: bold;
+}
+
+/* Streak styling */
+.scmg-color-matching-game .scmg-streak {
+  background-color: #fff3e0; /* Light pastel orange */
+  border: 2px solid #ffcc80; /* Pastel orange border */
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scmg-streak h3 {
+  font-size: 1.4rem;
+  color: #ff8e88; /* Pastel red */
+  margin: 0;
+}
+
+/* Rewards section */
+.scmg-color-matching-game .scmg-rewards {
+  background-color: #f5f5f5; /* Light gray background */
+  border: 2px solid #e0e0e0; /* Light gray border */
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scmg-rewards h3 {
+  font-size: 1.5rem;
+  color: #5c6bc0; /* Pastel purple */
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.scmg-rewards ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.scmg-rewards li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff; /* White background for each reward */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scmg-rewards li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.scmg-rewards img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+}
+
+.scmg-rewards span {
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: bold;
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
-  .color-matching-game .game-container {
+  .scmg-color-matching-game .scmg-game-container {
     padding: 15px;
   }
 
-  .color-matching-game .circle,
-  .color-matching-game .empty-circle,
-  .color-matching-game .color-option {
+  .scmg-color-matching-game .scmg-circle,
+  .scmg-color-matching-game .scmg-empty-circle,
+  .scmg-color-matching-game .scmg-color-option {
     width: 40px;
     height: 40px;
   }
 
-  .color-matching-game h1 {
+  .scmg-color-matching-game h1 {
     font-size: 1.2rem;
   }
 }
 
 @media (max-width: 480px) {
-  .color-matching-game .circle,
-  .color-matching-game .empty-circle,
-  .color-matching-game .color-option {
+  .scmg-color-matching-game .scmg-circle,
+  .scmg-color-matching-game .scmg-empty-circle,
+  .scmg-color-matching-game .scmg-color-option {
     width: 30px;
     height: 30px;
   }
 
-  .color-matching-game h1 {
+  .scmg-color-matching-game h1 {
     font-size: 1rem;
   }
 }
