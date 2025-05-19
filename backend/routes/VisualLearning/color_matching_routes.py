@@ -35,7 +35,7 @@ LEVEL_CIRCLE_COUNTS = {"easy": 3, "medium": 5, "hard": 7}
 # Initialize RL agent and LSTM predictor
 STATE_SIZE = 6  # Must match state_from_performance output
 ACTION_SIZE = 3
-MODEL_PATH = "E:/BloomingMinds/ml-models/scripts/VisualLearning/color_matching_model_weights.keras"
+MODEL_PATH = "C:/Users/suren/Desktop/test/Blooming-Minds/models/scripts/Visual/color_matching_model_weights.keras"
 
 # Initialize RL agent - always create new instance with correct architecture
 rl_agent = RLAgent(STATE_SIZE, ACTION_SIZE)

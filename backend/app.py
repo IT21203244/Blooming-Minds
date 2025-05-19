@@ -43,7 +43,7 @@ app.register_blueprint(LetterRoutes)
 app.register_blueprint(EmotionFileRoute)
 
 # app.register_blueprint(letter_routes, url_prefix='/read_write_learning')
-
+CORS(color_matching_routes, origins="http://localhost:3000")
 app.register_blueprint(color_matching_routes, url_prefix='/visual_learning')
 
 
