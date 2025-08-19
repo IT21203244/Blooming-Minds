@@ -1,180 +1,179 @@
 /* Ensure the styles only affect the CompareProgressDashboard */
 .compare-progress-dashboard {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .compare-progress-dashboard h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 30px;
-  }
-  
-  /* First Results Section */
-  .first-results {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around; /* Adjusts spacing between cards */
-    gap: 20px; /* Optional: space between cards */
-    margin-bottom: 40px;
-  }
-  
-  .first-results .level-card {
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    max-width: 350px;
-    min-width: 250px; /* Minimum width to ensure consistency */
-    flex: 1 1 calc(33.333% - 20px); /* Ensure 3 cards in a row */
-    margin: 10px;
-  }
-  
-  .first-results h3 {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .first-results .result-values p {
-    font-size: 16px;
-    margin: 5px 0;
-    color: #555;
-  }
-  
-  /* Comparison Results Section */
-  .comparison-results {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-  }
-  
-  .comparison-level {
-    width: 100%;
-    margin-bottom: 40px;
-  }
-  
-  .comparison-level h2 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.compare-progress-dashboard h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* First Results Section */
+.first-results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; /* Adjusts spacing between cards */
+  gap: 20px; /* Optional: space between cards */
+  margin-bottom: 40px;
+}
+
+.first-results .level-card {
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 350px;
+  min-width: 250px; /* Minimum width to ensure consistency */
+  flex: 1 1 calc(33.333% - 20px); /* Ensure 3 cards in a row */
+  margin: 10px;
+}
+
+.first-results h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.first-results .result-values p {
+  font-size: 16px;
+  margin: 5px 0;
+  color: #555;
+}
+
+/* Comparison Results Section */
+.comparison-results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.comparison-level {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.comparison-level h2 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.comparison-pair {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 130px;
+  gap: 20px;
+}
+
+.chart-container {
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  flex: 1;
+  min-width: 300px;
+  max-width: 350px;
+}
+
+.chart-container h4 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.result-values {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #555;
+}
+
+.result-values p {
+  margin: 5px 0;
+}
+
+.comparison-pair .result-values p {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
   .comparison-pair {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 130px;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
   }
-  
+
   .chart-container {
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    flex: 1;
-    min-width: 300px;
-    max-width: 350px;
+    width: 100%;
+    margin-bottom: 20px;
   }
-  
-  .chart-container h4 {
+}
+
+@media (max-width: 768px) {
+  .compare-progress-dashboard {
+    padding: 10px;
+  }
+
+  .comparison-level h2 {
+    font-size: 20px;
+  }
+
+  .comparison-pair {
+    gap: 15px;
+  }
+
+  .chart-container {
+    padding: 15px;
+  }
+
+  .first-results .level-card {
+    flex: 1 1 calc(50% - 20px); /* 2 cards in a row on tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .compare-progress-dashboard {
+    padding: 10px;
+  }
+
+  .comparison-level h2 {
     font-size: 18px;
-    color: #333;
-    margin-bottom: 10px;
   }
-  
-  .result-values {
-    margin-top: 20px;
-    font-size: 16px;
-    color: #555;
+
+  .comparison-pair {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
-  
+
+  .chart-container {
+    padding: 10px;
+    width: 90%;
+  }
+
+  .first-results .level-card {
+    flex: 1 1 100%; /* Stack cards on mobile */
+  }
+
   .result-values p {
-    margin: 5px 0;
-  }
-  
-  .comparison-pair .result-values p {
     font-size: 14px;
-    color: #666;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 1024px) {
-    .comparison-pair {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .chart-container {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .compare-progress-dashboard {
-      padding: 10px;
-    }
-  
-    .comparison-level h2 {
-      font-size: 20px;
-    }
-  
-    .comparison-pair {
-      gap: 15px;
-    }
-  
-    .chart-container {
-      padding: 15px;
-    }
-  
-    .first-results .level-card {
-      flex: 1 1 calc(50% - 20px); /* 2 cards in a row on tablets */
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .compare-progress-dashboard {
-      padding: 10px;
-    }
-  
-    .comparison-level h2 {
-      font-size: 18px;
-    }
-  
-    .comparison-pair {
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-  
-    .chart-container {
-      padding: 10px;
-      width: 90%;
-    }
-  
-    .first-results .level-card {
-      flex: 1 1 100%; /* Stack cards on mobile */
-    }
-  
-    .result-values p {
-      font-size: 14px;
-    }
-  }
-  
-  .error-message {
-    color: red;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .loading-message {
-    text-align: center;
-    font-size: 18px;
-    color: #666;
-  }
-  
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+}
